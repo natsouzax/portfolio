@@ -29,7 +29,11 @@
   inset: 0;
 }
 
-/* Composites over the grid, under the noise grain. */
+/*
+  Composites over the grid, under the noise grain. Held deliberately faint: the
+  abstract field is atmosphere only — the meaningful 3D lives in the content
+  itself (capability orbit, Lexuri cycle) and must never compete with it.
+*/
 .scene {
   position: absolute;
   inset: 0;

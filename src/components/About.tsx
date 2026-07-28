@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/Icon";
+import CapabilityOrbit from "@/components/about/CapabilityOrbit";
 import TiltScene from "@/components/motion/TiltScene";
 import WorkspaceGuide from "@/components/workspace/WorkspaceGuide";
-import { capabilities } from "@/data/portfolio";
 
 import styles from "./About.module.css";
 
@@ -78,25 +78,12 @@ export default function About() {
         <div className={styles.capabilityHeader} data-reveal>
           <p className="chapter-kicker">o que consigo mover</p>
           <p>
-            Tecnologias sustentam o trabalho. As capacidades abaixo explicam o
-            resultado.
+            As quatro capacidades partem do mesmo centro: elas se sustentam
+            entre si, e é por isso que penso nelas juntas.
           </p>
         </div>
 
-        <div className={styles.capabilityGrid}>
-          {capabilities.map((capability) => (
-            <article key={capability.number} data-reveal>
-              <span className={styles.capabilityNumber}>{capability.number}</span>
-              <h3>{capability.title}</h3>
-              <p>{capability.description}</p>
-              <ul aria-label={`Competências em ${capability.title}`}>
-                {capability.technologies.map((technology) => (
-                  <li key={technology}>{technology}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
+        <CapabilityOrbit />
 
         <aside className={styles.learningNote} data-reveal>
           <span className={styles.learningIcon} aria-hidden="true">

@@ -41,15 +41,17 @@ export const GROUP_DEPTH = {
 } as const;
 
 /**
- * Opacity of the whole canvas layer once live. Deliberately below 1: this is an
- * ambient backdrop that sits behind copy, not a foreground element.
+ * Opacity of the whole canvas layer once live. Deliberately low: this abstract
+ * field is atmosphere only. The 3D that carries meaning lives in the content
+ * itself — the capability orbit and the Lexuri cycle — and this must stay
+ * subordinate to it, never competing for attention.
  */
-export const SCENE_LAYER_OPACITY = 0.72;
+export const SCENE_LAYER_OPACITY = 0.18;
 
 export const CAMERA = {
   // Pulled well back so the primitives read as a distant field rather than as
   // large shapes crowding the text.
-  position: [0, 0, 13] as [number, number, number],
+  position: [0, 0, 19] as [number, number, number],
   fov: 45,
   /**
    * How far the camera travels on each axis at full pointer deflection. Scaled

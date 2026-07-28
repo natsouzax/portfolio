@@ -18,6 +18,7 @@ import WorkspaceGuide from "@/components/workspace/WorkspaceGuide";
 import { useDesktopPinning } from "@/hooks/useDesktopPinning";
 
 import LaptopShell from "./LaptopShell";
+import StepCycle from "./StepCycle";
 import { lexuriSteps, type LexuriStepId } from "./steps";
 import styles from "./LexuriShowcase.module.css";
 
@@ -222,34 +223,6 @@ function ProductIntroduction() {
   );
 }
 
-function StepControls({
-  activeStep,
-  onSelect,
-}: {
-  activeStep: number;
-  onSelect: (index: number) => void;
-}) {
-  return (
-    <div className={styles.stepControls} aria-label="Etapas da experiência Lexuri">
-      {lexuriSteps.map((step, index) => (
-        <button
-          key={step.id}
-          type="button"
-          className={index === activeStep ? styles.activeStep : undefined}
-          onClick={() => onSelect(index)}
-          aria-pressed={index === activeStep}
-        >
-          <span>{step.number}</span>
-          <span>
-            <small>{step.eyebrow}</small>
-            <strong>{step.title}</strong>
-          </span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function NotebookStage({
   activeStep,
   onSelect,
@@ -276,7 +249,7 @@ function NotebookStage({
         <strong>{active.title}</strong>
         <p>{active.description}</p>
       </div>
-      <StepControls activeStep={activeStep} onSelect={onSelect} />
+      <StepCycle activeStep={activeStep} onSelect={onSelect} />
     </TiltScene>
   );
 }

@@ -1,0 +1,227 @@
+.orbit {
+  --orbit-radius: 20rem;
+  margin-top: 2rem;
+}
+
+.stage {
+  position: relative;
+  height: 26rem;
+  perspective: 78rem;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 900ms var(--ease-in-out);
+}
+
+/*
+  Plano-base do sistema. Deslocado para baixo dos cards para que o núcleo e os
+  raios fiquem visíveis em vez de ocultos atrás do card da frente.
+*/
+.hub {
+  position: absolute;
+  inset: 0;
+  transform: translateY(9rem);
+  transform-style: preserve-3d;
+}
+
+/* Núcleo comum de onde as quatro capacidades partem. */
+.core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 0.4rem var(--signal-soft), 0 0 2.5rem rgba(200, 255, 112, 0.45);
+  transform: translate(-50%, -50%);
+}
+
+/* Trilha fechada ligando as quatro pontas. */
+.hubPath {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--orbit-radius) * 2);
+  height: calc(var(--orbit-radius) * 2);
+  border: 1px dashed var(--line-strong);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(90deg);
+}
+
+.spoke {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--orbit-radius);
+  height: 1px;
+  background: linear-gradient(90deg, var(--signal), rgba(238, 245, 226, 0.05));
+  transform-origin: left center;
+  opacity: 0.32;
+  transition: opacity 500ms var(--ease-out);
+}
+
+.spoke[data-slot="0"] {
+  opacity: 1;
+}
+
+.node {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 21rem;
+  padding: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(155deg, rgba(23, 26, 22, 0.94), rgba(12, 14, 12, 0.96));
+  box-shadow: var(--shadow-soft);
+  transition:
+    opacity 700ms var(--ease-out),
+    border-color 700ms var(--ease-out),
+    box-shadow 700ms var(--ease-out);
+}
+
+.node[data-slot="0"] {
+  border-color: rgba(200, 255, 112, 0.32);
+  box-shadow: var(--shadow-object), 0 0 4rem rgba(200, 255, 112, 0.08);
+  opacity: 1;
+}
+
+.node[data-slot="1"],
+.node[data-slot="3"] {
+  opacity: 0.34;
+}
+
+.node[data-slot="2"] {
+  opacity: 0.12;
+}
+
+.number {
+  color: var(--signal);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+}
+
+.node h3,
+.fallbackGrid h3 {
+  margin: 1.35rem 0 0;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  font-weight: 560;
+  letter-spacing: -0.035em;
+}
+
+.node p,
+.fallbackGrid p {
+  margin: 0.7rem 0 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.node ul,
+.fallbackGrid ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.node li,
+.fallbackGrid li {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text-faint);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.57rem;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.controls button {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.1rem 1rem;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  text-align: left;
+  transition: color 240ms ease, background 240ms ease;
+}
+
+.controls button:last-child {
+  border-right: 0;
+}
+
+.controls button:hover {
+  color: var(--text);
+  background: rgba(23, 26, 22, 0.5);
+}
+
+.controls button span:first-child {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.55rem;
+}
+
+.controls button span:last-child {
+  font-size: 0.82rem;
+  letter-spacing: -0.02em;
+}
+
+.activeControl {
+  color: var(--text) !important;
+  box-shadow: inset 0 1px 0 var(--signal);
+}
+
+.activeControl span:first-child {
+  color: var(--signal);
+}
+
+/* Fallback: grade estática para telas menores e para quem reduz animações. */
+.fallbackGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 2rem;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.fallbackGrid article {
+  min-height: 20rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(12, 14, 12, 0.46);
+  transition: background 240ms ease, border-color 240ms ease;
+}
+
+.fallbackGrid article:hover {
+  background: rgba(23, 26, 22, 0.72);
+  border-color: rgba(200, 255, 112, 0.28);
+}
+
+.fallbackGrid h3 {
+  margin-top: 2.25rem;
+}
+
+@media (max-width: 680px) {
+  .fallbackGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fallbackGrid article {
+    min-height: auto;
+  }
+}

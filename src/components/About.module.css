@@ -143,23 +143,20 @@
   border-bottom: 1px solid var(--line);
 }
 
-.principleNumber,
-.capabilityNumber {
+.principleNumber {
   color: var(--signal);
   font-family: var(--font-mono), monospace;
   font-size: 0.62rem;
 }
 
-.principles h3,
-.capabilityGrid h3 {
+.principles h3 {
   margin: 0;
   font-size: clamp(1.25rem, 2.1vw, 1.65rem);
   font-weight: 560;
   letter-spacing: -0.035em;
 }
 
-.principles p,
-.capabilityGrid p {
+.principles p {
   max-width: 35rem;
   margin: 0.7rem 0 0;
   color: var(--text-soft);
@@ -183,55 +180,6 @@
   max-width: 31rem;
   margin: 0;
   color: var(--text-soft);
-}
-
-.capabilityGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 2rem;
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
-}
-
-.capabilityGrid article {
-  min-height: 20rem;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  background: rgba(12, 14, 12, 0.46);
-  transform: perspective(60rem) translateZ(0);
-  transition:
-    background 240ms ease,
-    border-color 240ms ease,
-    transform 320ms var(--ease-out);
-}
-
-.capabilityGrid article:hover {
-  background: rgba(23, 26, 22, 0.72);
-  border-color: rgba(200, 255, 112, 0.28);
-  transform: perspective(60rem) translateY(-0.35rem) rotateX(1.5deg) rotateY(-1deg);
-}
-
-.capabilityGrid h3 {
-  margin-top: 2.25rem;
-}
-
-.capabilityGrid ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin: 2rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.capabilityGrid li {
-  padding: 0.4rem 0.65rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--text-faint);
-  font-family: var(--font-mono), monospace;
-  font-size: 0.57rem;
 }
 
 .learningNote {
@@ -325,14 +273,6 @@
   .capabilityHeader {
     align-items: start;
     flex-direction: column;
-  }
-
-  .capabilityGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .capabilityGrid article {
-    min-height: auto;
   }
 
   .learningNote {
