@@ -1,0 +1,29 @@
+.scene {
+  position: relative;
+  isolation: isolate;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.pointerGlow {
+  position: absolute;
+  z-index: -1;
+  top: calc(50% - 11rem);
+  left: calc(50% - 11rem);
+  width: 22rem;
+  height: 22rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 255, 112, 0.11), transparent 68%);
+  filter: blur(1.5rem);
+  pointer-events: none;
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .scene {
+    transform: none !important;
+  }
+
+  .pointerGlow {
+    display: none;
+  }
+}

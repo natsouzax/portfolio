@@ -1,26 +1,281 @@
-@import "tailwindcss";
-
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #070907;
+  --ink-soft: #0c0e0c;
+  --surface: #111410;
+  --surface-raised: #171a16;
+  --surface-bright: #1d211b;
+  --line: rgba(238, 245, 226, 0.12);
+  --line-strong: rgba(238, 245, 226, 0.22);
+  --text: #f0f4e9;
+  --text-soft: #b0b8aa;
+  --text-faint: #747d70;
+  --signal: #c8ff70;
+  --signal-soft: rgba(200, 255, 112, 0.12);
+  --warm: #ffb66e;
+  --warm-soft: rgba(255, 182, 110, 0.12);
+  --danger: #ff7f6f;
+  --radius-sm: 0.75rem;
+  --radius-md: 1.15rem;
+  --radius-lg: 1.75rem;
+  --radius-xl: 2.5rem;
+  --shadow-soft: 0 28px 80px rgba(0, 0, 0, 0.34);
+  --shadow-object: 0 45px 100px rgba(0, 0, 0, 0.52);
+  --content-width: 76rem;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --nav-height: 4.5rem;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
+  overflow-x: clip;
+  scroll-behavior: smooth;
+  scrollbar-color: var(--line-strong) var(--ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  width: 100%;
+  min-width: 320px;
+  margin: 0;
+  overflow-x: clip;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  color: inherit;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 4px;
+}
+
+[id] {
+  scroll-margin-top: calc(var(--nav-height) + 1.5rem);
+}
+
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: var(--signal);
+  color: var(--ink);
+  font-weight: 700;
+  transform: translateY(-180%);
+  transition: transform 180ms var(--ease-out);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.scene-shell {
+  width: min(100%, var(--content-width));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.chapter-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  color: var(--text-faint);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.chapter-kicker::before {
+  width: 1.75rem;
+  height: 1px;
+  background: var(--signal);
+  content: "";
+}
+
+.chapter-number {
+  color: var(--signal);
+}
+
+.display-title {
+  max-width: 100%;
+  margin: 0;
+  font-size: clamp(2.75rem, 7vw, 6.8rem);
+  font-weight: 540;
+  letter-spacing: -0.062em;
+  line-height: 0.96;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.section-title {
+  max-width: 14ch;
+  margin: 1.25rem 0 0;
+  font-size: clamp(2.3rem, 5.2vw, 5rem);
+  font-weight: 540;
+  letter-spacing: -0.055em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.section-lede {
+  max-width: 40rem;
+  margin: 1.5rem 0 0;
+  color: var(--text-soft);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.65;
+}
+
+.mono {
+  font-family: var(--font-mono), monospace;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+[data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+@supports (animation-timeline: view()) {
+  [data-reveal] {
+    animation: scene-reveal both linear;
+    animation-timeline: view();
+    animation-range: entry 0% entry 34%;
+  }
+
+  [data-reveal="left"] {
+    --reveal-x: -1.5rem;
+    --reveal-y: 0;
+  }
+
+  [data-reveal="right"] {
+    --reveal-x: 1.5rem;
+    --reveal-y: 0;
+  }
+}
+
+@keyframes scene-reveal {
+  from {
+    opacity: 0.18;
+    transform: translate3d(var(--reveal-x, 0), var(--reveal-y, 1.5rem), 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes ambient-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(0, -0.55rem, 0) rotate(0.7deg);
+  }
+}
+
+@keyframes signal-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    box-shadow: 0 0 0 0 rgba(200, 255, 112, 0.16);
+  }
+
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 0.45rem rgba(200, 255, 112, 0);
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --gutter: 1.25rem;
+  }
+
+  .chapter-kicker {
+    font-size: 0.67rem;
+  }
+
+  .section-title {
+    max-width: 16ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  [data-reveal] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

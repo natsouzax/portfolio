@@ -1,0 +1,284 @@
+.guide {
+  margin: 0;
+  perspective: 55rem;
+  transform-style: preserve-3d;
+}
+
+.frame {
+  position: relative;
+  padding: 0.2rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 1.4rem;
+  background:
+    radial-gradient(circle at 50% 70%, rgba(200, 255, 112, 0.12), transparent 42%),
+    linear-gradient(145deg, rgba(27, 31, 25, 0.72), rgba(9, 11, 9, 0.24));
+  box-shadow: var(--shadow-object);
+  transform-style: preserve-3d;
+}
+
+.imageWrap {
+  position: relative;
+  z-index: 2;
+  aspect-ratio: 0.655;
+  border-radius: 1rem;
+  transform-origin: 50% 80%;
+  will-change: transform;
+}
+
+.image {
+  object-fit: contain;
+  object-position: 50% 100%;
+  image-rendering: pixelated;
+  filter: saturate(0.92) contrast(1.04) drop-shadow(0 1.2rem 1.4rem rgba(0, 0, 0, 0.42));
+}
+
+.scanlines {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 1rem;
+  opacity: 0.1;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(7, 9, 7, 0.35) 4px
+  );
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.characterOrbit {
+  position: absolute;
+  z-index: 1;
+  top: 16%;
+  left: 5%;
+  width: 90%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(200, 255, 112, 0.16);
+  border-radius: 50%;
+  transform: rotateX(68deg) translateZ(-1rem);
+  animation: guide-orbit 9s linear infinite;
+}
+
+.characterOrbit::before,
+.characterOrbit::after {
+  position: absolute;
+  inset: 12%;
+  border: 1px dashed rgba(238, 245, 226, 0.1);
+  border-radius: inherit;
+  content: "";
+}
+
+.characterOrbit::after {
+  inset: 28%;
+}
+
+.characterOrbit i {
+  position: absolute;
+  top: calc(50% - 0.22rem);
+  left: -0.22rem;
+  width: 0.44rem;
+  height: 0.44rem;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 1rem rgba(200, 255, 112, 0.7);
+}
+
+.cornerOne,
+.cornerTwo {
+  position: absolute;
+  z-index: 4;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-color: var(--signal);
+  opacity: 0.7;
+}
+
+.cornerOne {
+  top: 0.25rem;
+  left: 0.25rem;
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-radius: 0.8rem 0 0;
+}
+
+.cornerTwo {
+  right: 0.25rem;
+  bottom: 0.25rem;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  border-radius: 0 0 0.8rem;
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  color: var(--text-faint);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
+}
+
+.liveDot {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0.8rem rgba(200, 255, 112, 0.55);
+  animation: signal-pulse 2.2s ease-in-out infinite;
+}
+
+.hero {
+  width: clamp(13rem, 24vw, 18.5rem);
+}
+
+.arriving .frame {
+  transform: rotate(-1.5deg);
+}
+
+.compact {
+  width: clamp(9.5rem, 17vw, 12rem);
+}
+
+.compact .frame {
+  transform: rotate(2deg);
+}
+
+.observing .frame {
+  transform: rotate(2deg);
+}
+
+.ending {
+  width: clamp(11rem, 22vw, 14rem);
+}
+
+.presenting .frame {
+  transform: rotate(1.5deg);
+}
+
+.waving .frame {
+  transform: rotate(-2deg);
+}
+
+.waving .image {
+  image-rendering: auto;
+}
+
+.pixelSparkOne,
+.pixelSparkTwo {
+  position: absolute;
+  z-index: 4;
+  width: 0.38rem;
+  height: 0.38rem;
+  background: var(--signal);
+  box-shadow: 0.55rem -0.55rem 0 -0.12rem var(--warm);
+  animation: pixel-spark 2.8s steps(4, end) infinite;
+}
+
+.pixelSparkOne {
+  top: 22%;
+  right: 8%;
+}
+
+.pixelSparkTwo {
+  bottom: 20%;
+  left: 7%;
+  animation-delay: -1.4s;
+}
+
+.waving .frameOne {
+  animation: wave-frame-one 3.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.waving .frameTwo {
+  opacity: 0;
+  animation: wave-frame-two 3.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes guide-orbit {
+  to {
+    transform: rotateX(68deg) rotateZ(360deg) translateZ(-1rem);
+  }
+}
+
+@keyframes pixel-spark {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0.5rem, 0) scale(0.6);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate3d(0, -0.5rem, 0) scale(1);
+  }
+}
+
+@keyframes wave-frame-one {
+  0%,
+  18%,
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  28%,
+  41%,
+  65%,
+  78% {
+    opacity: 0;
+    transform: translate3d(0.12rem, 0.04rem, 0);
+  }
+
+  51%,
+  55%,
+  88% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes wave-frame-two {
+  0%,
+  18%,
+  51%,
+  55%,
+  88%,
+  100% {
+    opacity: 0;
+    transform: translate3d(-0.1rem, 0.03rem, 0);
+  }
+
+  28%,
+  41%,
+  65%,
+  78% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (max-width: 520px) {
+  .caption {
+    font-size: 0.52rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .characterOrbit,
+  .pixelSparkOne,
+  .pixelSparkTwo,
+  .liveDot,
+  .waving .frameOne,
+  .waving .frameTwo {
+    animation: none;
+  }
+
+  .waving .frameTwo {
+    display: none;
+  }
+}

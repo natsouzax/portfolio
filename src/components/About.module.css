@@ -1,0 +1,345 @@
+.about {
+  position: relative;
+  padding: clamp(7rem, 12vw, 11rem) 0;
+}
+
+.about::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(calc(100% - (var(--gutter) * 2)), calc(var(--content-width) - (var(--gutter) * 2)));
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  content: "";
+  transform: translateX(-50%);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.75fr);
+  align-items: end;
+  gap: clamp(2rem, 7vw, 7rem);
+}
+
+.methodGrid {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  margin-top: clamp(4rem, 8vw, 7rem);
+}
+
+.guideStation {
+  position: relative;
+  display: grid;
+  min-height: 31rem;
+  align-content: end;
+  justify-items: start;
+  padding: 2rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 70% 22%, rgba(255, 182, 110, 0.12), transparent 12rem),
+    linear-gradient(145deg, rgba(23, 26, 22, 0.88), rgba(12, 14, 12, 0.95));
+  box-shadow: var(--shadow-soft);
+  transform-style: preserve-3d;
+}
+
+.guideStation::before {
+  position: absolute;
+  top: 14%;
+  right: -25%;
+  width: 20rem;
+  height: 20rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  content: "";
+}
+
+.stationLabel {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.6rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+}
+
+.guideStation figure {
+  position: absolute;
+  z-index: 1;
+  top: 1.35rem;
+  right: 2rem;
+  width: 7.5rem;
+  transform: translateZ(3rem);
+}
+
+.guideStation blockquote {
+  position: relative;
+  z-index: 2;
+  max-width: 20rem;
+  margin: 0;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-weight: 520;
+  letter-spacing: -0.025em;
+  line-height: 1.45;
+  transform: translateZ(2rem);
+}
+
+.nextChapter {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  width: 100%;
+  margin-top: 1.8rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  transform: translateZ(1.25rem);
+}
+
+.nextChapter span,
+.nextChapter strong {
+  display: block;
+  grid-column: 1;
+  font-family: var(--font-mono), monospace;
+}
+
+.nextChapter span {
+  color: var(--text-faint);
+  font-size: 0.55rem;
+}
+
+.nextChapter strong {
+  margin-top: 0.2rem;
+  color: var(--signal);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.nextChapter svg {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  color: var(--signal);
+}
+
+.principles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.principles li {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr auto;
+  gap: 1.25rem;
+  align-items: start;
+  min-height: 10rem;
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.principles li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.principleNumber,
+.capabilityNumber {
+  color: var(--signal);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+}
+
+.principles h3,
+.capabilityGrid h3 {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.1vw, 1.65rem);
+  font-weight: 560;
+  letter-spacing: -0.035em;
+}
+
+.principles p,
+.capabilityGrid p {
+  max-width: 35rem;
+  margin: 0.7rem 0 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.principles svg {
+  width: 1.1rem;
+  color: var(--text-faint);
+}
+
+.capabilityHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: clamp(6rem, 10vw, 9rem);
+}
+
+.capabilityHeader > p:last-child {
+  max-width: 31rem;
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.capabilityGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 2rem;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.capabilityGrid article {
+  min-height: 20rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(12, 14, 12, 0.46);
+  transform: perspective(60rem) translateZ(0);
+  transition:
+    background 240ms ease,
+    border-color 240ms ease,
+    transform 320ms var(--ease-out);
+}
+
+.capabilityGrid article:hover {
+  background: rgba(23, 26, 22, 0.72);
+  border-color: rgba(200, 255, 112, 0.28);
+  transform: perspective(60rem) translateY(-0.35rem) rotateX(1.5deg) rotateY(-1deg);
+}
+
+.capabilityGrid h3 {
+  margin-top: 2.25rem;
+}
+
+.capabilityGrid ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.capabilityGrid li {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text-faint);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.57rem;
+}
+
+.learningNote {
+  display: grid;
+  grid-template-columns: auto minmax(12rem, 0.8fr) minmax(16rem, 1fr);
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--warm-soft);
+}
+
+.learningIcon {
+  display: grid;
+  width: 2.7rem;
+  height: 2.7rem;
+  place-items: center;
+  border: 1px solid rgba(255, 182, 110, 0.35);
+  border-radius: 50%;
+  color: var(--warm);
+}
+
+.learningNote strong,
+.learningLabel {
+  display: block;
+}
+
+.learningLabel {
+  color: var(--text-faint);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.55rem;
+}
+
+.learningNote strong {
+  margin-top: 0.15rem;
+  font-size: 0.9rem;
+}
+
+.learningNote p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .header,
+  .methodGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    align-items: start;
+  }
+
+  .methodGrid {
+    gap: 1.5rem;
+  }
+
+  .guideStation {
+    min-height: 29rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .about {
+    padding-block: 7rem;
+  }
+
+  .guideStation {
+    min-height: 31rem;
+    padding: 1.5rem;
+  }
+
+  .guideStation figure {
+    top: 2.1rem;
+    right: 1.75rem;
+    width: 7.1rem;
+  }
+
+  .principles li {
+    grid-template-columns: 1.7rem 1fr;
+    gap: 0.9rem;
+  }
+
+  .principles svg {
+    display: none;
+  }
+
+  .capabilityHeader {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .capabilityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .capabilityGrid article {
+    min-height: auto;
+  }
+
+  .learningNote {
+    grid-template-columns: auto 1fr;
+  }
+
+  .learningNote p {
+    grid-column: 1 / -1;
+  }
+}
