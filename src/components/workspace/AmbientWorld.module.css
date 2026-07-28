@@ -1,0 +1,127 @@
+.world {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% -15%, rgba(200, 255, 112, 0.08), transparent 34rem),
+    linear-gradient(180deg, #090b09 0%, var(--ink) 24%, #090a08 66%, #060706 100%);
+  pointer-events: none;
+}
+
+.grid {
+  position: absolute;
+  inset: -12rem 0;
+  opacity: 0.32;
+  background-image:
+    linear-gradient(rgba(238, 245, 226, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(238, 245, 226, 0.035) 1px, transparent 1px);
+  background-size: 5rem 5rem;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+/*
+  Wrapper so the CSS light/orbit layer can cross-fade as one unit when the 3D
+  canvas takes over, without overriding each child's own base opacity.
+*/
+.atmosphere {
+  position: absolute;
+  inset: 0;
+}
+
+/* Composites over the grid, under the noise grain. */
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.lightTop,
+.lightMiddle {
+  position: absolute;
+  width: 48rem;
+  height: 48rem;
+  border-radius: 50%;
+  filter: blur(4rem);
+  opacity: 0.11;
+}
+
+.lightTop {
+  top: -28rem;
+  right: -8rem;
+  background: var(--signal);
+}
+
+.lightMiddle {
+  top: 185vh;
+  left: -32rem;
+  background: var(--warm);
+}
+
+.orbitOne,
+.orbitTwo {
+  position: absolute;
+  top: 15vh;
+  right: -12rem;
+  width: 38rem;
+  height: 38rem;
+  border: 1px solid rgba(238, 245, 226, 0.08);
+  border-radius: 50%;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.orbitOne::before,
+.orbitTwo::before {
+  position: absolute;
+  top: 50%;
+  left: -0.25rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 1.5rem rgba(200, 255, 112, 0.55);
+  content: "";
+  animation: ambient-orbit-pulse 3.2s ease-in-out infinite;
+}
+
+.orbitTwo {
+  top: 21vh;
+  right: -18rem;
+  width: 46rem;
+  height: 23rem;
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+@keyframes ambient-orbit-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@media (max-width: 720px) {
+  .grid {
+    background-size: 3.5rem 3.5rem;
+  }
+
+  .orbitOne,
+  .orbitTwo {
+    right: -24rem;
+  }
+
+  .lightMiddle {
+    left: -40rem;
+  }
+}
