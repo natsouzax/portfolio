@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 
 import { useIsReducedMotion } from "@/components/motion/useIsReducedMotion";
 import { useDesktopPinning } from "@/hooks/useDesktopPinning";
@@ -11,10 +11,18 @@ import styles from "./CapabilityOrbit.module.css";
 const COUNT = capabilities.length;
 const STEP = 360 / COUNT;
 const AUTO_ADVANCE_MS = 6400;
+/** Graus de rotação por pixel arrastado. */
+const DRAG_DEG_PER_PX = 0.32;
+/** Abaixo disso o gesto conta como clique, não como arrasto. */
+const CLICK_SLOP_PX = 6;
+
+function wrap(index: number) {
+  return ((index % COUNT) + COUNT) % COUNT;
+}
 
 /** Posição de cada nó em relação ao que está de frente: 0 frente, 2 fundo. */
 function relativeSlot(index: number, active: number) {
-  return (index - active + COUNT) % COUNT;
+  return wrap(index - active);
 }
 
 function CapabilityList() {
@@ -41,28 +49,74 @@ export default function CapabilityOrbit() {
   const hasRoomForOrbit = useDesktopPinning();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  /** Graus de deslocamento enquanto o dedo/mouse está pressionado. */
+  const [dragDeg, setDragDeg] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const gesture = useRef({ startX: 0, moved: false });
+  const controlsRef = useRef<HTMLDivElement>(null);
 
-  const select = useCallback((index: number) => {
-    setActive(((index % COUNT) + COUNT) % COUNT);
-  }, []);
+  const select = useCallback((index: number) => setActive(wrap(index)), []);
 
   const orbiting = hasRoomForOrbit && !shouldReduceMotion;
 
   useEffect(() => {
-    if (!orbiting || paused) return;
+    if (!orbiting || paused || dragging) return;
 
     const timer = window.setInterval(() => {
-      setActive((current) => (current + 1) % COUNT);
+      setActive((current) => wrap(current + 1));
     }, AUTO_ADVANCE_MS);
 
     return () => window.clearInterval(timer);
-  }, [orbiting, paused]);
+  }, [orbiting, paused, dragging]);
+
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    // Sem isto o pointer capture do palco engole o clique nas setas.
+    if ((event.target as HTMLElement).closest("button")) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    gesture.current = { startX: event.clientX, moved: false };
+    setDragging(true);
+    setDragDeg(0);
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+    if (!dragging) return;
+    const dx = event.clientX - gesture.current.startX;
+    if (Math.abs(dx) > CLICK_SLOP_PX) gesture.current.moved = true;
+    setDragDeg(dx * DRAG_DEG_PER_PX);
+  }
+
+  function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
+    if (!dragging) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    // Encaixa no card mais próximo do que foi arrastado.
+    setActive((current) => wrap(current - Math.round(dragDeg / STEP)));
+    setDragDeg(0);
+    setDragging(false);
+  }
+
+  /** Clique num card só conta se não houve arrasto — evita seleção acidental. */
+  function handleCardClick(index: number) {
+    if (gesture.current.moved) return;
+    select(index);
+  }
+
+  function handleControlsKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const next = wrap(active + (event.key === "ArrowRight" ? 1 : -1));
+    select(next);
+    const buttons = controlsRef.current?.querySelectorAll("button");
+    buttons?.[next]?.focus();
+  }
 
   if (!orbiting) {
     return <CapabilityList />;
   }
 
-  const spin = -active * STEP;
+  const spin = -active * STEP + dragDeg;
 
   return (
     <div
@@ -72,8 +126,19 @@ export default function CapabilityOrbit() {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div className={styles.stage}>
-        <div className={styles.ring} style={{ transform: `rotateY(${spin}deg)` }}>
+      <div
+        className={styles.stage}
+        data-dragging={dragging || undefined}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+      >
+        <div
+          className={styles.ring}
+          data-dragging={dragging || undefined}
+          style={{ transform: `rotateY(${spin}deg)` }}
+        >
           {/*
             Base do sistema: núcleo comum + raios até cada capacidade. Fica
             abaixo dos cards, num plano horizontal, para permanecer visível —
@@ -99,6 +164,7 @@ export default function CapabilityOrbit() {
                 key={capability.number}
                 className={styles.node}
                 data-slot={slot}
+                onClick={() => handleCardClick(index)}
                 style={{
                   transform: `translate(-50%, -50%) rotateY(${index * STEP}deg) translateZ(var(--orbit-radius))`,
                 }}
@@ -115,9 +181,41 @@ export default function CapabilityOrbit() {
             );
           })}
         </div>
+
+        {/*
+          Num anel de quatro, os cards vizinhos ficam a 90° — de perfil, sem
+          área clicável útil. Estas setas são o alvo confiável; o arrasto e a
+          barra abaixo cobrem os outros modos de interação.
+        */}
+        <button
+          type="button"
+          className={`${styles.arrow} ${styles.arrowPrev}`}
+          onClick={() => select(active - 1)}
+          aria-label="Capacidade anterior"
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          className={`${styles.arrow} ${styles.arrowNext}`}
+          onClick={() => select(active + 1)}
+          aria-label="Próxima capacidade"
+        >
+          ›
+        </button>
+
+        <p className={styles.hint} aria-hidden="true">
+          arraste o anel ou use as setas
+        </p>
       </div>
 
-      <div className={styles.controls} role="group" aria-label="Capacidades">
+      <div
+        ref={controlsRef}
+        className={styles.controls}
+        role="group"
+        aria-label="Capacidades"
+        onKeyDown={handleControlsKeyDown}
+      >
         {capabilities.map((capability, index) => (
           <button
             key={capability.number}

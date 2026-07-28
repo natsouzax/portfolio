@@ -7,6 +7,13 @@
   position: relative;
   height: 26rem;
   perspective: 78rem;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.stage[data-dragging] {
+  cursor: grabbing;
+  user-select: none;
 }
 
 .ring {
@@ -14,6 +21,70 @@
   inset: 0;
   transform-style: preserve-3d;
   transition: transform 900ms var(--ease-in-out);
+}
+
+/* Durante o arrasto o anel acompanha o ponteiro 1:1, sem suavização. */
+.ring[data-dragging] {
+  transition: none;
+}
+
+.arrow {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  display: grid;
+  width: 2.9rem;
+  height: 2.9rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(12, 14, 12, 0.86);
+  color: var(--text-soft);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    border-color 220ms var(--ease-out),
+    color 220ms var(--ease-out),
+    background 220ms var(--ease-out);
+}
+
+.arrow:hover {
+  border-color: var(--signal);
+  background: rgba(23, 26, 22, 0.96);
+  color: var(--signal);
+}
+
+.arrow:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+.arrowPrev {
+  left: 0.5rem;
+}
+
+.arrowNext {
+  right: 0.5rem;
+}
+
+.hint {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin: 0;
+  color: var(--text-faint);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 320ms var(--ease-out);
+}
+
+.stage:hover .hint {
+  opacity: 1;
 }
 
 /*
@@ -90,13 +161,30 @@
   opacity: 1;
 }
 
+/* Cards fora da frente são alvos de clique: trazem-se para o centro. */
+.node[data-slot="1"],
+.node[data-slot="2"],
+.node[data-slot="3"] {
+  cursor: pointer;
+}
+
 .node[data-slot="1"],
 .node[data-slot="3"] {
   opacity: 0.34;
 }
 
+.node[data-slot="1"]:hover,
+.node[data-slot="3"]:hover {
+  border-color: rgba(200, 255, 112, 0.45);
+  opacity: 0.62;
+}
+
 .node[data-slot="2"] {
   opacity: 0.12;
+}
+
+.node[data-slot="2"]:hover {
+  opacity: 0.3;
 }
 
 .number {
