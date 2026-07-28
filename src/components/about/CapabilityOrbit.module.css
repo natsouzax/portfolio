@@ -304,6 +304,26 @@
   margin-top: 2.25rem;
 }
 
+/* Notebooks com pouca altura útil: compacta o anel em vez de escondê-lo. */
+@media (max-height: 780px) {
+  .orbit {
+    --orbit-radius: 18rem;
+  }
+
+  .stage {
+    height: 23rem;
+  }
+
+  .hub {
+    transform: translateY(7.5rem);
+  }
+
+  .node {
+    width: 19rem;
+    padding: 1.5rem;
+  }
+}
+
 @media (max-width: 680px) {
   .fallbackGrid {
     grid-template-columns: 1fr;

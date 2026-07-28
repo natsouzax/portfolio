@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 
 import { useIsReducedMotion } from "@/components/motion/useIsReducedMotion";
-import { useDesktopPinning } from "@/hooks/useDesktopPinning";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { capabilities } from "@/data/portfolio";
 
 import styles from "./CapabilityOrbit.module.css";
@@ -11,6 +11,13 @@ import styles from "./CapabilityOrbit.module.css";
 const COUNT = capabilities.length;
 const STEP = 360 / COUNT;
 const AUTO_ADVANCE_MS = 6400;
+/**
+ * O anel é horizontal: precisa de largura, não de altura. O palco ocupa ~26rem
+ * e os controles ~4rem, então 560px de altura já sobra. Usar o gate do
+ * scroll-pin do Lexuri (680px) escondia o carrossel em notebooks 1366x768 com
+ * a barra do navegador — altura útil ali fica por volta de 650px.
+ */
+const ORBIT_QUERY = "(min-width: 880px) and (min-height: 560px)";
 /** Graus de rotação por pixel arrastado. */
 const DRAG_DEG_PER_PX = 0.32;
 /** Abaixo disso o gesto conta como clique, não como arrasto. */
@@ -46,7 +53,7 @@ function CapabilityList() {
 
 export default function CapabilityOrbit() {
   const shouldReduceMotion = useIsReducedMotion();
-  const hasRoomForOrbit = useDesktopPinning();
+  const hasRoomForOrbit = useMediaQuery(ORBIT_QUERY);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   /** Graus de deslocamento enquanto o dedo/mouse está pressionado. */
