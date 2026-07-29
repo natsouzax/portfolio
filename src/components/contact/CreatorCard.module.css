@@ -26,6 +26,8 @@
   height: var(--size);
   flex-shrink: 0;
   place-items: center;
+  /* Flutuação leve: o retrato parece pousado, não colado no rodapé. */
+  animation: creator-float 5.4s ease-in-out infinite;
 }
 
 /* Anel girando: o sinal de "vivo", discreto o bastante para um rodapé. */
@@ -70,8 +72,12 @@
 
 .photo {
   object-fit: cover;
-  /* A arte tem bastante cenário acima da cabeça: o recorte centraliza o rosto. */
-  object-position: 50% 46%;
+  /*
+    Na arte (768x1364) o cabelo começa em ~34% e a camisa em ~82%. Como o
+    recorte circular mostra só ~56% da altura, este deslocamento centraliza
+    cabeça e ombros — em 46% o queixo ficava colado na borda de baixo.
+  */
+  object-position: 50% 64%;
 }
 
 .text {
@@ -92,6 +98,16 @@
   color: var(--text-faint);
   font-size: 0.7rem;
   line-height: 1.35;
+}
+
+@keyframes creator-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.28rem);
+  }
 }
 
 @keyframes creator-ring {
@@ -129,6 +145,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .avatar,
   .ring,
   .frame {
     animation: none;
