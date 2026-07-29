@@ -1,0 +1,140 @@
+.card {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem 0.75rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: linear-gradient(120deg, rgba(23, 26, 22, 0.75), rgba(12, 14, 12, 0.6));
+  transition:
+    border-color 320ms var(--ease-out),
+    transform 320ms var(--ease-out),
+    background 320ms var(--ease-out);
+}
+
+.card:hover {
+  border-color: rgba(200, 255, 112, 0.34);
+  background: linear-gradient(120deg, rgba(28, 32, 26, 0.9), rgba(15, 17, 14, 0.75));
+  transform: translateY(-2px);
+}
+
+.avatar {
+  --size: 3.6rem;
+  position: relative;
+  display: grid;
+  width: var(--size);
+  height: var(--size);
+  flex-shrink: 0;
+  place-items: center;
+}
+
+/* Anel girando: o sinal de "vivo", discreto o bastante para um rodapé. */
+.ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--signal) 50deg,
+    transparent 140deg,
+    transparent 360deg
+  );
+  opacity: 0.8;
+  animation: creator-ring 6s linear infinite;
+  transition: opacity 320ms var(--ease-out);
+}
+
+/* Recorta o miolo para o gradiente virar um aro fino em vez de um disco. */
+.ring::after {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--ink);
+  content: "";
+}
+
+.card:hover .ring {
+  opacity: 1;
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--line-strong);
+  animation: creator-breathe 4.6s ease-in-out infinite;
+}
+
+.photo {
+  object-fit: cover;
+  /* A arte tem bastante cenário acima da cabeça: o recorte centraliza o rosto. */
+  object-position: 50% 46%;
+}
+
+.text {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.text strong {
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.text small {
+  color: var(--text-faint);
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+@keyframes creator-ring {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes creator-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px var(--line-strong), 0 0 0 rgba(200, 255, 112, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(200, 255, 112, 0.4), 0 0 1.1rem rgba(200, 255, 112, 0.25);
+  }
+}
+
+@media (max-width: 680px) {
+  .card {
+    padding: 0.6rem 1rem 0.6rem 0.6rem;
+  }
+
+  .avatar {
+    --size: 3rem;
+  }
+
+  .text strong {
+    font-size: 0.85rem;
+  }
+
+  .text small {
+    font-size: 0.66rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring,
+  .frame {
+    animation: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+}
