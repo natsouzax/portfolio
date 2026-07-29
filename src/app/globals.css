@@ -35,7 +35,10 @@ html {
   color-scheme: dark;
   overflow-x: clip;
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-height) + 1.5rem);
   scrollbar-color: var(--line-strong) var(--ink);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -62,15 +65,10 @@ body {
   }
 }
 
-@media (min-width: 1101px) and (hover: hover) and (pointer: fine) {
-  body {
-    zoom: 0.85;
-  }
-}
-
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 button,
@@ -131,7 +129,8 @@ button {
 .scene-shell {
   width: min(100%, var(--content-width));
   margin-inline: auto;
-  padding-inline: var(--gutter);
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
 }
 
 .chapter-kicker {
@@ -297,6 +296,7 @@ button {
 @media (max-width: 720px) {
   :root {
     --gutter: 1.25rem;
+    --nav-height: 4.25rem;
   }
 
   .chapter-kicker {
@@ -311,6 +311,12 @@ button {
 
   .section-title {
     max-width: 16ch;
+  }
+
+  [data-reveal="left"],
+  [data-reveal="right"] {
+    --reveal-x: 0;
+    --reveal-y: 0.85rem;
   }
 }
 

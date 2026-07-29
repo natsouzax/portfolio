@@ -128,4 +128,9 @@
   .lightMiddle {
     left: -40rem;
   }
+
+  .orbitOne::before,
+  .orbitTwo::before {
+    animation: none;
+  }
 }

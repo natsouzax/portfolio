@@ -33,7 +33,7 @@ export default function Navbar() {
   return (
     <header className={styles.header}>
       <nav className={styles.nav} aria-label={copy.navigation}>
-        <a className={styles.brand} href="#top" aria-label={copy.home} data-sound="whoosh">
+        <a className={styles.brand} href="#top" aria-label={copy.home} data-sound-click="none">
           <span className={styles.mark} aria-hidden="true">
             <span />
             <span />
@@ -45,7 +45,7 @@ export default function Navbar() {
 
         <div className={styles.links}>
           {navigation.map((item) => (
-            <a key={item.href} href={item.href} data-sound="whoosh">
+            <a key={item.href} href={item.href} data-sound-click="none">
               <span>{item.chapter}</span>
               {item.label}
             </a>
@@ -97,7 +97,7 @@ export default function Navbar() {
             </span>
           </button>
 
-          <a className={styles.availability} href="#contato" data-sound="whoosh">
+          <a className={styles.availability} href="#contato" data-sound-click="none">
             <span className={styles.statusDot} aria-hidden="true" />
             <span className={styles.availabilityLong}>{copy.availability}</span>
             <span className={styles.availabilityShort}>{copy.contact}</span>

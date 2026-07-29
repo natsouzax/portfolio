@@ -58,7 +58,12 @@ export default function Hero() {
   const copy = heroCopy[locale];
 
   return (
-    <section id="top" className={styles.hero} aria-labelledby="hero-title">
+    <section
+      id="top"
+      className={styles.hero}
+      data-locale={locale}
+      aria-labelledby="hero-title"
+    >
       <div className={`scene-shell ${styles.inner}`}>
         <div className={styles.copy}>
           <p className="chapter-kicker">
@@ -70,8 +75,8 @@ export default function Hero() {
             <strong>{profile.fullName}</strong>
           </p>
           <h1 id="hero-title" className="display-title">
-            {copy.title[0]}
-            <span>{copy.title[1]}</span>
+            <span className={styles.titlePrimary}>{copy.title[0]}</span>
+            <span className={styles.titleSecondary}>{copy.title[1]}</span>
           </h1>
           <p className={styles.lede}>{copy.lede}</p>
 

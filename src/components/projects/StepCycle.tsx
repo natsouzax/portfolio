@@ -13,7 +13,7 @@ const STEP = 360 / COUNT;
 const TILT = 64;
 /** Ângulo que fica de frente para quem olha (base da elipse). */
 const FRONT = 180;
-const STEP_SETTLE_MS = 820;
+const STEP_SETTLE_MS = 660;
 
 export default function StepCycle({
   activeStep,
@@ -41,7 +41,7 @@ export default function StepCycle({
   }, [activeStep]);
 
   function selectStep(index: number) {
-    if (isSettling || index === activeStep) return;
+    if (index === activeStep) return;
     setIsSettling(true);
     onSelect(index);
   }
@@ -70,7 +70,6 @@ export default function StepCycle({
                 data-active={isActive || undefined}
                 data-sound="binary"
                 aria-pressed={isActive}
-                aria-disabled={isSettling || undefined}
                 onClick={() => selectStep(index)}
                 style={{
                   transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--cycle-radius) * -1))`,

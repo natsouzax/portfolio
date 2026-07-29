@@ -22,6 +22,8 @@ export default function AmbientWorld() {
   // first client render, so the fallback markup can never mismatch.
   const wantsScene3D =
     !shouldReduceMotion && isSceneCapableViewport && !hasSceneFailed;
+  const enablesAmbientMotion =
+    !shouldReduceMotion && isSceneCapableViewport;
 
   // Derived rather than stored: if the gate closes (resize, WebGL loss) the CSS
   // layer comes straight back with no effect-driven state sync.
@@ -50,7 +52,11 @@ export default function AmbientWorld() {
   }, []);
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
+    if (!enablesAmbientMotion) {
+      pointerX.set(0);
+      pointerY.set(0);
+      return;
+    }
 
     function updatePointer(event: PointerEvent) {
       pointerX.set((event.clientX / window.innerWidth) * 2 - 1);
@@ -59,13 +65,13 @@ export default function AmbientWorld() {
 
     window.addEventListener("pointermove", updatePointer, { passive: true });
     return () => window.removeEventListener("pointermove", updatePointer);
-  }, [pointerX, pointerY, shouldReduceMotion]);
+  }, [enablesAmbientMotion, pointerX, pointerY]);
 
   const layerTransition = { duration: DURATION.scene, ease: EASE.soft };
 
   return (
     <div className={styles.world} aria-hidden="true">
-      <motion.div className={styles.grid} style={shouldReduceMotion ? undefined : { y: gridY, x: farX }} />
+      <motion.div className={styles.grid} style={enablesAmbientMotion ? { y: gridY, x: farX } : undefined} />
       {/*
         The light blobs and orbit rings only fade out once the canvas has proven
         it rendered a frame — not merely once the capability gate passed.
@@ -75,10 +81,10 @@ export default function AmbientWorld() {
         animate={{ opacity: is3DLive ? 0 : 1 }}
         transition={layerTransition}
       >
-        <motion.div className={styles.lightTop} style={shouldReduceMotion ? undefined : { x: nearX, y: nearY }} />
-        <motion.div className={styles.lightMiddle} style={shouldReduceMotion ? undefined : { x: farX, y: farY }} />
-        <motion.div className={styles.orbitOne} style={shouldReduceMotion ? undefined : { rotate: orbitRotation, x: nearX }} />
-        <motion.div className={styles.orbitTwo} style={shouldReduceMotion ? undefined : { rotate: orbitRotation, x: farX }} />
+        <motion.div className={styles.lightTop} style={enablesAmbientMotion ? { x: nearX, y: nearY } : undefined} />
+        <motion.div className={styles.lightMiddle} style={enablesAmbientMotion ? { x: farX, y: farY } : undefined} />
+        <motion.div className={styles.orbitOne} style={enablesAmbientMotion ? { rotate: orbitRotation, x: nearX } : undefined} />
+        <motion.div className={styles.orbitTwo} style={enablesAmbientMotion ? { rotate: orbitRotation, x: farX } : undefined} />
       </motion.div>
       {wantsScene3D ? (
         <motion.div

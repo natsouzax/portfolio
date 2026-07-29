@@ -223,6 +223,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     const handleClick = (event: MouseEvent) => {
       const target = (event.target as Element | null)?.closest("a, button");
       if (!target || target.hasAttribute("data-sound-control")) return;
+      if (target.getAttribute("data-sound-click") === "none") return;
       const contextualEffect = target.getAttribute("data-sound") as SoundEffect | null;
 
       if (target.matches("a[href]")) {

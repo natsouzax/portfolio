@@ -13,8 +13,8 @@ export type IdentityMode = "arriving" | "observing" | "presenting" | "waving";
 
 const ARRIVAL_CYCLE_MS = 8800;
 const FRAME_TRANSITIONS = [0.23, 0.38, 0.52, 0.68, 0.72] as const;
-const AUDIO_SYNC_LEAD_MS = 90;
-const AUDIO_SYNC_GRACE_MS = 45;
+const AUDIO_SYNC_LEAD_MS = 130;
+const AUDIO_SYNC_GRACE_MS = AUDIO_SYNC_LEAD_MS;
 
 type IdentityFrame = {
   primary: string;

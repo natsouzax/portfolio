@@ -22,7 +22,11 @@ function ProjectCard({
   technologiesLabel: string;
 }) {
   return (
-    <article className={styles[project.slug.replaceAll("-", "")]} data-reveal>
+    <article
+      className={styles[project.slug.replaceAll("-", "")]}
+      data-reveal
+      data-sound-hover="softWhoosh"
+    >
       <div className={styles.projectCopy}>
         <div className={styles.projectTopline}>
           <span>{code}</span>

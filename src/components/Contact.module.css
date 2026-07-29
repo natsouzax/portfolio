@@ -294,8 +294,12 @@
 }
 
 @media (max-width: 560px) {
+  .contact {
+    padding-top: 7rem;
+  }
+
   .guideEnd {
-    min-height: 30rem;
+    min-height: 27rem;
   }
 
   .primaryContacts > a {

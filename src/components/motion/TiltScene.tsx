@@ -50,6 +50,11 @@ export default function TiltScene({
   function handleMouseMove(event: ReactMouseEvent<HTMLDivElement>) {
     if (shouldReduceMotion) return;
 
+    if ((event.target as Element).closest("[data-tilt-lock]")) {
+      resetScene();
+      return;
+    }
+
     const rect = event.currentTarget.getBoundingClientRect();
     pointerX.set((event.clientX - rect.left) / rect.width - 0.5);
     pointerY.set((event.clientY - rect.top) / rect.height - 0.5);

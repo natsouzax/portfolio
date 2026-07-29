@@ -2249,9 +2249,58 @@
     width: 100%;
     margin: 0.5rem 0 0;
   }
+
+  .storeHeader button,
+  .legalSwitcher button {
+    min-height: 2.75rem;
+  }
 }
 
 @media (max-width: 520px) {
+  .projects {
+    padding-block: 7rem;
+  }
+
+  .workGroup {
+    margin-top: 4.5rem;
+  }
+
+  .workGroup + .workGroup {
+    margin-top: 6rem;
+  }
+
+  .projectGrid {
+    gap: 0.75rem;
+  }
+
+  .projectGrid article,
+  .fluxo,
+  .lsstore,
+  .legalecosystem,
+  .totalsuplements,
+  .xcontentbot {
+    grid-template-rows: auto minmax(17rem, 1fr);
+  }
+
+  .projectCopy {
+    padding: 1.35rem;
+  }
+
+  .projectCopy h4 {
+    margin-top: 1.5rem;
+  }
+
+  .fluxoPreview {
+    min-height: 29rem;
+  }
+
+  .storePreview,
+  .servicesPreview,
+  .totalPreview,
+  .botPreview {
+    min-height: 20rem;
+  }
+
   .groupHeader {
     grid-template-columns: 1fr;
     gap: 0.7rem;
