@@ -1,6 +1,7 @@
 .projects {
   position: relative;
-  padding: clamp(8rem, 13vw, 12rem) 0;
+  /* Ver nota em About.module.css: o padding também é limitado pela altura. */
+  padding: clamp(5rem, min(13vw, 17vh), 12rem) 0;
 }
 
 .header {
@@ -34,11 +35,12 @@
 }
 
 .workGroup {
-  margin-top: clamp(5rem, 9vw, 8rem);
+  /* Também limitado pela altura — ver nota em About.module.css. */
+  margin-top: clamp(3.5rem, min(9vw, 11vh), 8rem);
 }
 
 .workGroup + .workGroup {
-  margin-top: clamp(8rem, 13vw, 12rem);
+  margin-top: clamp(4.5rem, min(13vw, 15vh), 12rem);
 }
 
 .groupHeader {
@@ -78,7 +80,13 @@
 
 .projectGrid article {
   display: grid;
-  min-height: 39rem;
+  /*
+    39rem é a altura de projeto e continua valendo em telas normais (a 900px de
+    viewport, 78vh = 43rem, então o mínimo segue sendo 39rem). O teto por
+    altura só age em telas baixas, onde um card fixo de 624px sozinho já
+    ocupava quase a tela inteira.
+  */
+  min-height: min(39rem, 78vh);
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);

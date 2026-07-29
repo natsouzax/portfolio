@@ -1,6 +1,11 @@
 .about {
   position: relative;
-  padding: clamp(7rem, 12vw, 11rem) 0;
+  /*
+    O respiro vertical também é limitado pela altura da viewport. Só com `vw`,
+    uma tela larga e baixa (1440x645) mantinha o padding máximo de desktop e
+    duas seções vizinhas somavam mais de meia tela de fundo vazio.
+  */
+  padding: clamp(4.5rem, min(12vw, 16vh), 11rem) 0;
 }
 
 .about::before {

@@ -28,13 +28,20 @@
 }
 
 .staticExperience {
-  padding-top: clamp(7rem, 11vw, 10rem);
-  padding-bottom: clamp(8rem, 12vw, 12rem);
+  /* Ver nota em About.module.css: o padding também é limitado pela altura. */
+  padding-top: clamp(4.5rem, min(11vw, 15vh), 10rem);
+  padding-bottom: clamp(5rem, min(12vw, 16vh), 12rem);
 }
 
 .scrollExperience {
   position: relative;
-  height: 165vh;
+  /*
+    Trilho do capítulo pinado. A cena grudada ocupa 100svh, então a sobra é o
+    curso real do storytelling: 45vh para os 4 passos, em vez dos 65vh
+    anteriores. Continua legível ao rolar devagar e encurta a travessia para
+    quem passa rápido.
+  */
+  height: 145vh;
 }
 
 .stickyScene {
