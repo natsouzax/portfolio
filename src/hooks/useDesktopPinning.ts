@@ -2,7 +2,8 @@
 
 import { useSyncExternalStore } from "react";
 
-const DESKTOP_QUERY = "(min-width: 900px) and (min-height: 680px)";
+const DESKTOP_QUERY =
+  "(min-width: 900px) and (hover: hover) and (pointer: fine)";
 
 function subscribe(callback: () => void) {
   const mediaQuery = window.matchMedia(DESKTOP_QUERY);

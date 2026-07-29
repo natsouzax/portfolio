@@ -10,6 +10,7 @@ import type { Group } from "three";
 import {
   CAMERA,
   GROUP_DEPTH,
+  GROUP_OFFSET_X,
   LIGHTS,
   RENDERER,
   SCENE_OBJECTS,
@@ -133,7 +134,7 @@ function ObjectField({
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} position={[GROUP_OFFSET_X, 0, GROUP_DEPTH.from]}>
       {SCENE_OBJECTS.map((object) => (
         <SceneShape key={object.id} object={object} />
       ))}

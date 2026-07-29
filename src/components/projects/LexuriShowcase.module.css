@@ -34,7 +34,7 @@
 
 .scrollExperience {
   position: relative;
-  height: 390vh;
+  height: 165vh;
 }
 
 .stickyScene {
@@ -216,10 +216,54 @@
   line-height: 1.55;
 }
 
+.productScreen,
 .screenMotion,
 .appChrome {
   position: absolute;
   inset: 0;
+}
+
+.screenArrow {
+  position: absolute;
+  z-index: 20;
+  top: 50%;
+  display: grid;
+  width: clamp(1.55rem, 2.7vw, 2.1rem);
+  height: clamp(1.55rem, 2.7vw, 2.1rem);
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(24, 33, 29, 0.78);
+  box-shadow: 0 0.45rem 1rem rgba(24, 33, 29, 0.2);
+  color: #fffaf0;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms var(--ease-out);
+}
+
+.screenArrow:hover {
+  border-color: #c8ff70;
+  background: #18211d;
+  color: #c8ff70;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.screenArrow span {
+  font-size: clamp(0.72rem, 1.4vw, 1rem);
+  line-height: 1;
+}
+
+.screenArrowPrevious {
+  left: 0.45rem;
+}
+
+.screenArrowNext {
+  right: 0.45rem;
 }
 
 .appChrome {

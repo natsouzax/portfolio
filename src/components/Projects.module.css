@@ -259,6 +259,8 @@
 }
 
 .fluxoPreview {
+  contain: paint;
+  isolation: isolate;
   background:
     radial-gradient(circle at 50% 34%, rgba(6, 102, 235, 0.22), transparent 16rem),
     linear-gradient(145deg, #f5f6f8, #dce7f6);
@@ -293,10 +295,14 @@
   color: #172016;
   transform: translateX(-50%) rotateY(-7deg) rotateX(3deg) rotateZ(3deg) translateZ(2.5rem);
   transform-style: preserve-3d;
-  transition: transform 520ms var(--ease-out);
+  transition:
+    transform 880ms var(--ease-out),
+    box-shadow 880ms var(--ease-out);
+  will-change: transform;
 }
 
 .fluxoPreview:hover .phoneFrame {
+  box-shadow: 0 2.6rem 5.5rem rgba(6, 102, 235, 0.22);
   transform: translateX(-50%) rotateY(2deg) rotateX(-1deg) rotateZ(-1deg) translate3d(0, -0.65rem, 4.5rem);
 }
 
@@ -388,17 +394,29 @@
 
 .aiPrompt {
   position: absolute;
-  right: 1rem;
-  bottom: 2.5rem;
-  width: 11rem;
+  right: 1.25rem;
+  bottom: 3.75rem;
+  left: 1.25rem;
+  width: auto;
+  max-width: 11rem;
+  margin-inline: auto;
   padding: 0.8rem;
   border: 1px solid rgba(6, 102, 235, 0.2);
   border-radius: 0.75rem;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(0.8rem);
-  transform: translateZ(5rem) rotate(-2deg);
+  transform: translateY(0) rotate(-2deg);
+  transition:
+    bottom 780ms var(--ease-out),
+    box-shadow 780ms var(--ease-out);
   animation: project-float 4.5s var(--ease-in-out) infinite;
+  will-change: bottom, transform;
+}
+
+.fluxoPreview:hover .aiPrompt {
+  bottom: 4.5rem;
+  box-shadow: 0 1.35rem 2.8rem rgba(6, 102, 235, 0.24);
 }
 
 .aiPrompt span {
@@ -2086,11 +2104,11 @@
 @keyframes project-float {
   0%,
   100% {
-    transform: translateZ(5rem) translateY(0) rotate(-2deg);
+    transform: translateY(0) rotate(-2deg);
   }
 
   50% {
-    transform: translateZ(5rem) translateY(-0.45rem) rotate(0.5deg);
+    transform: translateY(-0.45rem) rotate(0.5deg);
   }
 }
 

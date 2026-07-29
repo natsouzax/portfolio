@@ -153,7 +153,7 @@ function FluxoPreview() {
   return (
     <div className={styles.fluxoPreview} aria-hidden="true">
       <span className={styles.financeOrb} />
-      <div className={styles.phoneFrame}>
+      <div className={styles.phoneFrame} data-sound-hover="softWhoosh">
         <div className={styles.phoneStatus}>
           <strong>fluxo</strong>
           <span>9:41</span>

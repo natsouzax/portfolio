@@ -1,0 +1,55 @@
+.cue {
+  position: fixed;
+  z-index: 96;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(1.25rem, 4vw, 3.5rem);
+  padding: 0.42rem 0.7rem;
+  border: 1px solid rgba(200, 255, 112, 0.42);
+  border-radius: 0.45rem;
+  background: rgba(7, 9, 7, 0.84);
+  box-shadow:
+    0 0 1.4rem rgba(200, 255, 112, 0.12),
+    inset 0 0 0.9rem rgba(200, 255, 112, 0.05);
+  color: var(--signal);
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(0.72rem, 1.2vw, 0.9rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  pointer-events: none;
+  text-transform: uppercase;
+  animation: sound-cue 680ms var(--ease-out) both;
+}
+
+.cue::before {
+  margin-right: 0.4rem;
+  color: var(--text-faint);
+  content: "sfx /";
+  font-size: 0.56em;
+  letter-spacing: 0.08em;
+  vertical-align: 0.12em;
+}
+
+@keyframes sound-cue {
+  0% {
+    opacity: 0;
+    transform: translate3d(0.8rem, 0.4rem, 0) scale(0.82) skewX(-8deg);
+  }
+
+  18%,
+  72% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1) skewX(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-0.2rem, -0.3rem, 0) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cue {
+    display: none;
+  }
+}

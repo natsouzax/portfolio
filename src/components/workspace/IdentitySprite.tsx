@@ -1,11 +1,20 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useRef } from "react";
+
+import { useSoundEffects } from "@/audio/SoundProvider";
+import { useIsReducedMotion } from "@/components/motion/useIsReducedMotion";
 import { useLanguage } from "@/i18n/LanguageProvider";
 
 import styles from "./IdentitySprite.module.css";
 
 export type IdentityMode = "arriving" | "observing" | "presenting" | "waving";
+
+const ARRIVAL_CYCLE_MS = 8800;
+const FRAME_TRANSITIONS = [0.23, 0.38, 0.52, 0.68, 0.72] as const;
+const AUDIO_SYNC_LEAD_MS = 90;
+const AUDIO_SYNC_GRACE_MS = 45;
 
 type IdentityFrame = {
   primary: string;
@@ -89,11 +98,77 @@ export default function IdentitySprite({
   sizes: string;
 }) {
   const { locale } = useLanguage();
+  const { enabled: soundEnabled, playSound } = useSoundEffects();
+  const shouldReduceMotion = useIsReducedMotion();
+  const spriteRef = useRef<HTMLDivElement>(null);
+  const cycleStartRef = useRef<number | null>(null);
+  const isVisibleRef = useRef(true);
   const frame = frames[mode];
   const copy = frameCopy[locale][mode];
 
+  useEffect(() => {
+    cycleStartRef.current = mode === "arriving" ? performance.now() : null;
+  }, [mode]);
+
+  useEffect(() => {
+    const sprite = spriteRef.current;
+    if (!sprite || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting && entry.intersectionRatio > 0.12;
+      },
+      { threshold: [0, 0.12, 0.5] },
+    );
+
+    observer.observe(sprite);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (mode !== "arriving" || !soundEnabled || shouldReduceMotion) return;
+
+    const sprite = spriteRef.current;
+    const primaryLayer = sprite?.querySelector<HTMLElement>(
+      `.${styles.primaryLayer}`,
+    );
+    const cssAnimationTime = primaryLayer?.getAnimations()[0]?.currentTime;
+    const fallbackCycleStart = cycleStartRef.current ?? performance.now();
+    const elapsed = typeof cssAnimationTime === "number"
+      ? ((cssAnimationTime % ARRIVAL_CYCLE_MS) + ARRIVAL_CYCLE_MS) % ARRIVAL_CYCLE_MS
+      : (performance.now() - fallbackCycleStart) % ARRIVAL_CYCLE_MS;
+    const timers: number[] = [];
+
+    FRAME_TRANSITIONS.forEach((progress, step) => {
+      const transitionAt = progress * ARRIVAL_CYCLE_MS;
+      let delay = transitionAt - AUDIO_SYNC_LEAD_MS - elapsed;
+
+      if (delay < -AUDIO_SYNC_GRACE_MS) delay += ARRIVAL_CYCLE_MS;
+      else delay = Math.max(0, delay);
+
+      const playTransition = () => {
+        if (isVisibleRef.current && document.visibilityState === "visible") {
+          playSound("frameTransition", {
+            step,
+            intensity: step === FRAME_TRANSITIONS.length - 1 ? 0.9 : 0.68,
+          });
+        }
+
+        timers[step] = window.setTimeout(playTransition, ARRIVAL_CYCLE_MS);
+      };
+
+      timers[step] = window.setTimeout(playTransition, delay);
+    });
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [mode, playSound, shouldReduceMotion, soundEnabled]);
+
   return (
-    <div className={`${styles.sprite} ${styles[mode]}`} data-identity-frame={frame.code}>
+    <div
+      ref={spriteRef}
+      className={`${styles.sprite} ${styles[mode]}`}
+      data-identity-frame={frame.code}
+    >
       <span className={styles.depthPlaneBack} aria-hidden="true" />
       <span className={styles.depthPlaneMiddle} aria-hidden="true" />
 

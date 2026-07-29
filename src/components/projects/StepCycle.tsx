@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 import { useLanguage } from "@/i18n/LanguageProvider";
 
 import { lexuriStepsByLocale } from "./steps";
@@ -11,6 +13,7 @@ const STEP = 360 / COUNT;
 const TILT = 64;
 /** Ângulo que fica de frente para quem olha (base da elipse). */
 const FRONT = 180;
+const STEP_SETTLE_MS = 820;
 
 export default function StepCycle({
   activeStep,
@@ -20,17 +23,36 @@ export default function StepCycle({
   onSelect: (index: number) => void;
 }) {
   const { locale } = useLanguage();
+  const [isSettling, setIsSettling] = useState(false);
+  const previousStepRef = useRef(activeStep);
   const lexuriSteps = lexuriStepsByLocale[locale];
   const loopNote = locale === "pt"
     ? "ciclo contínuo — a continuidade devolve a pessoa à imersão"
     : "continuous cycle — continuity brings each person back to immersion";
   const spin = FRONT - activeStep * STEP;
 
+  useEffect(() => {
+    if (previousStepRef.current === activeStep) return;
+    previousStepRef.current = activeStep;
+    setIsSettling(true);
+
+    const timer = window.setTimeout(() => setIsSettling(false), STEP_SETTLE_MS);
+    return () => window.clearTimeout(timer);
+  }, [activeStep]);
+
+  function selectStep(index: number) {
+    if (isSettling || index === activeStep) return;
+    setIsSettling(true);
+    onSelect(index);
+  }
+
   return (
     <div className={styles.cycle}>
       <div className={styles.stage}>
         <div
           className={styles.plane}
+          data-settling={isSettling || undefined}
+          aria-busy={isSettling}
           style={{ transform: `rotateX(${TILT}deg) rotateZ(${spin}deg)` }}
         >
           <span className={styles.path} aria-hidden="true" />
@@ -46,8 +68,10 @@ export default function StepCycle({
                 type="button"
                 className={styles.node}
                 data-active={isActive || undefined}
+                data-sound="binary"
                 aria-pressed={isActive}
-                onClick={() => onSelect(index)}
+                aria-disabled={isSettling || undefined}
+                onClick={() => selectStep(index)}
                 style={{
                   transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--cycle-radius) * -1))`,
                 }}

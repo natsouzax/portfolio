@@ -33,14 +33,69 @@
 }
 
 .intro {
-  margin: 2.5rem 0 1rem;
+  position: relative;
+  display: grid;
+  width: fit-content;
+  max-width: 100%;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem;
+  margin: 2.15rem 0 1.7rem;
+  padding: 0.22rem 0.1rem 0.38rem 1rem;
+}
+
+.intro::before {
+  position: absolute;
+  top: 0.15rem;
+  bottom: 0.15rem;
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--signal);
+  box-shadow: 0 0 1rem rgba(200, 255, 112, 0.34);
+  content: "";
+}
+
+.intro > span {
   color: var(--text-soft);
-  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.intro strong {
+  position: relative;
+  color: var(--text);
+  font-size: clamp(1.7rem, 2.85vw, 2.55rem);
+  font-weight: 660;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  text-shadow: 0 0 1.6rem rgba(200, 255, 112, 0.09);
+  text-wrap: balance;
+}
+
+.intro strong::after {
+  position: absolute;
+  right: 0;
+  bottom: -0.38rem;
+  left: 0;
+  height: 1px;
+  opacity: 0.72;
+  background: linear-gradient(90deg, var(--signal), transparent 82%);
+  content: "";
+}
+
+.copy h1 {
+  color: rgba(240, 244, 233, 0.82);
+  font-size: clamp(2.5rem, 5.45vw, 5.2rem);
+  font-weight: 520;
 }
 
 .copy h1 span {
   display: block;
-  color: var(--text-soft);
+  color: var(--text-faint);
 }
 
 .lede {
@@ -421,11 +476,18 @@
   }
 
   .intro {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
     margin-top: 2rem;
+    padding-left: 0.85rem;
+  }
+
+  .intro strong {
+    font-size: clamp(1.58rem, 7vw, 2.05rem);
   }
 
   .copy h1 {
-    font-size: clamp(2.55rem, 11vw, 3rem);
+    font-size: clamp(2.35rem, 10vw, 2.8rem);
     letter-spacing: -0.055em;
   }
 

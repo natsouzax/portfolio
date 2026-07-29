@@ -43,7 +43,13 @@ function ProjectCard({
         </ul>
         <div className={styles.projectLinks}>
           {project.links.map((link) => (
-            <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              data-sound="whoosh"
+            >
               {link.label}
               <Icon name="arrowUpRight" />
             </a>

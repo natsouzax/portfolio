@@ -3,7 +3,6 @@
 import {
   AnimatePresence,
   motion,
-  useMotionValueEvent,
   useScroll,
   useTransform,
   type MotionValue,
@@ -275,25 +274,59 @@ const screens: Record<LexuriStepId, () => React.JSX.Element> = {
   continue: ContinuityScreen,
 };
 
-function ProductScreen({ activeStep }: { activeStep: number }) {
+function ProductScreen({
+  activeStep,
+  onSelect,
+}: {
+  activeStep: number;
+  onSelect: (index: number) => void;
+}) {
   const { locale } = useLanguage();
   const lexuriSteps = lexuriStepsByLocale[locale];
   const active = lexuriSteps[activeStep] ?? lexuriSteps[0];
   const Screen = screens[active.id];
+  const previousLabel = locale === "pt" ? "Etapa anterior" : "Previous step";
+  const nextLabel = locale === "pt" ? "Próxima etapa" : "Next step";
+
+  function cycleStep(direction: -1 | 1) {
+    onSelect(
+      (activeStep + direction + lexuriSteps.length) % lexuriSteps.length,
+    );
+  }
 
   return (
-    <AnimatePresence initial={false}>
-      <motion.div
-        key={active.id}
-        className={styles.screenMotion}
-        initial={{ opacity: 0, y: 8, scale: 0.99 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -6, scale: 1.005 }}
-        transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+    <div className={styles.productScreen}>
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={active.id}
+          className={styles.screenMotion}
+          initial={{ opacity: 0, y: 8, scale: 0.99 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -6, scale: 1.005 }}
+          transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Screen />
+        </motion.div>
+      </AnimatePresence>
+      <button
+        type="button"
+        className={`${styles.screenArrow} ${styles.screenArrowPrevious}`}
+        aria-label={previousLabel}
+        data-sound="binary"
+        onClick={() => cycleStep(-1)}
       >
-        <Screen />
-      </motion.div>
-    </AnimatePresence>
+        <span aria-hidden="true">&larr;</span>
+      </button>
+      <button
+        type="button"
+        className={`${styles.screenArrow} ${styles.screenArrowNext}`}
+        aria-label={nextLabel}
+        data-sound="binary"
+        onClick={() => cycleStep(1)}
+      >
+        <span aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
   );
 }
 
@@ -329,6 +362,7 @@ function ProductIntroduction() {
         href="https://lexuri.app"
         target="_blank"
         rel="noreferrer"
+        data-sound="whoosh"
       >
         {copy.link}
         <Icon name="arrowUpRight" />
@@ -359,7 +393,7 @@ function NotebookStage({
     <TiltScene className={styles.notebookStage} intensity={4.5} lift={6}>
       <span className={styles.objectLabel}>{copy.objectLabel}</span>
       <LaptopShell lidRotate={lidRotate} lift={lift} glow={glow}>
-        <ProductScreen activeStep={activeStep} />
+        <ProductScreen activeStep={activeStep} onSelect={onSelect} />
       </LaptopShell>
       <div className={styles.activeNarrative} aria-live="polite">
         <span>{active.number} / {active.eyebrow}</span>
@@ -388,38 +422,17 @@ function StaticExperience() {
   );
 }
 
-function stepFromProgress(progress: number) {
-  const normalized = Math.max(0, Math.min(0.999, (progress - 0.22) / 0.68));
-  return Math.floor(normalized * 4);
-}
-
 function ScrollExperience() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"],
+    offset: ["start 72%", "start 18%"],
   });
 
-  const lidRotate = useTransform(scrollYProgress, [0.02, 0.2], [-88, 0]);
-  const lift = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [85, 0, 0, -24]);
-  const glow = useTransform(scrollYProgress, [0.13, 0.24], [0, 1]);
-
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const nextStep = stepFromProgress(progress);
-    setActiveStep((current) => (current === nextStep ? current : nextStep));
-  });
-
-  function scrollToStep(index: number) {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const rect = container.getBoundingClientRect();
-    const top = rect.top + window.scrollY;
-    const travel = container.offsetHeight - window.innerHeight;
-    const progress = 0.28 + index * (0.62 / 3);
-    window.scrollTo({ top: top + travel * progress, behavior: "smooth" });
-  }
+  const lidRotate = useTransform(scrollYProgress, [0, 0.28], [-88, 0]);
+  const lift = useTransform(scrollYProgress, [0, 0.28], [85, 0]);
+  const glow = useTransform(scrollYProgress, [0.08, 0.32], [0, 1]);
 
   return (
     <div ref={containerRef} className={styles.scrollExperience}>
@@ -428,7 +441,7 @@ function ScrollExperience() {
           <ProductIntroduction />
           <NotebookStage
             activeStep={activeStep}
-            onSelect={scrollToStep}
+            onSelect={setActiveStep}
             lidRotate={lidRotate}
             lift={lift}
             glow={glow}

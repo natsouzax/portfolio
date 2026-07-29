@@ -206,10 +206,12 @@
 }
 
 .arriving .primaryLayer {
-  animation: crt-primary 8.8s steps(1, end) infinite;
+  animation: crt-primary var(--identity-cycle-duration, 8.8s) steps(1, end) infinite;
 }
 
 .arriving {
+  --identity-cycle-duration: 8.8s;
+
   overflow: hidden;
   border-radius: 0.95rem;
   background: #050807;
@@ -221,7 +223,7 @@
   clip-path: inset(0);
   mix-blend-mode: normal;
   transform: translateZ(3.2rem);
-  animation-duration: 8.8s;
+  animation-duration: var(--identity-cycle-duration, 8.8s);
   animation-timing-function: steps(1, end);
   animation-iteration-count: infinite;
 }
@@ -265,16 +267,16 @@
   background-position: 0 0;
   mix-blend-mode: screen;
   content: "";
-  animation: crt-transition-scratches 8.8s steps(3, end) infinite;
+  animation: crt-transition-scratches var(--identity-cycle-duration, 8.8s) steps(3, end) infinite;
   pointer-events: none;
 }
 
 .arriving .crtNoise {
-  animation: crt-noise 8.8s steps(3, end) infinite;
+  animation: crt-noise var(--identity-cycle-duration, 8.8s) steps(3, end) infinite;
 }
 
 .arriving .crtGlitch {
-  animation: crt-roll 8.8s steps(2, end) infinite;
+  animation: crt-roll var(--identity-cycle-duration, 8.8s) steps(2, end) infinite;
 }
 
 .waving .primaryLayer {

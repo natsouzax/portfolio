@@ -3,6 +3,7 @@
   display: grid;
   justify-items: center;
   margin-top: 1.5rem;
+  user-select: none;
 }
 
 .stage {
@@ -62,7 +63,12 @@
   border: 0;
   background: transparent;
   cursor: pointer;
+  touch-action: manipulation;
   transform-style: preserve-3d;
+}
+
+.plane[data-settling] .node {
+  pointer-events: none;
 }
 
 .face {
