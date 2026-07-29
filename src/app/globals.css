@@ -51,6 +51,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+@media (min-width: 1101px) and (hover: hover) and (pointer: fine) {
+  body {
+    zoom: 0.85;
+  }
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;

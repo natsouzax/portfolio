@@ -19,10 +19,18 @@
 .imageWrap {
   position: relative;
   z-index: 2;
-  aspect-ratio: 0.655;
+  aspect-ratio: 352 / 640;
   border-radius: 1rem;
   transform-origin: 50% 80%;
   will-change: transform;
+}
+
+.arriving .imageWrap {
+  aspect-ratio: 352 / 568;
+}
+
+.observing .imageWrap {
+  aspect-ratio: 0.655;
 }
 
 .image {
@@ -164,10 +172,6 @@
   transform: rotate(-2deg);
 }
 
-.waving .image {
-  image-rendering: auto;
-}
-
 .pixelSparkOne,
 .pixelSparkTwo {
   position: absolute;
@@ -190,15 +194,6 @@
   animation-delay: -1.4s;
 }
 
-.waving .frameOne {
-  animation: wave-frame-one 3.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-
-.waving .frameTwo {
-  opacity: 0;
-  animation: wave-frame-two 3.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-
 @keyframes guide-orbit {
   to {
     transform: rotateX(68deg) rotateZ(360deg) translateZ(-1rem);
@@ -218,50 +213,6 @@
   }
 }
 
-@keyframes wave-frame-one {
-  0%,
-  18%,
-  100% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-
-  28%,
-  41%,
-  65%,
-  78% {
-    opacity: 0;
-    transform: translate3d(0.12rem, 0.04rem, 0);
-  }
-
-  51%,
-  55%,
-  88% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes wave-frame-two {
-  0%,
-  18%,
-  51%,
-  55%,
-  88%,
-  100% {
-    opacity: 0;
-    transform: translate3d(-0.1rem, 0.03rem, 0);
-  }
-
-  28%,
-  41%,
-  65%,
-  78% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
 @media (max-width: 520px) {
   .caption {
     font-size: 0.52rem;
@@ -272,13 +223,7 @@
   .characterOrbit,
   .pixelSparkOne,
   .pixelSparkTwo,
-  .liveDot,
-  .waving .frameOne,
-  .waving .frameTwo {
+  .liveDot {
     animation: none;
-  }
-
-  .waving .frameTwo {
-    display: none;
   }
 }

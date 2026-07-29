@@ -110,6 +110,60 @@
     color 180ms ease;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.4rem;
+}
+
+.languageToggle {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-faint);
+  cursor: pointer;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.63rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.languageToggle:hover {
+  border-color: var(--line-strong);
+  color: var(--text-soft);
+}
+
+.languageToggle span[data-active] {
+  color: var(--signal);
+}
+
+.languageOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+.flag {
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.languageToggle i {
+  width: 1px;
+  height: 0.8rem;
+  background: var(--line-strong);
+}
+
 .availability:hover {
   border-color: var(--line-strong);
   color: var(--text);
@@ -160,6 +214,15 @@
   .availability {
     min-height: 2.75rem;
     padding-inline: 0.8rem;
+  }
+
+  .actions {
+    gap: 0.3rem;
+  }
+
+  .languageToggle {
+    min-height: 2.75rem;
+    padding-inline: 0.6rem;
   }
 
   .availabilityLong {

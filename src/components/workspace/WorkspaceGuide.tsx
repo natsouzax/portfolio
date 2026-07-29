@@ -4,24 +4,27 @@ import Image from "next/image";
 import { motion } from "motion/react";
 
 import { useIsReducedMotion } from "@/components/motion/useIsReducedMotion";
+import IdentitySprite, { type IdentityMode } from "@/components/workspace/IdentitySprite";
 import { EASE } from "@/lib/motion";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 import styles from "./WorkspaceGuide.module.css";
 
-export type GuideMode = "arriving" | "observing" | "presenting" | "waving";
+export type GuideMode = IdentityMode;
 
-const labels: Record<GuideMode, string> = {
-  arriving: "chegando ao workspace",
-  observing: "observando o sistema",
-  presenting: "apresentando uma ideia",
-  waving: "até a próxima",
-};
-
-const images: Record<GuideMode, string> = {
-  arriving: "/characters/natan-arriving.png",
-  observing: "/characters/natan-observing.png",
-  presenting: "/characters/natan-presenting.png",
-  waving: "/characters/natan-waving-v2.png",
+const labels: Record<"pt" | "en", Record<GuideMode, string>> = {
+  pt: {
+    arriving: "chegando ao workspace",
+    observing: "observando o sistema",
+    presenting: "apresentando uma ideia",
+    waving: "até a próxima",
+  },
+  en: {
+    arriving: "arriving at the workspace",
+    observing: "observing the system",
+    presenting: "presenting an idea",
+    waving: "see you next time",
+  },
 };
 
 const floatingMotion: Record<GuideMode, { y: number[]; rotate: number[] }> = {
@@ -40,8 +43,10 @@ export default function WorkspaceGuide({
   variant?: "hero" | "compact" | "ending";
   priority?: boolean;
 }) {
+  const { locale } = useLanguage();
   const shouldReduceMotion = useIsReducedMotion();
   const float = floatingMotion[mode];
+  const label = labels[locale][mode];
 
   return (
     <motion.figure
@@ -61,22 +66,20 @@ export default function WorkspaceGuide({
           animate={shouldReduceMotion ? undefined : { y: float.y, rotate: float.rotate }}
           transition={{ duration: mode === "waving" ? 4.4 : 4.2, ease: EASE.inOut, repeat: Infinity }}
         >
-          <Image
-            src={images[mode]}
-            alt={`Natan Oliveira em pixel art, ${labels[mode]}`}
-            fill
-            priority={priority}
-            sizes={variant === "hero" ? "(max-width: 720px) 52vw, 300px" : "210px"}
-            className={`${styles.image} ${styles.frameOne}`}
-          />
-          {mode === "waving" && (
+          {mode === "observing" || mode === "waving" ? (
             <Image
-              src="/characters/natan-waving-alt-v2.png"
-              alt=""
+              src={mode === "waving" ? "/characters/natan-waving-v2.png" : "/characters/natan-observing.png"}
+              alt={locale === "pt" ? `Natan Oliveira em pixel art, ${label}` : `Pixel art of Natan Oliveira, ${label}`}
               fill
-              aria-hidden="true"
+              priority={priority}
               sizes="210px"
-              className={`${styles.image} ${styles.frameTwo}`}
+              className={styles.image}
+            />
+          ) : (
+            <IdentitySprite
+              mode={mode}
+              preload={priority}
+              sizes={variant === "hero" ? "(max-width: 720px) 52vw, 300px" : "210px"}
             />
           )}
           <span className={styles.scanlines} aria-hidden="true" />
@@ -88,7 +91,7 @@ export default function WorkspaceGuide({
       </div>
       <figcaption className={styles.caption}>
         <span className={styles.liveDot} aria-hidden="true" />
-        natan.state / {labels[mode]}
+        natan.state / {label}
       </figcaption>
     </motion.figure>
   );

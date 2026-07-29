@@ -115,7 +115,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 0.5rem 0 0;
+  margin: 1.5rem 0 0;
   color: var(--text-faint);
   font-family: var(--font-mono), monospace;
   font-size: 0.55rem;
@@ -136,6 +136,10 @@
 
   .face {
     width: 4.6rem;
+  }
+
+  .loopNote {
+    margin-top: 1.25rem;
   }
 }
 

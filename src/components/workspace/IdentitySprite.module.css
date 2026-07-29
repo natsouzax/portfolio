@@ -1,0 +1,694 @@
+.sprite {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  perspective: 58rem;
+  transform-style: preserve-3d;
+}
+
+.depthPlaneBack,
+.depthPlaneMiddle,
+.primaryLayer,
+.hologramLayer,
+.depthGrid,
+.scanBeam,
+.crtNoise,
+.crtGlitch,
+.dataRail {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.depthPlaneBack,
+.depthPlaneMiddle {
+  inset: 4%;
+  border: 1px solid rgba(200, 255, 112, 0.14);
+  border-radius: 0.9rem;
+  pointer-events: none;
+  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1), opacity 320ms ease;
+}
+
+.depthPlaneBack {
+  opacity: 0.38;
+  transform: translate3d(-0.55rem, 0.45rem, -2.8rem) rotateY(4deg);
+}
+
+.depthPlaneMiddle {
+  opacity: 0.5;
+  transform: translate3d(0.4rem, -0.3rem, -1.4rem) rotateY(-2.5deg);
+}
+
+.primaryLayer,
+.hologramLayer {
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0.95rem;
+  backface-visibility: hidden;
+}
+
+.primaryLayer {
+  z-index: 2;
+  background: #050807;
+  box-shadow: 0 1.5rem 2.8rem rgba(0, 0, 0, 0.42);
+  transform: translateZ(2.1rem);
+  transition: filter 320ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spriteImage {
+  object-fit: contain;
+  object-position: 50% 50%;
+  filter: saturate(0.94) contrast(1.035);
+}
+
+.hologramLayer {
+  z-index: 5;
+  opacity: 0.22;
+  background: rgba(5, 8, 7, 0.28);
+  clip-path: inset(0 0 86% 0);
+  mix-blend-mode: screen;
+  transform: translate3d(0.18rem, -0.1rem, 3.2rem);
+  animation: identity-scan 7.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+
+.hologramLayer .spriteImage {
+  filter: saturate(1.2) contrast(1.08) brightness(1.06);
+}
+
+.depthGrid {
+  z-index: 4;
+  inset: 4%;
+  opacity: 0.12;
+  background:
+    linear-gradient(rgba(200, 255, 112, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 255, 112, 0.16) 1px, transparent 1px);
+  background-size: 1.6rem 1.6rem;
+  mask-image: linear-gradient(to bottom, transparent 4%, #000 30%, #000 70%, transparent 96%);
+  transform: translateZ(2.8rem);
+  pointer-events: none;
+}
+
+.scanBeam {
+  z-index: 6;
+  top: 7%;
+  right: 5%;
+  left: 5%;
+  height: 1px;
+  opacity: 0.52;
+  background: linear-gradient(90deg, transparent, var(--signal), transparent);
+  box-shadow: 0 0 0.9rem rgba(200, 255, 112, 0.4);
+  transform: translateZ(3.4rem);
+  animation: identity-beam 7.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  pointer-events: none;
+}
+
+.dataRail {
+  z-index: 7;
+  right: 0.7rem;
+  bottom: 0.65rem;
+  left: 0.7rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.34rem 0.45rem;
+  border: 1px solid rgba(200, 255, 112, 0.14);
+  border-radius: 0.38rem;
+  background: rgba(4, 8, 6, 0.66);
+  color: rgba(226, 241, 211, 0.72);
+  font-family: var(--font-mono), monospace;
+  line-height: 1;
+  backdrop-filter: blur(0.42rem);
+  transform: translateZ(4rem);
+  pointer-events: none;
+}
+
+.dataRail strong {
+  color: var(--signal);
+  font-size: 0.36rem;
+  letter-spacing: 0.08em;
+}
+
+.dataRail i {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(200, 255, 112, 0.38), transparent);
+}
+
+.dataRail small {
+  font-size: 0.3rem;
+  letter-spacing: 0.04em;
+}
+
+.sprite:hover .depthPlaneBack {
+  opacity: 0.62;
+  transform: translate3d(-0.85rem, 0.62rem, -3.4rem) rotateY(7deg);
+}
+
+.sprite:hover .depthPlaneMiddle {
+  opacity: 0.72;
+  transform: translate3d(0.68rem, -0.46rem, -1.8rem) rotateY(-4deg);
+}
+
+.sprite:hover .primaryLayer {
+  filter: brightness(1.035);
+  transform: translate3d(0, -0.18rem, 2.8rem) rotateY(-1.2deg);
+}
+
+.sprite:hover .hologramLayer {
+  opacity: 0.42;
+}
+
+.observing .hologramLayer {
+  opacity: 0.34;
+  mix-blend-mode: lighten;
+}
+
+.crtNoise,
+.crtGlitch {
+  z-index: 8;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.crtNoise {
+  inset: 0;
+  border-radius: 0.95rem;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(218, 255, 184, 0.18) 3px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      97deg,
+      rgba(255, 72, 96, 0.08) 0 1px,
+      transparent 1px 5px,
+      rgba(72, 182, 255, 0.08) 5px 6px,
+      transparent 6px 11px
+    );
+  mix-blend-mode: screen;
+}
+
+.crtGlitch {
+  right: 0;
+  left: 0;
+  height: 13%;
+  background:
+    linear-gradient(90deg, transparent, rgba(200, 255, 112, 0.32), transparent),
+    rgba(231, 255, 215, 0.08);
+  box-shadow:
+    0.18rem 0 rgba(255, 62, 86, 0.14),
+    -0.18rem 0 rgba(65, 183, 255, 0.14);
+  mix-blend-mode: screen;
+}
+
+.arriving .primaryLayer {
+  animation: crt-primary 8.8s steps(1, end) infinite;
+}
+
+.arriving {
+  overflow: hidden;
+  border-radius: 0.95rem;
+  background: #050807;
+}
+
+.arriving .hologramLayer {
+  opacity: 0;
+  background: #050807;
+  clip-path: inset(0);
+  mix-blend-mode: normal;
+  transform: translateZ(3.2rem);
+  animation-duration: 8.8s;
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+}
+
+.arriving .hologram1 {
+  animation-name: crt-hologram-one;
+}
+
+.arriving .hologram2 {
+  animation-name: crt-hologram-two;
+}
+
+.arriving .hologram3 {
+  animation-name: crt-hologram-three;
+}
+
+.arriving .hologram4 {
+  animation-name: crt-hologram-four;
+}
+
+.arriving .hologram4::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  opacity: 0;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 0.22rem,
+      rgba(221, 255, 192, 0.26) 0.24rem,
+      transparent 0.28rem 0.58rem
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 8%,
+      rgba(200, 255, 112, 0.2) 9% 11%,
+      transparent 12% 58%,
+      rgba(200, 255, 112, 0.16) 59% 62%,
+      transparent 63%
+    );
+  background-position: 0 0;
+  mix-blend-mode: screen;
+  content: "";
+  animation: crt-transition-scratches 8.8s steps(3, end) infinite;
+  pointer-events: none;
+}
+
+.arriving .crtNoise {
+  animation: crt-noise 8.8s steps(3, end) infinite;
+}
+
+.arriving .crtGlitch {
+  animation: crt-roll 8.8s steps(2, end) infinite;
+}
+
+.waving .primaryLayer {
+  transform-origin: 50% 84%;
+  animation: identity-wave-idle 4.8s ease-in-out infinite;
+}
+
+@keyframes identity-scan {
+  0%,
+  14%,
+  100% {
+    clip-path: inset(0 0 88% 0);
+  }
+
+  45%,
+  58% {
+    clip-path: inset(0 0 10% 0);
+  }
+
+  78% {
+    clip-path: inset(78% 0 0 0);
+  }
+}
+
+@keyframes identity-beam {
+  0%,
+  14%,
+  100% {
+    top: 9%;
+    opacity: 0.18;
+  }
+
+  45%,
+  58% {
+    top: 88%;
+    opacity: 0.7;
+  }
+
+  78% {
+    top: 22%;
+    opacity: 0.38;
+  }
+}
+
+@keyframes identity-wave-idle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 2.1rem) rotateZ(-0.2deg);
+  }
+
+  50% {
+    transform: translate3d(0, -0.24rem, 2.35rem) rotateZ(0.25deg);
+  }
+}
+
+@keyframes crt-primary {
+  0%,
+  22%,
+  73%,
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: translateZ(2.1rem);
+  }
+
+  23% {
+    opacity: 0.32;
+    filter:
+      drop-shadow(0.18rem 0 rgba(255, 62, 86, 0.72))
+      drop-shadow(-0.18rem 0 rgba(65, 183, 255, 0.72));
+    transform: translate3d(-0.12rem, 0, 2.1rem) skewX(-0.7deg);
+  }
+
+  24%,
+  71% {
+    opacity: 0;
+  }
+
+  72% {
+    opacity: 0.18;
+    filter:
+      drop-shadow(0.24rem 0 rgba(255, 62, 86, 0.58))
+      drop-shadow(-0.24rem 0 rgba(65, 183, 255, 0.58));
+    transform: translate3d(0.15rem, 0, 2.1rem) skewX(0.8deg);
+  }
+}
+
+@keyframes crt-hologram-one {
+  0%,
+  23%,
+  38%,
+  100% {
+    opacity: 0;
+  }
+
+  24%,
+  36% {
+    opacity: 1;
+    filter: contrast(1.08) brightness(1.03);
+  }
+
+  37% {
+    opacity: 0.36;
+    filter:
+      drop-shadow(0.18rem 0 rgba(255, 70, 92, 0.62))
+      drop-shadow(-0.18rem 0 rgba(66, 185, 255, 0.62));
+  }
+}
+
+@keyframes crt-hologram-two {
+  0%,
+  37%,
+  52%,
+  100% {
+    opacity: 0;
+  }
+
+  38%,
+  50% {
+    opacity: 1;
+    filter: contrast(1.08) brightness(1.03);
+  }
+
+  51% {
+    opacity: 0.34;
+    filter:
+      drop-shadow(0.2rem 0 rgba(255, 70, 92, 0.62))
+      drop-shadow(-0.2rem 0 rgba(66, 185, 255, 0.62));
+  }
+}
+
+@keyframes crt-hologram-three {
+  0%,
+  51%,
+  66%,
+  100% {
+    opacity: 0;
+  }
+
+  52%,
+  64% {
+    opacity: 1;
+    filter: contrast(1.08) brightness(1.03);
+  }
+
+  65% {
+    opacity: 0.28;
+    filter:
+      drop-shadow(0.22rem 0 rgba(255, 70, 92, 0.66))
+      drop-shadow(-0.22rem 0 rgba(66, 185, 255, 0.66));
+  }
+}
+
+@keyframes crt-hologram-four {
+  0%,
+  67%,
+  72%,
+  100% {
+    opacity: 0;
+    clip-path: inset(0);
+    filter: none;
+    transform: translate3d(0, 0, 3.2rem);
+  }
+
+  68% {
+    opacity: 0.18;
+    clip-path: inset(8% 0 66% 0);
+    filter: contrast(1.18) brightness(1.12);
+    transform: translate3d(-0.06rem, 0, 3.2rem) skewX(-0.5deg);
+  }
+
+  68.25% {
+    opacity: 0.5;
+    clip-path: inset(0);
+    filter: contrast(1.12) brightness(1.06);
+    transform: translate3d(0.04rem, 0, 3.2rem);
+  }
+
+  68.5% {
+    opacity: 0.12;
+    clip-path: inset(34% 0 43% 0);
+    transform: translate3d(-0.08rem, 0, 3.2rem);
+  }
+
+  68.75% {
+    opacity: 0.4;
+    clip-path: inset(0);
+    filter:
+      contrast(1.12)
+      drop-shadow(0.16rem 0 rgba(255, 70, 92, 0.48))
+      drop-shadow(-0.16rem 0 rgba(66, 185, 255, 0.48));
+    transform: translate3d(0.06rem, 0, 3.2rem);
+  }
+
+  69% {
+    opacity: 0.08;
+    clip-path: inset(61% 0 25% 0);
+    transform: translate3d(-0.05rem, 0, 3.2rem);
+  }
+
+  69.25% {
+    opacity: 0.34;
+    clip-path: inset(0);
+    filter: contrast(1.15) brightness(1.08);
+    transform: translate3d(0, 0, 3.2rem);
+  }
+
+  69.5% {
+    opacity: 0.16;
+    clip-path: inset(17% 0 54% 0);
+    transform: translate3d(0.08rem, 0, 3.2rem);
+  }
+
+  69.75% {
+    opacity: 0.44;
+    clip-path: inset(0);
+    filter:
+      contrast(1.2)
+      drop-shadow(0.2rem 0 rgba(255, 70, 92, 0.56))
+      drop-shadow(-0.2rem 0 rgba(66, 185, 255, 0.56));
+    transform: translate3d(-0.08rem, 0, 3.2rem) skewX(0.65deg);
+  }
+
+  70% {
+    opacity: 0.1;
+    clip-path: inset(48% 0 37% 0);
+    transform: translate3d(0.05rem, 0, 3.2rem);
+  }
+
+  70.25% {
+    opacity: 0.3;
+    clip-path: inset(0);
+    filter: contrast(1.16) brightness(1.04);
+    transform: translate3d(0, 0, 3.2rem);
+  }
+
+  70.5% {
+    opacity: 0.08;
+    clip-path: inset(68% 0 18% 0);
+    transform: translate3d(-0.04rem, 0, 3.2rem);
+  }
+
+  70.75% {
+    opacity: 0.24;
+    clip-path: inset(0);
+    filter:
+      contrast(1.2)
+      drop-shadow(0.22rem 0 rgba(255, 70, 92, 0.5))
+      drop-shadow(-0.22rem 0 rgba(66, 185, 255, 0.5));
+    transform: translate3d(0.06rem, 0, 3.2rem) skewX(-0.55deg);
+  }
+
+  71% {
+    opacity: 0;
+    clip-path: inset(82% 0 8% 0);
+    transform: translate3d(0, 0, 3.2rem);
+  }
+}
+
+@keyframes crt-transition-scratches {
+  0%,
+  67%,
+  72%,
+  100% {
+    opacity: 0;
+    background-position: 0 0;
+  }
+
+  68%,
+  69%,
+  70% {
+    opacity: 0.24;
+    background-position: 0 -0.38rem;
+  }
+
+  68.25%,
+  69.25%,
+  70.25% {
+    opacity: 0.5;
+    background-position: 0 0.46rem;
+  }
+
+  68.5%,
+  69.5%,
+  70.5%,
+  71% {
+    opacity: 0.12;
+    background-position: 0 -0.72rem;
+  }
+
+  68.75%,
+  69.75%,
+  70.75% {
+    opacity: 0.38;
+    background-position: 0 0.84rem;
+  }
+}
+
+@keyframes crt-noise {
+  0%,
+  21%,
+  73%,
+  100% {
+    opacity: 0;
+    background-position: 0 0, 0 0;
+  }
+
+  23%,
+  31%,
+  37%,
+  51%,
+  65%,
+  70.75%,
+  72% {
+    opacity: 0.38;
+    background-position: 0 0.24rem, 0.32rem 0;
+  }
+
+  34%,
+  47%,
+  61%,
+  69.75% {
+    opacity: 0.14;
+    background-position: 0 -0.18rem, -0.28rem 0;
+  }
+}
+
+@keyframes crt-roll {
+  0%,
+  21%,
+  73%,
+  100% {
+    top: 8%;
+    opacity: 0;
+  }
+
+  23% {
+    top: 12%;
+    opacity: 0.82;
+  }
+
+  37% {
+    top: 78%;
+    opacity: 0.28;
+  }
+
+  38% {
+    top: 22%;
+    opacity: 0.74;
+  }
+
+  51% {
+    top: 84%;
+    opacity: 0.24;
+  }
+
+  52% {
+    top: 16%;
+    opacity: 0.7;
+  }
+
+  65% {
+    top: 82%;
+    opacity: 0.22;
+  }
+
+  66% {
+    top: 48%;
+    opacity: 0.66;
+  }
+
+  70.75% {
+    top: 82%;
+    opacity: 0.22;
+  }
+
+  71.5% {
+    top: 48%;
+    opacity: 0.66;
+  }
+}
+
+@media (max-width: 520px) {
+  .dataRail {
+    right: 0.5rem;
+    bottom: 0.45rem;
+    left: 0.5rem;
+  }
+
+  .dataRail small {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hologramLayer,
+  .scanBeam,
+  .waving .primaryLayer,
+  .arriving .primaryLayer,
+  .crtNoise,
+  .crtGlitch {
+    animation: none;
+  }
+
+  .hologramLayer {
+    display: none;
+  }
+
+  .scanBeam {
+    top: 48%;
+  }
+
+  .crtNoise,
+  .crtGlitch {
+    display: none;
+  }
+}

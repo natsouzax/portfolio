@@ -14,15 +14,117 @@ import { useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import TiltScene from "@/components/motion/TiltScene";
 import { useIsReducedMotion } from "@/components/motion/useIsReducedMotion";
-import WorkspaceGuide from "@/components/workspace/WorkspaceGuide";
 import { useDesktopPinning } from "@/hooks/useDesktopPinning";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 import LaptopShell from "./LaptopShell";
 import StepCycle from "./StepCycle";
-import { lexuriSteps, type LexuriStepId } from "./steps";
+import { lexuriStepsByLocale, type LexuriStepId } from "./steps";
 import styles from "./LexuriShowcase.module.css";
 
+const lexuriCopy = {
+  pt: {
+    appDemo: "Demonstração do aplicativo",
+    appNav: ["Explorar", "Minhas lições", "Revisão"],
+    streak: "7 dias",
+    immersion: {
+      lesson: "lição em vídeo",
+      mediaLevel: "CONVERSA / B2",
+      interactiveCaption: "legenda interativa",
+      chunks: "18 chunks detectados",
+      hint: "Toque em uma expressão sem interromper o vídeo.",
+    },
+    understanding: {
+      label: "ajuda no momento certo",
+      translation: "dar algo como garantido",
+      definition: "Parar de valorizar algo porque parece normal.",
+      caption:
+        "Ajuda sob demanda: significado, contexto e pronúncia somente quando necessários.",
+    },
+    retention: {
+      label: "repetição espaçada",
+      title: "Revisão de hoje",
+      description:
+        "O que surgiu durante a imersão retorna antes de ser esquecido.",
+      progress: "3 de 10 cards",
+      discovered: "CHUNK DESCOBERTO NA LIÇÃO",
+      translation: "dar algo como garantido",
+      actions: ["De novo", "Difícil", "Bom", "Fácil"],
+    },
+    continuity: {
+      label: "mesmo progresso / três superfícies",
+      description:
+        "O sistema mantém contexto, progresso e revisão em cada dispositivo.",
+    },
+    introduction: {
+      kicker: "produto principal / startup",
+      title: "Aprender inglês com o conteúdo que já prende sua atenção.",
+      lede:
+        "No Lexuri, desenhei a experiência para preservar o fluxo de atenção: conteúdo real vira compreensão contextual, prática curta e memória — no navegador, no Android e no Windows.",
+      decisionsLabel: "Decisões de experiência do Lexuri",
+      decisions: [
+        ["Contexto primeiro", "O idioma nasce do conteúdo que a pessoa escolheu."],
+        ["Ajuda sem ruptura", "Significado e pronúncia aparecem dentro do fluxo."],
+        ["Memória contínua", "Descobertas retornam no ritmo certo para revisar."],
+      ],
+      link: "Abrir lexuri.app",
+    },
+    objectLabel: "lexuri / produto principal em evolução",
+  },
+  en: {
+    appDemo: "Application demo",
+    appNav: ["Explore", "My lessons", "Review"],
+    streak: "7 days",
+    immersion: {
+      lesson: "video lesson",
+      mediaLevel: "CONVERSATION / B2",
+      interactiveCaption: "interactive captions",
+      chunks: "18 chunks detected",
+      hint: "Tap an expression without interrupting the video.",
+    },
+    understanding: {
+      label: "help at the right moment",
+      translation: "to assume something will always be there",
+      definition: "To stop valuing something because it seems normal.",
+      caption:
+        "On-demand help: meaning, context, and pronunciation only when needed.",
+    },
+    retention: {
+      label: "spaced repetition",
+      title: "Today's review",
+      description:
+        "What appeared during immersion returns before it can be forgotten.",
+      progress: "3 of 10 cards",
+      discovered: "CHUNK DISCOVERED IN THE LESSON",
+      translation: "to assume something will always be there",
+      actions: ["Again", "Hard", "Good", "Easy"],
+    },
+    continuity: {
+      label: "same progress / three surfaces",
+      description:
+        "The system preserves context, progress, and review on every device.",
+    },
+    introduction: {
+      kicker: "main product / startup",
+      title: "Learn English with content that already holds your attention.",
+      lede:
+        "For Lexuri, I designed the experience to preserve the flow of attention: real content becomes contextual understanding, short practice, and lasting memory — in the browser, on Android, and on Windows.",
+      decisionsLabel: "Lexuri experience decisions",
+      decisions: [
+        ["Context first", "Language starts with content the person chose."],
+        ["Help without disruption", "Meaning and pronunciation appear within the flow."],
+        ["Continuous memory", "Discoveries return at the right time for review."],
+      ],
+      link: "Open lexuri.app",
+    },
+    objectLabel: "lexuri / main product in development",
+  },
+} as const;
+
 function AppChrome({ children }: { children: React.ReactNode }) {
+  const { locale } = useLanguage();
+  const copy = lexuriCopy[locale];
+
   return (
     <div className={styles.appChrome}>
       <header className={styles.appHeader}>
@@ -30,12 +132,10 @@ function AppChrome({ children }: { children: React.ReactNode }) {
           <Image src="/projects/lexuri/logo-icon.svg" width={22} height={22} alt="" />
         </span>
         <strong>lexuri</strong>
-        <nav aria-label="Demonstração do aplicativo">
-          <span>Explorar</span>
-          <span>Minhas lições</span>
-          <span>Revisão</span>
+        <nav aria-label={copy.appDemo}>
+          {copy.appNav.map((item) => <span key={item}>{item}</span>)}
         </nav>
-        <span className={styles.appStreak}>7 dias</span>
+        <span className={styles.appStreak}>{copy.streak}</span>
         <span className={styles.avatar}>NO</span>
       </header>
       <div className={styles.appBody}>{children}</div>
@@ -44,14 +144,17 @@ function AppChrome({ children }: { children: React.ReactNode }) {
 }
 
 function ImmersionScreen() {
+  const { locale } = useLanguage();
+  const copy = lexuriCopy[locale].immersion;
+
   return (
     <AppChrome>
       <div className={styles.immersionGrid}>
         <div className={styles.mediaCard}>
-          <span className={styles.mediaEyebrow}>lição em vídeo</span>
+          <span className={styles.mediaEyebrow}>{copy.lesson}</span>
           <div className={styles.albumArt}>
             <span className={styles.playGlyph}>▶</span>
-            <small>CONVERSATION / B2</small>
+            <small>{copy.mediaLevel}</small>
             <strong>Why small habits shape fluency</strong>
           </div>
           <div className={styles.playerBar}>
@@ -61,13 +164,13 @@ function ImmersionScreen() {
         </div>
         <div className={styles.lyricsPanel}>
           <div className={styles.lessonHeading}>
-            <span className={styles.screenLabel}>legenda interativa</span>
-            <strong>18 chunks detectados</strong>
+            <span className={styles.screenLabel}>{copy.interactiveCaption}</span>
+            <strong>{copy.chunks}</strong>
           </div>
           <p className={styles.transcriptLine}>
             I used to <span>take it for granted</span> that I could understand English.
           </p>
-          <small className={styles.interactionHint}>Toque em uma expressão sem interromper o vídeo.</small>
+          <small className={styles.interactionHint}>{copy.hint}</small>
           <div className={styles.chunkPreviewRow}>
             <span><small>COLLOCATION</small><strong>take it for granted</strong></span>
             <span><small>IDIOM</small><strong>at the end of the day</strong></span>
@@ -79,47 +182,53 @@ function ImmersionScreen() {
 }
 
 function UnderstandingScreen() {
+  const { locale } = useLanguage();
+  const copy = lexuriCopy[locale].understanding;
+
   return (
     <AppChrome>
       <div className={styles.understandScreen}>
-        <span className={styles.screenLabel}>ajuda no momento certo</span>
+        <span className={styles.screenLabel}>{copy.label}</span>
         <p className={styles.contextLine}>I used to</p>
         <div className={styles.chunkFocus}>
           <span>take it for granted</span>
           <div className={styles.translationBubble}>
             <div><small>COLLOCATION</small><i>🔊</i></div>
-            <strong>dar algo como garantido</strong>
-            <p>Parar de valorizar algo porque parece normal.</p>
+            <strong>{copy.translation}</strong>
+            <p>{copy.definition}</p>
             <span>“Many people take clean water for granted.”</span>
           </div>
         </div>
         <p className={styles.contextLine}>that I could understand English.</p>
-        <small className={styles.contextCaption}>Ajuda sob demanda: significado, contexto e pronúncia somente quando necessários.</small>
+        <small className={styles.contextCaption}>{copy.caption}</small>
       </div>
     </AppChrome>
   );
 }
 
 function RetentionScreen() {
+  const { locale } = useLanguage();
+  const copy = lexuriCopy[locale].retention;
+
   return (
     <AppChrome>
       <div className={styles.reviewLayout}>
         <div className={styles.reviewMeta}>
-          <span className={styles.screenLabel}>repetição espaçada</span>
-          <strong>Revisão de hoje</strong>
-          <p>O que surgiu durante a imersão retorna antes de ser esquecido.</p>
-          <b>3 de 10 cards</b>
+          <span className={styles.screenLabel}>{copy.label}</span>
+          <strong>{copy.title}</strong>
+          <p>{copy.description}</p>
+          <b>{copy.progress}</b>
           <div className={styles.reviewProgress}>
             <span style={{ width: "30%" }} />
           </div>
         </div>
         <div className={styles.flashcard}>
-          <small>CHUNK DESCOBERTO NA LIÇÃO</small>
+          <small>{copy.discovered}</small>
           <strong>take it for granted</strong>
-          <p>dar algo como garantido</p>
+          <p>{copy.translation}</p>
           <i>“I used to take it for granted.”</i>
           <div className={styles.reviewActions}>
-            <span>De novo</span><span>Difícil</span><span>Bom</span><span>Fácil</span>
+            {copy.actions.map((action) => <span key={action}>{action}</span>)}
           </div>
         </div>
       </div>
@@ -128,10 +237,13 @@ function RetentionScreen() {
 }
 
 function ContinuityScreen() {
+  const { locale } = useLanguage();
+  const copy = lexuriCopy[locale].continuity;
+
   return (
     <AppChrome>
       <div className={styles.syncScreen}>
-        <span className={styles.screenLabel}>mesmo progresso / três superfícies</span>
+        <span className={styles.screenLabel}>{copy.label}</span>
         <div className={styles.deviceMap}>
           <div className={`${styles.device} ${styles.webDevice}`}>
             <span />
@@ -150,7 +262,7 @@ function ContinuityScreen() {
             <strong>Windows</strong>
           </div>
         </div>
-        <p>O sistema mantém contexto, progresso e revisão em cada dispositivo.</p>
+        <p>{copy.description}</p>
       </div>
     </AppChrome>
   );
@@ -164,6 +276,8 @@ const screens: Record<LexuriStepId, () => React.JSX.Element> = {
 };
 
 function ProductScreen({ activeStep }: { activeStep: number }) {
+  const { locale } = useLanguage();
+  const lexuriSteps = lexuriStepsByLocale[locale];
   const active = lexuriSteps[activeStep] ?? lexuriSteps[0];
   const Screen = screens[active.id];
 
@@ -184,22 +298,25 @@ function ProductScreen({ activeStep }: { activeStep: number }) {
 }
 
 function ProductIntroduction() {
+  const { locale } = useLanguage();
+  const copy = lexuriCopy[locale].introduction;
+
   return (
     <div className={styles.productIntro}>
       <p className="chapter-kicker">
         <span className="chapter-number">03</span>
-        produto principal / startup
+        {copy.kicker}
       </p>
-      <h2 id="lexuri-title">Aprender inglês com o conteúdo que já prende sua atenção.</h2>
-      <p>
-        No Lexuri, desenhei a experiência para preservar o fluxo de atenção:
-        conteúdo real vira compreensão contextual, prática curta e memória —
-        no navegador, no Android e no Windows.
-      </p>
-      <div className={styles.uxDecisions} aria-label="Decisões de experiência do Lexuri">
-        <div><span>01</span><strong>Contexto primeiro</strong><small>O idioma nasce do conteúdo que a pessoa escolheu.</small></div>
-        <div><span>02</span><strong>Ajuda sem ruptura</strong><small>Significado e pronúncia aparecem dentro do fluxo.</small></div>
-        <div><span>03</span><strong>Memória contínua</strong><small>Descobertas retornam no ritmo certo para revisar.</small></div>
+      <h2 id="lexuri-title">{copy.title}</h2>
+      <p>{copy.lede}</p>
+      <div className={styles.uxDecisions} aria-label={copy.decisionsLabel}>
+        {copy.decisions.map(([title, description], index) => (
+          <div key={title}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{title}</strong>
+            <small>{description}</small>
+          </div>
+        ))}
       </div>
       <div className={styles.productMeta}>
         <span>Next.js</span>
@@ -213,12 +330,9 @@ function ProductIntroduction() {
         target="_blank"
         rel="noreferrer"
       >
-        Abrir lexuri.app
+        {copy.link}
         <Icon name="arrowUpRight" />
       </a>
-      <div className={styles.lexuriGuide} aria-hidden="true">
-        <WorkspaceGuide mode="presenting" variant="compact" />
-      </div>
     </div>
   );
 }
@@ -236,11 +350,14 @@ function NotebookStage({
   lift?: number | MotionValue<number>;
   glow?: number | MotionValue<number>;
 }) {
+  const { locale } = useLanguage();
+  const lexuriSteps = lexuriStepsByLocale[locale];
+  const copy = lexuriCopy[locale];
   const active = lexuriSteps[activeStep] ?? lexuriSteps[0];
 
   return (
     <TiltScene className={styles.notebookStage} intensity={4.5} lift={6}>
-      <span className={styles.objectLabel}>lexuri / produto principal em evolução</span>
+      <span className={styles.objectLabel}>{copy.objectLabel}</span>
       <LaptopShell lidRotate={lidRotate} lift={lift} glow={glow}>
         <ProductScreen activeStep={activeStep} />
       </LaptopShell>
@@ -273,7 +390,7 @@ function StaticExperience() {
 
 function stepFromProgress(progress: number) {
   const normalized = Math.max(0, Math.min(0.999, (progress - 0.22) / 0.68));
-  return Math.floor(normalized * lexuriSteps.length);
+  return Math.floor(normalized * 4);
 }
 
 function ScrollExperience() {
@@ -300,7 +417,7 @@ function ScrollExperience() {
     const rect = container.getBoundingClientRect();
     const top = rect.top + window.scrollY;
     const travel = container.offsetHeight - window.innerHeight;
-    const progress = 0.28 + index * (0.62 / (lexuriSteps.length - 1));
+    const progress = 0.28 + index * (0.62 / 3);
     window.scrollTo({ top: top + travel * progress, behavior: "smooth" });
   }
 

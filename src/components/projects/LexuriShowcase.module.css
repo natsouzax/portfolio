@@ -52,24 +52,6 @@
   z-index: 5;
 }
 
-.lexuriGuide {
-  position: absolute;
-  z-index: -1;
-  right: -3.5rem;
-  bottom: -2.4rem;
-  width: 9.2rem;
-  pointer-events: none;
-  transform: translateZ(3rem);
-}
-
-.lexuriGuide figure {
-  width: 100%;
-}
-
-.lexuriGuide figcaption {
-  display: none;
-}
-
 .productIntro h2 {
   max-width: 12ch;
   margin: 1.4rem 0 0;
@@ -802,15 +784,6 @@
 
   .productIntro {
     max-width: 43rem;
-  }
-
-  .lexuriGuide {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    z-index: 1;
-    width: 10rem;
-    margin: -2rem 0 -4rem auto;
   }
 
   .notebookStage {

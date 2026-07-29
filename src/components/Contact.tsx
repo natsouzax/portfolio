@@ -1,11 +1,49 @@
+"use client";
+
 import { Icon } from "@/components/ui/Icon";
+import CreatorCard from "@/components/contact/CreatorCard";
 import TiltScene from "@/components/motion/TiltScene";
 import WorkspaceGuide from "@/components/workspace/WorkspaceGuide";
-import { navigation, profile } from "@/data/portfolio";
+import { portfolioContent, profile } from "@/data/portfolio";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 import styles from "./Contact.module.css";
 
 export default function Contact() {
+  const { locale } = useLanguage();
+  const { navigation, role } = portfolioContent[locale];
+  const copy = locale === "pt"
+    ? {
+        kicker: "fim da visita / início da conversa",
+        title: "Tem uma ideia que merece sair do rascunho?",
+        lede:
+          "Estou aberto a oportunidades e conversas sobre produtos digitais, desenvolvimento full stack e experiências que pedem mais cuidado.",
+        email: "e-mail profissional",
+        nextStep: "próximo passo / vamos conversar",
+        likedIt: "Gostou do que viu?",
+        invitation: "Vamos tirar sua ideia do papel.",
+        footerNavigation: "Navegação do rodapé",
+        home: "Início",
+        github: "GitHub de Natan Oliveira",
+        linkedin: "LinkedIn de Natan Oliveira",
+        legal: "Projetado e construído com intenção.",
+      }
+    : {
+        kicker: "end of the visit / start of the conversation",
+        title: "Have an idea that deserves to leave the drawing board?",
+        lede:
+          "I'm open to opportunities and conversations about digital products, full stack development, and experiences that deserve extra care.",
+        email: "professional email",
+        nextStep: "next step / let's talk",
+        likedIt: "Like what you saw?",
+        invitation: "Let's bring your idea to life.",
+        footerNavigation: "Footer navigation",
+        home: "Home",
+        github: "Natan Oliveira on GitHub",
+        linkedin: "Natan Oliveira on LinkedIn",
+        legal: "Designed and built with intention.",
+      };
+
   return (
     <footer id="contato" className={styles.contact} aria-labelledby="contact-title">
       <div className="scene-shell">
@@ -13,15 +51,12 @@ export default function Contact() {
           <div className={styles.copy} data-reveal>
             <p className="chapter-kicker">
               <span className="chapter-number">05</span>
-              fim da visita / início da conversa
+              {copy.kicker}
             </p>
             <h2 id="contact-title">
-              Tem uma ideia que merece sair do rascunho?
+              {copy.title}
             </h2>
-            <p>
-              Estou aberto a oportunidades e conversas sobre produtos digitais,
-              desenvolvimento full stack e experiências que pedem mais cuidado.
-            </p>
+            <p>{copy.lede}</p>
 
             <div className={styles.primaryContacts}>
               <a href={`mailto:${profile.professionalEmail}`}>
@@ -29,7 +64,7 @@ export default function Contact() {
                   <Icon name="mail" />
                 </span>
                 <span>
-                  <small>e-mail profissional</small>
+                  <small>{copy.email}</small>
                   <strong>{profile.professionalEmail}</strong>
                 </span>
                 <Icon name="arrowUpRight" />
@@ -48,27 +83,21 @@ export default function Contact() {
           </div>
 
           <TiltScene className={styles.guideEnd} intensity={4} lift={8}>
-            <span className={styles.endLabel}>session.end / obrigado pela visita</span>
+            <span className={styles.endLabel}>{copy.nextStep}</span>
             <WorkspaceGuide mode="waving" variant="ending" />
             <p>
-              O workspace continua evoluindo.
+              {copy.likedIt}
               <br />
-              Volte quando quiser.
+              {copy.invitation}
             </p>
           </TiltScene>
         </div>
 
         <div className={styles.footerBar}>
-          <div className={styles.identity}>
-            <span className={styles.footerMark} aria-hidden="true">NO</span>
-            <span>
-              <strong>{profile.fullName}</strong>
-              <small>{profile.role}</small>
-            </span>
-          </div>
+          <CreatorCard name={profile.fullName} role={role} />
 
-          <nav aria-label="Navegação do rodapé">
-            <a href="#top">Início</a>
+          <nav aria-label={copy.footerNavigation}>
+            <a href="#top">{copy.home}</a>
             {navigation.slice(0, -1).map((item) => (
               <a key={item.href} href={item.href}>{item.label}</a>
             ))}
@@ -79,7 +108,7 @@ export default function Contact() {
               href={profile.githubUrl}
               target="_blank"
               rel="noreferrer"
-              aria-label="GitHub de Natan Oliveira"
+              aria-label={copy.github}
             >
               <Icon name="github" />
             </a>
@@ -87,7 +116,7 @@ export default function Contact() {
               href={profile.linkedinUrl}
               target="_blank"
               rel="noreferrer"
-              aria-label="LinkedIn de Natan Oliveira"
+              aria-label={copy.linkedin}
             >
               <Icon name="linkedin" />
             </a>
@@ -96,7 +125,7 @@ export default function Contact() {
 
         <div className={styles.legal}>
           <span>© {new Date().getFullYear()} {profile.displayName}</span>
-          <span>Projetado e construído com intenção.</span>
+          <span>{copy.legal}</span>
         </div>
       </div>
     </footer>

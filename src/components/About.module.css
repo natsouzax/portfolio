@@ -69,10 +69,18 @@
 .guideStation figure {
   position: absolute;
   z-index: 1;
-  top: 1.35rem;
+  top: 0.45rem;
   right: 2rem;
   width: 7.5rem;
   transform: translateZ(3rem);
+}
+
+.guideStation figcaption {
+  width: max-content;
+  margin-top: 0.35rem;
+  font-size: 0.5rem;
+  white-space: nowrap;
+  transform: translateX(-3rem);
 }
 
 .guideStation blockquote {
@@ -173,25 +181,40 @@
   align-items: end;
   justify-content: space-between;
   gap: 2rem;
-  margin-top: clamp(6rem, 10vw, 9rem);
+  margin-top: clamp(3.5rem, 6vw, 5.5rem);
 }
 
 .capabilityHeader > p:last-child {
   max-width: 31rem;
   margin: 0;
+  padding: 0.65rem 0.85rem;
   color: var(--text-soft);
 }
 
 .learningNote {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(12rem, 0.8fr) minmax(16rem, 1fr);
   align-items: center;
   gap: 1.25rem;
-  margin-top: 1.5rem;
-  padding: 1.4rem;
-  border: 1px solid var(--line);
+  margin-top: 2.25rem;
+  padding: 1.6rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 182, 110, 0.24);
   border-radius: var(--radius-md);
-  background: var(--warm-soft);
+  background:
+    radial-gradient(circle at 8% 50%, rgba(255, 182, 110, 0.13), transparent 10rem),
+    linear-gradient(110deg, rgba(35, 28, 20, 0.76), rgba(18, 20, 17, 0.8));
+}
+
+.learningNote::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: linear-gradient(transparent, var(--warm), transparent);
+  content: "";
 }
 
 .learningIcon {
@@ -216,14 +239,15 @@
 }
 
 .learningNote strong {
-  margin-top: 0.15rem;
-  font-size: 0.9rem;
+  margin-top: 0.3rem;
+  font-size: 1rem;
 }
 
 .learningNote p {
   margin: 0;
   color: var(--text-soft);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.6;
 }
 
 @media (max-width: 900px) {
@@ -256,9 +280,13 @@
   }
 
   .guideStation figure {
-    top: 2.1rem;
+    top: 1rem;
     right: 1.75rem;
     width: 7.1rem;
+  }
+
+  .guideStation figcaption {
+    transform: translateX(-3rem);
   }
 
   .principles li {

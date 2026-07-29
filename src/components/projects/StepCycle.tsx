@@ -1,9 +1,11 @@
 "use client";
 
-import { lexuriSteps } from "./steps";
+import { useLanguage } from "@/i18n/LanguageProvider";
+
+import { lexuriStepsByLocale } from "./steps";
 import styles from "./StepCycle.module.css";
 
-const COUNT = lexuriSteps.length;
+const COUNT = 4;
 const STEP = 360 / COUNT;
 /** Inclinação do plano orbital — o ciclo é visto de cima, em perspectiva. */
 const TILT = 64;
@@ -17,6 +19,11 @@ export default function StepCycle({
   activeStep: number;
   onSelect: (index: number) => void;
 }) {
+  const { locale } = useLanguage();
+  const lexuriSteps = lexuriStepsByLocale[locale];
+  const loopNote = locale === "pt"
+    ? "ciclo contínuo — a continuidade devolve a pessoa à imersão"
+    : "continuous cycle — continuity brings each person back to immersion";
   const spin = FRONT - activeStep * STEP;
 
   return (
@@ -63,7 +70,7 @@ export default function StepCycle({
 
       <p className={styles.loopNote}>
         <span aria-hidden="true">↻</span>
-        ciclo contínuo — a continuidade devolve a pessoa à imersão
+        {loopNote}
       </p>
     </div>
   );

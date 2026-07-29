@@ -4,11 +4,12 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent } from "rea
 
 import { useIsReducedMotion } from "@/components/motion/useIsReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { capabilities } from "@/data/portfolio";
+import { portfolioContent, type Capability } from "@/data/portfolio";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 import styles from "./CapabilityOrbit.module.css";
 
-const COUNT = capabilities.length;
+const COUNT = 4;
 const STEP = 360 / COUNT;
 const AUTO_ADVANCE_MS = 6400;
 /**
@@ -32,7 +33,13 @@ function relativeSlot(index: number, active: number) {
   return wrap(index - active);
 }
 
-function CapabilityList() {
+function CapabilityList({
+  capabilities,
+  competenciesLabel,
+}: {
+  capabilities: readonly Capability[];
+  competenciesLabel: string;
+}) {
   return (
     <div className={styles.fallbackGrid}>
       {capabilities.map((capability) => (
@@ -40,7 +47,7 @@ function CapabilityList() {
           <span className={styles.number}>{capability.number}</span>
           <h3>{capability.title}</h3>
           <p>{capability.description}</p>
-          <ul aria-label={`Competências em ${capability.title}`}>
+          <ul aria-label={`${competenciesLabel} ${capability.title}`}>
             {capability.technologies.map((technology) => (
               <li key={technology}>{technology}</li>
             ))}
@@ -52,6 +59,23 @@ function CapabilityList() {
 }
 
 export default function CapabilityOrbit() {
+  const { locale } = useLanguage();
+  const { capabilities } = portfolioContent[locale];
+  const copy = locale === "pt"
+    ? {
+        competencies: "Competências em",
+        previous: "Capacidade anterior",
+        next: "Próxima capacidade",
+        hint: "arraste o anel ou use as setas",
+        group: "Capacidades",
+      }
+    : {
+        competencies: "Skills related to",
+        previous: "Previous capability",
+        next: "Next capability",
+        hint: "drag the ring or use the arrows",
+        group: "Capabilities",
+      };
   const shouldReduceMotion = useIsReducedMotion();
   const hasRoomForOrbit = useMediaQuery(ORBIT_QUERY);
   const [active, setActive] = useState(0);
@@ -120,7 +144,12 @@ export default function CapabilityOrbit() {
   }
 
   if (!orbiting) {
-    return <CapabilityList />;
+    return (
+      <CapabilityList
+        capabilities={capabilities}
+        competenciesLabel={copy.competencies}
+      />
+    );
   }
 
   const spin = -active * STEP + dragDeg;
@@ -179,7 +208,7 @@ export default function CapabilityOrbit() {
                 <span className={styles.number}>{capability.number}</span>
                 <h3>{capability.title}</h3>
                 <p>{capability.description}</p>
-                <ul aria-label={`Competências em ${capability.title}`}>
+                <ul aria-label={`${copy.competencies} ${capability.title}`}>
                   {capability.technologies.map((technology) => (
                     <li key={technology}>{technology}</li>
                   ))}
@@ -198,7 +227,7 @@ export default function CapabilityOrbit() {
           type="button"
           className={`${styles.arrow} ${styles.arrowPrev}`}
           onClick={() => select(active - 1)}
-          aria-label="Capacidade anterior"
+          aria-label={copy.previous}
         >
           ‹
         </button>
@@ -206,13 +235,13 @@ export default function CapabilityOrbit() {
           type="button"
           className={`${styles.arrow} ${styles.arrowNext}`}
           onClick={() => select(active + 1)}
-          aria-label="Próxima capacidade"
+          aria-label={copy.next}
         >
           ›
         </button>
 
         <p className={styles.hint} aria-hidden="true">
-          arraste o anel ou use as setas
+          {copy.hint}
         </p>
       </div>
 
@@ -220,7 +249,7 @@ export default function CapabilityOrbit() {
         ref={controlsRef}
         className={styles.controls}
         role="group"
-        aria-label="Capacidades"
+        aria-label={copy.group}
         onKeyDown={handleControlsKeyDown}
       >
         {capabilities.map((capability, index) => (

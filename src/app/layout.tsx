@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fira_Code, Open_Sans } from "next/font/google";
+import { LanguageProvider } from "@/i18n/LanguageProvider";
 
 import "./globals.css";
 
@@ -75,7 +76,9 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${firaCode.variable} ${openSans.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   );
 }
