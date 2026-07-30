@@ -59,7 +59,7 @@ export default function Contact() {
             <p>{copy.lede}</p>
 
             <div className={styles.primaryContacts}>
-              <a href={`mailto:${profile.professionalEmail}`}>
+              <a href={`mailto:${profile.professionalEmail}`} data-sound="check">
                 <span className={styles.contactIcon}>
                   <Icon name="mail" />
                 </span>
@@ -69,7 +69,12 @@ export default function Contact() {
                 </span>
                 <Icon name="arrowUpRight" />
               </a>
-              <a href={profile.whatsappUrl} target="_blank" rel="noreferrer">
+              <a
+                href={profile.whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                data-sound="check"
+              >
                 <span className={styles.contactIcon}>
                   <Icon name="whatsapp" />
                 </span>

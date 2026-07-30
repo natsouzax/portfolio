@@ -40,6 +40,9 @@ export const GROUP_DEPTH = {
   to: 1,
 } as const;
 
+/** Horizontal offset of the ambient field, in world units. */
+export const GROUP_OFFSET_X = -0.9;
+
 /**
  * Opacity of the whole canvas layer once live. Deliberately low: this abstract
  * field is atmosphere only. The 3D that carries meaning lives in the content

@@ -58,26 +58,34 @@ export default function Hero() {
   const copy = heroCopy[locale];
 
   return (
-    <section id="top" className={styles.hero} aria-labelledby="hero-title">
+    <section
+      id="top"
+      className={styles.hero}
+      data-locale={locale}
+      aria-labelledby="hero-title"
+    >
       <div className={`scene-shell ${styles.inner}`}>
         <div className={styles.copy}>
           <p className="chapter-kicker">
             <span className="chapter-number">01</span>
             {copy.kicker}
           </p>
-          <p className={styles.intro}>{copy.intro} {profile.fullName}.</p>
+          <p className={styles.intro}>
+            <span>{copy.intro}</span>
+            <strong>{profile.fullName}</strong>
+          </p>
           <h1 id="hero-title" className="display-title">
-            {copy.title[0]}
-            <span>{copy.title[1]}</span>
+            <span className={styles.titlePrimary}>{copy.title[0]}</span>
+            <span className={styles.titleSecondary}>{copy.title[1]}</span>
           </h1>
           <p className={styles.lede}>{copy.lede}</p>
 
           <div className={styles.actions}>
-            <a className={styles.primaryAction} href="#sobre">
+            <a className={styles.primaryAction} href="#sobre" data-sound="whoosh">
               {copy.explore}
               <Icon name="arrowDown" />
             </a>
-            <a className={styles.secondaryAction} href="#lexuri">
+            <a className={styles.secondaryAction} href="#lexuri" data-sound="futuristic">
               {copy.lexuri}
               <Icon name="arrowUpRight" />
             </a>
@@ -85,11 +93,11 @@ export default function Hero() {
 
           <div className={styles.proof} aria-label={copy.professionalLinks}>
             <span className={styles.proofLabel}>{copy.findMe}</span>
-            <a href={profile.githubUrl} target="_blank" rel="noreferrer">
+            <a href={profile.githubUrl} target="_blank" rel="noreferrer" data-sound="whoosh">
               <Icon name="github" />
               GitHub
             </a>
-            <a href={profile.linkedinUrl} target="_blank" rel="noreferrer">
+            <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" data-sound="whoosh">
               <Icon name="linkedin" />
               LinkedIn
             </a>

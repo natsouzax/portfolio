@@ -28,13 +28,20 @@
 }
 
 .staticExperience {
-  padding-top: clamp(7rem, 11vw, 10rem);
-  padding-bottom: clamp(8rem, 12vw, 12rem);
+  /* Ver nota em About.module.css: o padding também é limitado pela altura. */
+  padding-top: clamp(4.5rem, min(11vw, 15vh), 10rem);
+  padding-bottom: clamp(5rem, min(12vw, 16vh), 12rem);
 }
 
 .scrollExperience {
   position: relative;
-  height: 390vh;
+  /*
+    Trilho do capítulo pinado. A cena grudada ocupa 100svh, então a sobra é o
+    curso real do storytelling: 45vh para os 4 passos, em vez dos 65vh
+    anteriores. Continua legível ao rolar devagar e encurta a travessia para
+    quem passa rápido.
+  */
+  height: 145vh;
 }
 
 .stickyScene {
@@ -158,8 +165,6 @@
   position: relative;
   z-index: 3;
   min-width: 0;
-  perspective: 95rem;
-  transform-style: preserve-3d;
 }
 
 .notebookStage::before {
@@ -182,7 +187,6 @@
   font-family: var(--font-mono), monospace;
   font-size: 0.55rem;
   letter-spacing: 0.08em;
-  transform: translateZ(1rem);
 }
 
 .activeNarrative {
@@ -194,7 +198,6 @@
   margin: 1rem auto 0;
   padding-top: 1rem;
   border-top: 1px solid var(--line);
-  transform: translateZ(1.4rem);
 }
 
 .activeNarrative > span {
@@ -216,10 +219,65 @@
   line-height: 1.55;
 }
 
+.productScreen,
 .screenMotion,
 .appChrome {
   position: absolute;
   inset: 0;
+}
+
+.productScreen {
+  z-index: 11;
+  pointer-events: none;
+}
+
+.screenMotion {
+  pointer-events: none;
+}
+
+.screenArrow {
+  position: absolute;
+  z-index: 20;
+  top: 50%;
+  display: grid;
+  width: clamp(1.55rem, 2.7vw, 2.1rem);
+  height: clamp(1.55rem, 2.7vw, 2.1rem);
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(24, 33, 29, 0.78);
+  box-shadow: 0 0.45rem 1rem rgba(24, 33, 29, 0.2);
+  color: #fffaf0;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  transform: translateY(-50%);
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms var(--ease-out);
+}
+
+.screenArrow:hover {
+  border-color: #c8ff70;
+  background: #18211d;
+  color: #c8ff70;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.screenArrow span {
+  font-size: clamp(0.72rem, 1.4vw, 1rem);
+  line-height: 1;
+}
+
+.screenArrowPrevious {
+  left: 0.45rem;
+}
+
+.screenArrowNext {
+  right: 0.45rem;
 }
 
 .appChrome {
@@ -764,6 +822,52 @@
   font-size: clamp(0.28rem, 0.65vw, 0.5rem);
 }
 
+@media (min-width: 900px) {
+  .appHeader {
+    font-size: 0.68rem;
+  }
+
+  .screenLabel,
+  .mediaEyebrow {
+    font-size: 0.54rem;
+  }
+
+  .albumArt small,
+  .translationBubble small,
+  .translationBubble span,
+  .flashcard small,
+  .flashcard span {
+    font-size: 0.48rem;
+  }
+
+  .playerMeta,
+  .chunkPreviewRow small,
+  .reviewActions span {
+    font-size: 0.4rem;
+  }
+
+  .lessonHeading > strong,
+  .interactionHint,
+  .chunkPreviewRow strong,
+  .reviewMeta b,
+  .device strong,
+  .syncCore strong {
+    font-size: 0.5rem;
+  }
+
+  .translationBubble p,
+  .contextCaption,
+  .flashcard > i {
+    font-size: 0.46rem;
+  }
+
+  .reviewMeta p,
+  .flashcard > p,
+  .syncScreen > p {
+    font-size: 0.56rem;
+  }
+}
+
 @media (max-width: 1100px) {
   .staticExperience,
   .scrollLayout {
@@ -811,6 +915,19 @@
     margin-left: 0;
   }
 
+  .screenArrow {
+    width: 1.95rem;
+    height: 1.95rem;
+  }
+
+  .screenArrowPrevious {
+    left: 0.25rem;
+  }
+
+  .screenArrowNext {
+    right: 0.25rem;
+  }
+
   .activeNarrative {
     width: 100%;
     grid-template-columns: 1fr;
@@ -825,8 +942,84 @@
     display: none;
   }
 
+  .appHeader {
+    font-size: 0.48rem;
+  }
+
+  .appBody {
+    padding: 3%;
+  }
+
+  .mediaCard {
+    padding: 5%;
+  }
+
+  .albumArt {
+    margin-top: 3%;
+    padding: 6%;
+  }
+
+  .playerBar {
+    margin-top: 4%;
+  }
+
+  .playerMeta,
+  .chunkPreviewRow {
+    display: none;
+  }
+
+  .lyricsPanel {
+    padding: 6%;
+  }
+
+  .transcriptLine {
+    margin-top: 0.45rem;
+    line-height: 1.4;
+  }
+
+  .interactionHint {
+    margin-top: 0.3rem;
+  }
+
+  .screenLabel,
+  .mediaEyebrow,
+  .albumArt small,
+  .lessonHeading > strong,
+  .interactionHint,
+  .translationBubble small,
+  .translationBubble span,
+  .reviewMeta b,
+  .flashcard small,
+  .flashcard span,
+  .device strong,
+  .syncCore strong,
+  .syncScreen > p {
+    font-size: 0.38rem;
+  }
+
+  .chunkPreviewRow small,
+  .reviewActions span {
+    font-size: 0.32rem;
+  }
+
+  .interactionHint,
+  .contextCaption,
+  .translationBubble p,
+  .reviewMeta p,
+  .flashcard > i {
+    line-height: 1.35;
+  }
+
   .translationBubble {
     min-width: 7rem;
     padding: 0.4rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .screenArrow::before {
+    position: absolute;
+    inset: -0.45rem;
+    content: "";
   }
 }

@@ -22,7 +22,11 @@ function ProjectCard({
   technologiesLabel: string;
 }) {
   return (
-    <article className={styles[project.slug.replaceAll("-", "")]} data-reveal>
+    <article
+      className={styles[project.slug.replaceAll("-", "")]}
+      data-reveal
+      data-sound-hover="softWhoosh"
+    >
       <div className={styles.projectCopy}>
         <div className={styles.projectTopline}>
           <span>{code}</span>
@@ -43,7 +47,13 @@ function ProjectCard({
         </ul>
         <div className={styles.projectLinks}>
           {project.links.map((link) => (
-            <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              data-sound="whoosh"
+            >
               {link.label}
               <Icon name="arrowUpRight" />
             </a>

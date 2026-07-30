@@ -1,7 +1,8 @@
 .contact {
   position: relative;
   overflow: clip;
-  padding: clamp(7rem, 12vw, 11rem) 0 2rem;
+  /* Ver nota em About.module.css: o padding também é limitado pela altura. */
+  padding: clamp(4.5rem, min(12vw, 16vh), 11rem) 0 2rem;
   border-top: 1px solid var(--line);
   background:
     radial-gradient(circle at 78% 35%, rgba(200, 255, 112, 0.12), transparent 25rem),
@@ -294,8 +295,12 @@
 }
 
 @media (max-width: 560px) {
+  .contact {
+    padding-top: 7rem;
+  }
+
   .guideEnd {
-    min-height: 30rem;
+    min-height: 27rem;
   }
 
   .primaryContacts > a {

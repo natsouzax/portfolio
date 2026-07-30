@@ -103,7 +103,7 @@ export const portfolioContent = {
         links: [
           {
             label: "Ver no GitHub",
-            href: profile.githubUrl,
+            href: "https://github.com/natsouzax/fluxo",
             kind: "source",
           },
         ],
@@ -242,7 +242,7 @@ export const portfolioContent = {
         links: [
           {
             label: "View on GitHub",
-            href: profile.githubUrl,
+            href: "https://github.com/natsouzax/fluxo",
             kind: "source",
           },
         ],
