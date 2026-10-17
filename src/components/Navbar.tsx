@@ -1,9 +1,16 @@
 "use client";
 
-import { portfolioContent, profile } from "@/data/portfolio";
+import { portfolioContent } from "@/data/portfolio";
 import { useLanguage } from "@/i18n/LanguageProvider";
 
 import styles from "./Navbar.module.css";
+
+// The "N" drawn on a 5x5 matrix: two stems and a diagonal. Cell [0, 4] is the volt node.
+const markModules: ReadonlyArray<readonly [number, number]> = [
+  [0, 0], [1, 0], [2, 0], [3, 0], [4, 0],
+  [0, 4], [1, 4], [2, 4], [3, 4], [4, 4],
+  [1, 1], [2, 2], [3, 3],
+];
 
 export default function Navbar() {
   const { locale, toggleLocale } = useLanguage();
@@ -28,13 +35,24 @@ export default function Navbar() {
     <header className={styles.header}>
       <nav className={styles.nav} aria-label={copy.navigation}>
         <a className={styles.brand} href="#top" aria-label={copy.home}>
-          <span className={styles.mark} aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
+          <svg className={styles.mark} viewBox="0 0 64 64" aria-hidden="true">
+            <rect width="64" height="64" rx="14" />
+            {markModules.map(([row, col]) => (
+              <rect
+                key={`${row}-${col}`}
+                x={10.5 + col * 9}
+                y={10.5 + row * 9}
+                width="7"
+                height="7"
+                rx="1.5"
+                className={row === 0 && col === 4 ? styles.markDot : undefined}
+              />
+            ))}
+          </svg>
+          <span className={styles.wordmark}>
+            Natan<span> Oliveira</span>
+            <i aria-hidden="true" />
           </span>
-          <span>{profile.displayName}</span>
         </a>
 
         <div className={styles.links}>

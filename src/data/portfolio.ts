@@ -49,8 +49,8 @@ export const profile = {
   displayName: "Natan Oliveira",
   role: "Desenvolvedor full stack orientado a produto",
   professionalEmail: "oliveira.natan.dev@gmail.com",
-  phoneDisplay: "+55 32 99807-6972",
-  whatsappUrl: "https://wa.me/5532998076972",
+  phoneDisplay: "+351 928 280 737",
+  whatsappUrl: "https://wa.me/351928280737",
   githubUrl: "https://github.com/natsouzax",
   linkedinUrl:
     "https://www.linkedin.com/in/natan-de-souza-oliveira-it/",

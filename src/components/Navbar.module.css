@@ -36,28 +36,48 @@
 }
 
 .mark {
-  display: grid;
-  grid-template-columns: repeat(2, 0.28rem);
-  gap: 0.16rem;
-  align-content: center;
-  justify-content: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  border: 1px solid var(--line-strong);
-  border-radius: 0.58rem;
-  background: var(--surface-raised);
+  width: 2rem;
+  height: 2rem;
+  color: var(--text);
+  filter: drop-shadow(0 0 0.5rem rgba(200, 255, 112, 0.18));
 }
 
-.mark span {
-  width: 0.28rem;
-  height: 0.28rem;
-  border-radius: 0.08rem;
-  background: var(--text-faint);
+.mark rect:first-child {
+  fill: var(--surface-raised);
+  stroke: var(--line-strong);
+  stroke-width: 1;
 }
 
-.mark span:first-child {
+.mark rect:not(:first-child) {
+  fill: currentColor;
+}
+
+.mark .markDot {
+  fill: var(--signal);
+  filter: drop-shadow(0 0 2px rgba(200, 255, 112, 0.7));
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-family: var(--font-brand), var(--font-sans), sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.wordmark span {
+  color: var(--text);
+}
+
+.wordmark i {
+  width: 0.2em;
+  height: 1em;
+  margin-left: 0.1em;
   background: var(--signal);
-  box-shadow: 0 0 0.6rem rgba(200, 255, 112, 0.4);
 }
 
 .links {

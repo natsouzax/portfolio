@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fira_Code, Open_Sans } from "next/font/google";
+import { Fira_Code, Open_Sans, Unbounded } from "next/font/google";
 import { LanguageProvider } from "@/i18n/LanguageProvider";
 
 import "./globals.css";
@@ -13,6 +13,12 @@ const firaCode = Fira_Code({
 const openSans = Open_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
+});
+
+const unbounded = Unbounded({
+  variable: "--font-brand",
+  subsets: ["latin"],
+  weight: ["500", "700"],
 });
 
 const deploymentUrl =
@@ -74,7 +80,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${firaCode.variable} ${openSans.variable}`}
+      className={`${firaCode.variable} ${openSans.variable} ${unbounded.variable}`}
     >
       <body>
         <LanguageProvider>{children}</LanguageProvider>

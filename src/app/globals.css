@@ -1,16 +1,18 @@
 :root {
-  --ink: #070907;
-  --ink-soft: #0c0e0c;
-  --surface: #111410;
-  --surface-raised: #171a16;
+  /* Identity palette: void / carbon / graphite / fog / ghost / volt / ion / flare */
+  --ink: #050605;
+  --ink-soft: #0d100c;
+  --surface: #0d100c;
+  --surface-raised: #181c16;
   --surface-bright: #1d211b;
-  --line: rgba(238, 245, 226, 0.12);
-  --line-strong: rgba(238, 245, 226, 0.22);
-  --text: #f0f4e9;
+  --line: rgba(238, 243, 230, 0.12);
+  --line-strong: rgba(238, 243, 230, 0.22);
+  --text: #eef3e6;
   --text-soft: #b0b8aa;
-  --text-faint: #747d70;
+  --text-faint: #8e9988;
   --signal: #c8ff70;
   --signal-soft: rgba(200, 255, 112, 0.12);
+  --ion: #5ce1ff;
   --warm: #ffb66e;
   --warm-soft: rgba(255, 182, 110, 0.12);
   --danger: #ff7f6f;
@@ -150,21 +152,23 @@ button {
 .display-title {
   max-width: 100%;
   margin: 0;
-  font-size: clamp(2.75rem, 7vw, 6.8rem);
-  font-weight: 540;
-  letter-spacing: -0.062em;
-  line-height: 0.96;
+  font-family: var(--font-brand), var(--font-sans), sans-serif;
+  font-size: clamp(2.1rem, 5.2vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
   text-wrap: balance;
   overflow-wrap: anywhere;
 }
 
 .section-title {
-  max-width: 14ch;
+  max-width: 16ch;
   margin: 1.25rem 0 0;
-  font-size: clamp(2.3rem, 5.2vw, 5rem);
-  font-weight: 540;
-  letter-spacing: -0.055em;
-  line-height: 1;
+  font-family: var(--font-brand), var(--font-sans), sans-serif;
+  font-size: clamp(1.8rem, 3.9vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
   text-wrap: balance;
 }
 
