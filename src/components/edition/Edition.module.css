@@ -1,7 +1,10 @@
 .site { --paper:#efeee8; --volt:#c8ff70; background:#080908; color:var(--paper); }
+/* The scene comes up under the curtain rather than waiting behind it. */
+.site[data-phase="loading"] { opacity:0; transform:scale(1.035); }
+.site[data-phase="lifting"] { opacity:1; transform:none; transition:opacity .62s ease-out, transform .82s cubic-bezier(.3,0,.08,1); }
 .curtain {
   position:fixed; inset:0; z-index:2000; display:grid; place-items:center; background:#000; color:#fff;
-  transition:transform .98s cubic-bezier(.76,0,.24,1);
+  transition:transform .72s cubic-bezier(.3,0,.08,1);
 }
 .curtain[data-phase="lifting"] { transform:translateY(-100%); pointer-events:none; }
 .curtain img { width:clamp(14rem,38vw,34rem); height:auto; }
@@ -60,9 +63,11 @@
   .signature { font-size:.88rem; }.signature svg { width:1.35rem; }
   .subject { width:min(94vw,35rem); top:8%; bottom:13%; }
   .name { top:auto; bottom:1%; justify-content:center; gap:.2em; transform:none; font-size:9.15vw; }
+  .name::before, .band { mask-image:none; }
     .lower { padding-bottom:max(1.35rem,env(safe-area-inset-bottom)); }
 }
 @media (prefers-reduced-motion:reduce), (max-height:520px) {
   .opening { height:auto; } .viewport { position:relative; } .curtain { transition:none; }
+  .site[data-phase] { opacity:1; transform:none; transition:none; }
 }
 

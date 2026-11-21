@@ -5,7 +5,7 @@
   <style>
     .odev-background { fill: var(--odev-background, transparent); }
     .odev-place, .odev-facet, .odev-window, .odev-letters, .odev-symbol {
-      animation-duration: 2.4s;
+      animation-duration: 1.7s;
       animation-fill-mode: both;
     }
     .odev-place { animation-name: odev-place; animation-timing-function: cubic-bezier(.65, 0, .2, 1); }
