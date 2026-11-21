@@ -67,7 +67,10 @@ async function load([input, left, right, flip, warp]) {
     sy: v * info.height,
   });
   const inside = sx => sx >= 1 && sx <= info.width - 2;
-  return { lum, place, inside };
+  // Distance to the capture's own border. Sampling clamps outside it, which
+  // smears the edge pixel into streaks, so coverage has to fade out first.
+  const margin = sx => clamp(Math.min(sx, info.width - 1 - sx) / 6);
+  return { lum, place, inside, margin };
 }
 
 await mkdir(destination, { recursive: true });
@@ -87,17 +90,23 @@ for (const [name, captures, floor, gain, sparkle] of views) {
 
       // An implied head volume. The lattice bends around it, and a blended
       // view leans each capture along it, so the views read as one object.
-      const surface = Math.sqrt(clamp(1 - ((u - 0.5) / 0.34) ** 2 - ((v - 0.42) / 0.53) ** 2));
+      const radius = ((u - 0.5) / 0.34) ** 2 + ((v - 0.42) / 0.53) ** 2;
+      const surface = Math.sqrt(clamp(1 - radius));
+      // The warp needs a depth field with no edge. `surface` is clamped flat
+      // outside the ellipsoid, and that step tore the sampling along its
+      // boundary; this falls off smoothly instead.
+      const lean = Math.exp(-radius * 1.1);
 
-      let smooth = 0, ridge = 0, coarse = 0, weight = 0;
+      let smooth = 0, ridge = 0, coarse = 0, weight = 0, border = 1;
       for (const layer of layers) {
-        const { sx, sy } = layer.place(u, v, surface);
+        const { sx, sy } = layer.place(u, v, lean);
         if (!layer.inside(sx)) continue;
         const { lum } = layer;
         smooth += (lum(sx, sy) * 2 + lum(sx - 2, sy) + lum(sx + 2, sy) + lum(sx, sy + 2) + lum(sx, sy - 2)) / 6;
         // Fine local contrast. Hair, lashes and the captured wireframe all live here.
         ridge += Math.max(Math.abs(lum(sx + 1, sy) - lum(sx - 1, sy)), Math.abs(lum(sx, sy + 1) - lum(sx, sy - 1)));
         coarse += Math.max(Math.abs(lum(sx + 3, sy) - lum(sx - 3, sy)), Math.abs(lum(sx, sy + 3) - lum(sx, sy - 3)));
+        border = Math.min(border, layer.margin(sx));
         weight++;
       }
       if (!weight) continue;
@@ -122,7 +131,7 @@ for (const [name, captures, floor, gain, sparkle] of views) {
       // The shoulders fade out so the head floats instead of ending in a cut.
       const dissolveLine = 0.9 - Math.abs(u - 0.49) * 0.4 + 0.02 * Math.sin(u * 31);
       const dissolve = clamp((dissolveLine - v) * 12 + noise(x, y) * 0.9);
-      const edge = clamp(Math.min(u, 1 - u) * width / 22);
+      const edge = clamp(Math.min(u, 1 - u) * width / 22) * border;
       const coverage = clamp(Math.max(body * 3.6, structure * 1.6, rim * 1.2)) * dissolve * edge;
       if (coverage < 0.004) continue;
 
