@@ -166,3 +166,24 @@
 @media (prefers-reduced-motion: reduce) {
   .artLink::after { transition: none; }
 }
+
+/*
+  Assembly. Fragments.tsx writes --assembly (0..1) onto this section as the
+  opening's debris flies down and lands on these edges; each target comes up
+  once the shards reach it. The default of 1 means the page is complete if
+  that never runs.
+*/
+.work { --assembly: 1; }
+.work [data-assemble] {
+  --shown: clamp(0, calc((var(--assembly, 1) - var(--at, 0)) * 3.4), 1);
+  opacity: var(--shown);
+  transform: translateY(calc((1 - var(--shown)) * 2.2rem));
+  will-change: opacity, transform;
+}
+.heading[data-assemble] { --at: .42; }
+.lead[data-assemble] { --at: .56; }
+.second[data-assemble] { --at: .64; }
+.archive[data-assemble] { --at: .72; }
+@media (prefers-reduced-motion: reduce) {
+  .work [data-assemble] { --shown: 1; transform: none; }
+}

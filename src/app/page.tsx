@@ -1,5 +1,6 @@
 import Entrance from "@/components/edition/Entrance";
 import Opening from "@/components/edition/Opening";
+import Fragments from "@/components/edition/Fragments";
 import Work from "@/components/edition/Work";
 import Closing from "@/components/edition/Closing";
 import { profile } from "@/data/portfolio";
@@ -21,6 +22,7 @@ export default function Home() {
       <a className="skip-link" href="#conteudo">Skip to content</a>
       <main id="conteudo">
         <Opening />
+        <Fragments />
         <Work />
       </main>
       <Closing />
