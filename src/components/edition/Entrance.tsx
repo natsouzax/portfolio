@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import Interference from "./Interference";
+import Pointer from "./Pointer";
 import styles from "./Edition.module.css";
 
 export default function Entrance({ children }: { children: React.ReactNode }) {
@@ -51,7 +53,8 @@ export default function Entrance({ children }: { children: React.ReactNode }) {
         </div>
       )}
       <noscript><style>{`[data-curtain]{display:none!important}`}</style></noscript>
-      <div ref={site} className={styles.site}>{children}</div>
+      <div ref={site} data-scene="" className={styles.site}>{children}</div>
+      {phase === "open" && <><Interference /><Pointer /></>}
     </>
   );
 }

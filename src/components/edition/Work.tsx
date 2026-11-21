@@ -59,14 +59,14 @@ export default function Work() {
               <a className={styles.artLink} href="https://lexuri.app" aria-label="Visit Lexuri">
                 <Tape /><span className={styles.open}><Icon name="arrowUpRight" /></span>
               </a>
-              <div className={styles.projectTitle}><h3><a href="https://lexuri.app">Lexuri</a></h3><small>Language learning</small></div>
+              <div className={styles.projectTitle}><h3><a href="https://lexuri.app" data-marker="">Lexuri</a></h3><small>Language learning</small></div>
               <p>Pause on a phrase, hear how it sounds, then come back to it. I designed and built a way to study English through the videos you already watch.</p>
             </article>
             <article className={styles.second}>
               <Ledger />
               <div className={styles.projectTitle}><h3>Fluxo</h3><small>Mobile product</small></div>
               <p>A personal finance app that brings accounts, goals and notes together. I shaped the product and built its mobile experience in React Native.</p>
-              <a className={styles.authorLink} href={portfolioProjects[0].links[0].href}>My GitHub profile <Icon name="arrowUpRight" /></a>
+              <a className={styles.authorLink} data-marker="" href={portfolioProjects[0].links[0].href}>My GitHub profile <Icon name="arrowUpRight" /></a>
             </article>
           </div>
           <section className={styles.archive} aria-labelledby="archive-title">
@@ -75,14 +75,14 @@ export default function Work() {
               {archive.map((item) => (
                 <details key={item.slug} className={styles.row}>
                   <summary>
-                    <strong>{item.name}</strong>
+                    <strong data-marker="">{item.name}</strong>
                     <small>{item.technologies[0]}</small>
                     <span aria-hidden="true" className={styles.toggle} />
                   </summary>
                   <div className={styles.details}>
                     <p>{item.description}</p>
                     <div>{item.links.map((link) => (
-                      <a key={link.href} href={link.href}>{link.label}<Icon name="arrowUpRight" /></a>
+                      <a key={link.href} href={link.href} data-marker="">{link.label}<Icon name="arrowUpRight" /></a>
                     ))}</div>
                   </div>
                 </details>
@@ -98,7 +98,7 @@ export default function Work() {
             <div>
               <p>I’m Natan Oliveira. I design and build digital products in Portugal while studying Computer Engineering.</p>
               <p>On Lexuri, that means asking what happens when a learner pauses a video for one unfamiliar expression. The answer shapes the interface, the data I save and what comes back in their next review.</p>
-              <a href="#contato">Get in touch <Icon name="arrowDown" /></a>
+              <a href="#contato" data-marker="">Get in touch <Icon name="arrowDown" /></a>
             </div>
           </div>
         </div>

@@ -1,0 +1,82 @@
+/* Sits above the page and below the entrance curtain. Never takes a pointer. */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  pointer-events: none;
+  contain: strict;
+}
+.veil i {
+  position: absolute;
+  display: block;
+}
+
+/* The standing raster. A dark line and a faint bright one, so the texture
+   reads on the black opening and on the cream work section alike. */
+.raster {
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.09) 0 1px, transparent 1px 3px);
+}
+.raster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.028) 0 1px, transparent 1px 3px);
+}
+
+/* A wide bar of brightness travelling down the glass. */
+.roll {
+  left: 0;
+  right: 0;
+  height: 42vh;
+  background: linear-gradient(to bottom, transparent, rgba(236, 255, 206, 0.05) 46%, transparent);
+  animation: roll 11s linear infinite;
+}
+@keyframes roll {
+  from { transform: translateY(-46vh); }
+  to { transform: translateY(100vh); }
+}
+
+/* Dropout snow, only during a break. */
+.snow {
+  inset: 0;
+  opacity: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+.veil[data-break] .snow { opacity: 0.05; }
+.veil[data-break="hard"] .snow {
+  opacity: 0.14;
+  animation: snow 0.43s steps(5) 1;
+}
+@keyframes snow {
+  from { background-position: 0 0; }
+  to { background-position: 73px -119px; }
+}
+
+/* Bands of the picture that lose tracking and corrupt whatever sits beneath. */
+.tear {
+  left: 0;
+  right: 0;
+  height: 0;
+  opacity: 0;
+  backdrop-filter: invert(0.16) hue-rotate(58deg) saturate(1.7) brightness(1.12);
+  -webkit-backdrop-filter: invert(0.16) hue-rotate(58deg) saturate(1.7) brightness(1.12);
+}
+.veil[data-break] .tear { opacity: 1; }
+.veil[data-break] .tear:nth-of-type(4) { top: 21%; height: 1.1%; }
+.veil[data-break] .tear:nth-of-type(5) { top: 53%; height: 0.6%; }
+.veil[data-break] .tear:nth-of-type(6) { top: 77%; height: 1.4%; }
+.veil[data-break="hard"] .tear:nth-of-type(4) { top: 14%; height: 3.4%; }
+.veil[data-break="hard"] .tear:nth-of-type(5) { top: 44%; height: 2.1%; animation: shove 0.43s steps(4) 1; }
+.veil[data-break="hard"] .tear:nth-of-type(6) { top: 68%; height: 4.6%; animation: shove 0.43s steps(3) reverse 1; }
+@keyframes shove {
+  0% { transform: translateY(0); }
+  40% { transform: translateY(-9vh); }
+  70% { transform: translateY(5vh); }
+  100% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll { animation: none; opacity: 0.4; }
+  .snow, .tear { display: none; }
+}

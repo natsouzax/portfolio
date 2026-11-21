@@ -283,3 +283,195 @@ button {
     transform: none !important;
   }
 }
+
+/*
+  Signal break-up. Interference.tsx sets data-signal on <html> for a couple of
+  hundred milliseconds at irregular intervals; everything below is the page's
+  reaction to that. Only the scene wrapper is displaced, so the interference
+  veil and the entrance curtain stay anchored to the viewport.
+*/
+html[data-signal] [data-scene] {
+  animation: signal-jolt 190ms steps(3);
+}
+
+html[data-signal="hard"] [data-scene] {
+  animation-duration: 430ms;
+  animation-timing-function: steps(5);
+}
+
+@keyframes signal-jolt {
+  0% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(-4px, 1px, 0); }
+  50% { transform: translate3d(3px, -2px, 0); }
+  75% { transform: translate3d(-2px, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* The colour guns separate on the type while the signal is unstable. */
+html[data-signal] :is(h1, h2, h3, [data-signature]) {
+  text-shadow:
+    min(0.055em, 4px) 0 rgba(255, 40, 90, 0.5),
+    calc(-1 * min(0.055em, 4px)) 0 rgba(90, 225, 255, 0.45);
+}
+
+html[data-signal="hard"] :is(h1, h2, h3, [data-signature]) {
+  text-shadow:
+    min(0.1em, 8px) 1px rgba(255, 40, 90, 0.62),
+    calc(-1 * min(0.1em, 8px)) -1px rgba(90, 225, 255, 0.58);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-signal] [data-scene] { animation: none; }
+  html[data-signal] :is(h1, h2, h3, [data-signature]) { text-shadow: none; }
+}
+
+/*
+  The marker. Selecting text on this site paints a lime block behind it and
+  flips the letters dark; hovering anything interactive does the same thing on
+  purpose. One gesture, used everywhere, so the page feels like one object.
+*/
+[data-marker] {
+  position: relative;
+  isolation: isolate;
+  transition: color 220ms var(--ease-out);
+}
+
+[data-marker]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -0.12em -0.26em;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 340ms var(--ease-out);
+}
+
+[data-marker]:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+[data-marker]:is(:hover, :focus-visible)::before {
+  transform: scaleX(1);
+}
+
+/* On a dark panel the block still has to read as the page inverting. */
+[data-marker]:is(:hover, :focus-visible) :is(svg, span) {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-marker], [data-marker]::before { transition: none; }
+}
+
+/*
+  Pointer. A ring that trails the cursor, swells over anything that reacts,
+  and throws a ripple on press. Drawn only where there is a real pointer.
+*/
+.pointer-ring,
+.pointer-ripple {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1500;
+  pointer-events: none;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.pointer-ring {
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -1rem;
+  border: 1px solid var(--signal);
+  transition: width 240ms var(--ease-out), height 240ms var(--ease-out),
+    margin 240ms var(--ease-out), background-color 240ms var(--ease-out),
+    opacity 240ms var(--ease-out);
+}
+
+.pointer-ring[data-over="link"] {
+  width: 3.75rem;
+  height: 3.75rem;
+  margin: -1.875rem 0 0 -1.875rem;
+  background: rgba(200, 255, 112, 0.16);
+}
+
+.pointer-ring[data-over="drag"] {
+  width: 5rem;
+  height: 5rem;
+  margin: -2.5rem 0 0 -2.5rem;
+  border-style: dashed;
+  background: rgba(200, 255, 112, 0.1);
+}
+
+.pointer-ring[data-press="" ] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: -0.55rem 0 0 -0.55rem;
+  background: var(--signal);
+}
+
+.pointer-ripple {
+  width: 1rem;
+  height: 1rem;
+  margin: -0.5rem 0 0 -0.5rem;
+  border: 1px solid var(--signal);
+  animation: pointer-ripple 620ms var(--ease-out) forwards;
+}
+
+@keyframes pointer-ripple {
+  from { transform: scale(0.5); opacity: 0.85; }
+  to { transform: scale(6); opacity: 0; }
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .pointer-ring, .pointer-ripple { display: none; }
+}
+
+/*
+  The lens. Wherever the pointer goes it corrupts the picture underneath:
+  alternating raster rows invert into the signal colour, as if the page were
+  a transmission and the cursor a fault in it. Backdrop only, so it works over
+  the hologram, the type and the cream panels alike without knowing about them.
+*/
+.pointer-lens {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1490;
+  width: 9.5rem;
+  height: 9.5rem;
+  margin: -4.75rem 0 0 -4.75rem;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+  backdrop-filter: invert(0.92) hue-rotate(65deg) saturate(2.4) contrast(1.2);
+  -webkit-backdrop-filter: invert(0.92) hue-rotate(65deg) saturate(2.4) contrast(1.2);
+  mask-image:
+    radial-gradient(circle, #000 42%, rgba(0, 0, 0, 0.45) 62%, transparent 74%),
+    repeating-linear-gradient(to bottom, #000 0 2px, transparent 2px 5px);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    radial-gradient(circle, #000 42%, rgba(0, 0, 0, 0.45) 62%, transparent 74%),
+    repeating-linear-gradient(to bottom, #000 0 2px, transparent 2px 5px);
+  -webkit-mask-composite: source-in;
+  transition: opacity 260ms var(--ease-out), width 240ms var(--ease-out),
+    height 240ms var(--ease-out), margin 240ms var(--ease-out);
+  animation: lens-crawl 900ms steps(3) infinite;
+}
+
+/* The fault drifts rather than sitting still, so it reads as live. */
+@keyframes lens-crawl {
+  0% { mask-position: 0 0, 0 0; -webkit-mask-position: 0 0, 0 0; }
+  100% { mask-position: 0 0, 0 5px; -webkit-mask-position: 0 0, 0 5px; }
+}
+
+.pointer-lens[data-press=""] {
+  width: 15rem;
+  height: 15rem;
+  margin: -7.5rem 0 0 -7.5rem;
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .pointer-lens { display: none; }
+}

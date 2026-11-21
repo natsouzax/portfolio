@@ -10,7 +10,7 @@ export default function Closing() {
         <div className={styles.copy}>
           <p className={styles.status}><i aria-hidden="true"/> Open for collaborations</p>
           <h2 id="closing-title">Waiting<br/><em>for you.</em></h2>
-          <a className={styles.email} href={`mailto:${profile.professionalEmail}`} data-sound="check">
+          <a className={styles.email} data-marker="" href={`mailto:${profile.professionalEmail}`} data-sound="check">
             Send me an email <Icon name="arrowUpRight" />
           </a>
         </div>
@@ -25,11 +25,11 @@ export default function Closing() {
       <div className={styles.bottom}>
         <span>{profile.displayName} <span className={styles.slash}>/</span> Portugal</span>
         <nav aria-label="Contact and social links">
-          <a href={profile.whatsappUrl} target="_blank" rel="noreferrer">WhatsApp</a>
-          <a href={profile.githubUrl} target="_blank" rel="noreferrer">GitHub</a>
-          <a href={profile.linkedinUrl} target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href={profile.whatsappUrl} data-marker="" target="_blank" rel="noreferrer">WhatsApp</a>
+          <a href={profile.githubUrl} data-marker="" target="_blank" rel="noreferrer">GitHub</a>
+          <a href={profile.linkedinUrl} data-marker="" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>
-        <a href="#top" className={styles.back}>Back to top <span aria-hidden="true">↑</span></a>
+        <a href="#top" className={styles.back} data-marker="">Back to top <span aria-hidden="true">↑</span></a>
       </div>
     </footer>
   );
