@@ -1,25 +1,27 @@
 .closing {
   --volt: #c8ff70;
+  --gutter: clamp(1.15rem, 5.2vw, 6rem);
   position: relative;
   isolation: isolate;
   overflow: clip;
   color: #f7f8f0;
   background-color: #080a07;
-  background-image: radial-gradient(ellipse at 75% 53%, #1e2b1570, transparent 43%);
-  padding-inline: clamp(1.15rem, 5.2vw, 6rem);
+  background-image: radial-gradient(ellipse at 50% 78%, #1e2b1570, transparent 52%);
+  padding-inline: var(--gutter);
 }
 
 .invitation {
   position: relative;
+  z-index: 2;
   display: grid;
-  grid-template-columns: .96fr 1.04fr;
-  align-items: center;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 2rem;
   width: min(100%, 100rem);
-  min-height: clamp(34rem, 85svh, 72rem);
   margin-inline: auto;
+  padding-block: clamp(6rem, 11vw, 10rem) clamp(1rem, 2vw, 2rem);
 }
 
-.copy { z-index: 1; padding-block: 5rem; }
 .status {
   display: flex;
   align-items: center;
@@ -40,7 +42,7 @@
   align-items: center;
   gap: 2rem;
   min-height: 3.6rem;
-  margin-top: clamp(1.8rem, 3vw, 3rem);
+  margin-bottom: .4rem;
   border-bottom: 1px solid #c8ff7080;
   font-weight: 600;
 }
@@ -48,18 +50,107 @@
 .email:hover { color: var(--volt); }
 .email:hover svg { transform: translate(2px, -2px); }
 
-.theatre { position: relative; display: grid; align-items: center; isolation: isolate; }
-.theatre::before {
-  content: ""; position: absolute; inset: 60% -40% -4% -35%; z-index: -1;
-  background-image: linear-gradient(#8cb66728 1px, transparent 1px), linear-gradient(90deg, #8cb66728 1px, transparent 1px);
-  background-size: 2.8rem 2.8rem;
-  transform: perspective(15rem) rotateX(63deg);
-  mask-image: radial-gradient(ellipse at center, black, transparent 68%);
+/* ---------- The crowd ---------------------------------------------------- */
+
+/* Full bleed: the projection runs from one edge of the window to the other. */
+.stage {
+  --stage-h: clamp(32rem, 84svh, 54rem);
+  position: relative;
+  height: var(--stage-h);
+  margin-inline: calc(var(--gutter) * -1);
+  isolation: isolate;
 }
-.sculpture { width: 100%; height: auto; display: block; }
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 52% 0 0;
+  z-index: -1;
+  background:
+    linear-gradient(#8cb66722 1px, transparent 1px) 0 0 / 3.2rem 3.2rem,
+    linear-gradient(90deg, #8cb66722 1px, transparent 1px) 0 0 / 3.2rem 3.2rem;
+  transform: perspective(18rem) rotateX(64deg);
+  transform-origin: 50% 100%;
+  mask-image: linear-gradient(to top, black, transparent 80%);
+}
+.canvas, .poster { position: absolute; pointer-events: none; }
+.canvas { inset: 0; width: 100%; height: 100%; z-index: 1; opacity: 0; transition: opacity .6s ease; }
+.poster {
+  left: 50%;
+  bottom: -5%;
+  width: auto;
+  height: 92%;
+  transform: translateX(-50%);
+  transition: opacity .6s ease;
+}
+
+/* The projector strip the whole crowd rises from. */
+.emitter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c8ff7088 14%, #eaffcc 50%, #c8ff7088 86%, transparent);
+  box-shadow: 0 0 14px 1px #c8ff7066, 0 -12px 60px 8px #c8ff7018;
+}
+
+/* "See you soon." flanks the head, behind the crowd, painted as light. */
+.farewell {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  pointer-events: none;
+  font: 500 clamp(3.4rem, 8.4vw, 10.5rem)/.9 var(--font-brand), sans-serif;
+  letter-spacing: -.075em;
+}
+.farewell span {
+  position: absolute;
+  white-space: nowrap;
+  padding: .1em .12em;
+  color: #d9ff9c;
+  /* Two colour guns that never quite land on the letters, and the glow. */
+  text-shadow: -.022em 0 #ff3d7a66, .022em 0 #3ee8ff5e, 0 0 .25em #c8ff7047;
+  /* Raster lines and a fall-off towards the floor, cut through the light itself. */
+  -webkit-mask-image: repeating-linear-gradient(to bottom, #000 0 2px, #0008 2px 3px), linear-gradient(to bottom, #000 35%, #0009);
+  -webkit-mask-composite: source-in;
+  mask-image: repeating-linear-gradient(to bottom, #000 0 2px, #0008 2px 3px), linear-gradient(to bottom, #000 35%, #0009);
+  mask-composite: intersect;
+  animation: hum 5.3s steps(1) infinite;
+}
+.see { right: calc(50% + var(--stage-h) * .22); top: 8%; }
+.soon { left: calc(50% + var(--stage-h) * .25); top: 21%; animation-delay: -2.1s; }
+
+@keyframes hum {
+  0%, 100% { opacity: 1; }
+  41% { opacity: .82; }
+  42% { opacity: 1; }
+  77% { opacity: .9; }
+  78% { opacity: 1; }
+}
+
+/* The type materialises with the crowd, from the floor up. */
+.stage:not([data-live]) .farewell span { clip-path: inset(100% 0 0 0); }
+.stage[data-live] .farewell span {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1.6s cubic-bezier(.2, .7, .2, 1) .9s;
+}
+.stage[data-live] .soon { transition-delay: 1.15s; }
+
+/* Breaking up together with the page-wide interference. */
+:global(html[data-signal]) .farewell span {
+  transform: translateX(-.012em) skewX(-4deg);
+  text-shadow: -.08em 0 #ff3d7a99, .07em 0 #3ee8ff8c, 0 0 .3em #c8ff7055;
+}
+:global(html[data-signal="hard"]) .see { transform: translateX(.09em) skewX(8deg); clip-path: inset(0 0 38% 0); }
+:global(html[data-signal="hard"]) .soon { transform: translateX(-.11em) skewX(-6deg); opacity: .7; }
+
+/* ---------- Bottom bar ---------------------------------------------------- */
+
 .bottom {
-  position: relative; display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; border-top: 1px solid #ffffff30; padding-block: 1.15rem;
+  position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding-block: 1.15rem;
   width: min(100%, 100rem); margin-inline: auto; color: #bcc2b3;
   font: 500 .75rem/1.5 var(--font-mono), monospace;
 }
@@ -70,12 +161,20 @@
 .back { gap: .8rem; }
 
 @media (max-width: 760px) {
-  .invitation { grid-template-columns: 1fr; padding-top: 4rem; min-height: auto; }
-  .copy { padding-block: 0; }
+  .invitation { grid-template-columns: 1fr; padding-top: 4rem; gap: 1.25rem; }
   .copy h2 { font-size: clamp(4.1rem, 13vw, 6.5rem); }
   .status { margin-bottom: 1.5rem; }
-  .email { margin-top: 1.25rem; }
-  .theatre { width: min(100%, 32rem); justify-self: center; }
+  .email { justify-self: start; }
+  .stage { --stage-h: clamp(28rem, 140vw, 40rem); margin-top: 1rem; }
+  .farewell { font-size: clamp(3rem, 15vw, 5rem); text-align: center; }
+  .see { right: auto; left: 0; width: 100%; top: 3%; }
+  .soon { left: 0; width: 100%; top: calc(3% + .95em); }
   .bottom { flex-wrap: wrap; gap: .15rem 1.5rem; }
   .bottom nav { width: 100%; order: 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .farewell span { animation: none; }
+  .stage[data-live] .farewell span { transition: none; }
+  .stage:not([data-live]) .farewell span { clip-path: none; }
 }

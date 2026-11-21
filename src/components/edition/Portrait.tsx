@@ -7,8 +7,8 @@ import styles from "./Portrait.module.css";
 // The opening turns the head towards the viewer: it starts on the back of the
 // head and settles on the three-quarter. The straight-on front view is not part
 // of the sequence.
-const views = ["back", "side", "turn"] as const;
-const names = ["Back", "Profile", "Three-quarter"];
+const views = ["back", "side", "half", "turn"] as const;
+const names = ["Back", "Profile", "Half profile", "Three-quarter"];
 const LAST = views.length - 1;
 const base = "/edition/portrait/";
 const bound = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
@@ -321,7 +321,7 @@ export default function Portrait() {
   return (
     <div className={styles.projection} ref={holder} role="slider" tabIndex={0}
       aria-label="Holographic portrait of Natan. Drag or use the arrow keys to turn."
-      aria-valuemin={0} aria-valuemax={2} aria-valuenow={0} aria-valuetext="Back">
+      aria-valuemin={0} aria-valuemax={3} aria-valuenow={0} aria-valuetext="Back">
       <Image ref={poster} src="/edition/portrait/back-still.webp" alt="" fill preload unoptimized
         data-intro-poster draggable={false} className={styles.poster} />
       <canvas ref={canvas} aria-hidden="true" className={styles.canvas} />

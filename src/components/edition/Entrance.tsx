@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Interference from "./Interference";
 import Pointer from "./Pointer";
+import MatrixField from "./MatrixField";
+import Decode from "./Decode";
 import styles from "./Edition.module.css";
 
 export default function Entrance({ children }: { children: React.ReactNode }) {
@@ -54,7 +56,7 @@ export default function Entrance({ children }: { children: React.ReactNode }) {
       )}
       <noscript><style>{`[data-curtain]{display:none!important}`}</style></noscript>
       <div ref={site} data-scene="" className={styles.site}>{children}</div>
-      {phase === "open" && <><Interference /><Pointer /></>}
+      {phase === "open" && <><MatrixField /><Interference /><Pointer /><Decode /></>}
     </>
   );
 }

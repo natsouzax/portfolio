@@ -475,3 +475,21 @@ html[data-signal="hard"] :is(h1, h2, h3, [data-signature]) {
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
   .pointer-lens { display: none; }
 }
+
+/*
+  The code field. MatrixField draws glyphs that wake under the pointer; it sits
+  under the interference veil so the raster runs across it like the rest of
+  the picture, and never takes a pointer.
+*/
+.matrix-field {
+  position: fixed;
+  inset: 0;
+  z-index: 880;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .matrix-field { display: none; }
+}
