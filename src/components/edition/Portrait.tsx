@@ -32,6 +32,7 @@ const fragment = `
   uniform sampler2D first, second, reliefA, reliefB;
   uniform vec2 fit, tilt;
   uniform float fraction, scan, time, glitch, rows, burst;
+  uniform vec3 hover;
 
   float hash(float n) { return fract(sin(n * 91.3458) * 47453.5453); }
 
@@ -49,6 +50,17 @@ const fragment = `
     float seed = hash(cell.x * 7.13 + cell.y * 13.37);
     vec2 escape = normalize(p - core + vec2(.0001, .0002));
     p -= escape * burst * burst * (.05 + seed * .20);
+
+    // The pointer is a probe. Around it the projection is resampled into
+    // coarse blocks, as if the figure were being read cell by cell, and the
+    // surface ripples outward from the contact point.
+    vec2 probe = ((hover.xy - .5) * fit + .5 - core) / swell + core;
+    vec2 toward = (p - probe) * vec2(.758, 1.);
+    float reach = length(toward);
+    float touch = hover.z * smoothstep(.2, .0, reach);
+    float blocks = mix(150., 34., touch);
+    p = mix(p, (floor(p * blocks) + .5) / blocks, step(.08, touch));
+    p += normalize(toward + .0001) * sin(reach * 95. - time * 11.) * .005 * touch;
 
     // Horizontal tearing. Whole bands of the raster slip sideways when the
     // signal breaks up, the way a picture does on a mistracked tape.
@@ -69,7 +81,7 @@ const fragment = `
 
     // The three colour guns never land on quite the same spot, and they drift
     // further apart while the signal is unstable.
-    vec2 ch = vec2(.0014 + glitch * .013, 0.);
+    vec2 ch = vec2(.0014 + glitch * .013 + touch * .011, 0.);
     vec4 red = mix(texture2D(first, a + ch), texture2D(second, b + ch), blend);
     vec4 mid = mix(texture2D(first, a), texture2D(second, b), blend);
     vec4 blu = mix(texture2D(first, a - ch), texture2D(second, b - ch), blend);
@@ -89,6 +101,12 @@ const fragment = `
 
     // Each fragment flares as it tears loose.
     color += vec3(.70, 1., .42) * burst * (1. - burst * .7) * (.45 + seed * 1.1);
+
+    // Scan rings travelling out from the probe, and the figure lighting up
+    // under it.
+    float ring = exp(-pow((fract(reach * 9. - time * 1.4) - .5) * 9., 2.));
+    color += vec3(.55, 1., .35) * ring * touch * .55;
+    color += wire * vec3(.5, .9, .3) * touch * .6;
 
     // The scan line the scroll drives, kept from the original sequence.
     float sweep = smoothstep(.025, .051, .026 - abs(p.y - scan));
@@ -143,7 +161,7 @@ function createProjector(canvas: HTMLCanvasElement) {
   gl.enableVertexAttribArray(position);
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
   const uniforms = Object.fromEntries(
-    ["first","second","reliefA","reliefB","fraction","scan","fit","tilt","time","glitch","rows","burst"]
+    ["first","second","reliefA","reliefB","fraction","scan","fit","tilt","time","glitch","rows","burst","hover"]
       .map(name => [name, gl.getUniformLocation(program, name)]));
   ["first","second","reliefA","reliefB"].forEach((name,index) => gl.uniform1i(uniforms[name],index));
   function upload(img: HTMLImageElement, index: number) {
@@ -157,7 +175,7 @@ function createProjector(canvas: HTMLCanvasElement) {
       gl!.texParameteri(gl!.TEXTURE_2D, filter, gl!.LINEAR);
     gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, gl!.RGBA, gl!.UNSIGNED_BYTE, img);
   }
-  function draw(angle: number, pitch: number, scan: number, time: number, glitch: number, rows: number, burst: number) {
+  function draw(angle: number, pitch: number, scan: number, time: number, glitch: number, rows: number, burst: number, hover: [number, number, number]) {
     const i = Math.floor(angle), j = Math.min(i+1,LAST);
     [i*2,j*2,i*2+1,j*2+1].forEach((idx, unit) => {
       gl!.activeTexture(gl!.TEXTURE0+unit);
@@ -173,6 +191,7 @@ function createProjector(canvas: HTMLCanvasElement) {
     gl!.uniform1f(uniforms.glitch, glitch);
     gl!.uniform1f(uniforms.rows, rows);
     gl!.uniform1f(uniforms.burst, burst);
+    gl!.uniform3f(uniforms.hover, hover[0], hover[1], hover[2]);
     gl!.clear(gl!.COLOR_BUFFER_BIT);
     gl!.drawArrays(gl!.TRIANGLE_STRIP,0,4);
   }
@@ -192,10 +211,15 @@ export default function Portrait() {
     const projector = createProjector(layer);
     let ready = false, disposed = false, visible = true, frame = 0;
     let angle = 0, scrollAngle = 0, drag = 0, pitch = 0, targetPitch = 0, travel = 0;
-    // The pinned opening is one timeline: the head turns through the first
-    // stretch, then breaks apart over the last of it before the page releases.
-    const TURN = .74;
+    // The head turns on its own as the page opens, back to three-quarter, once.
+    // Scroll is left with one job: after a short hold, it breaks the figure
+    // apart before the page releases.
+    const INTRO = 3400, HOLD = .12;
+    let introStart = 0, introProgress = 0;
     let burst = 0;
+    // Where the pointer sits over the projection, in its own coordinates, and
+    // how present it is (eased so the effect blooms and settles).
+    let hoverX = .5, hoverY = .5, hoverOn = 0, hoverTarget = 0;
     let origin: { x: number; y: number; drag: number; id: number } | null = null;
     let last = 0;
     // One raster line every three CSS pixels, whatever the element is scaled to.
@@ -222,6 +246,13 @@ export default function Portrait() {
     function paint(now: number) {
       frame = 0;
       if (disposed || !visible) return;
+      if (!introStart && ready && !document.querySelector("[data-curtain]")) introStart = now + 250;
+      if (introStart && now > introStart) {
+        const t = bound((now - introStart) / INTRO, 0, 1);
+        // Ease in and out, so the turn starts and lands softly.
+        introProgress = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+      scrollAngle = reduced.matches ? LAST : introProgress * LAST;
       const target = bound(scrollAngle+drag,0,LAST);
       angle += (target-angle) * (reduced.matches ? 1 : .11);
       pitch += (targetPitch-pitch)*.12;
@@ -233,7 +264,8 @@ export default function Portrait() {
         last = view;
       }
       if (ready && !reduced.matches) {
-        projector?.draw(angle, pitch, bound(travel / TURN, 0, 1), now / 1000, signal(now), rows, burst);
+        hoverOn += (hoverTarget - hoverOn) * .1;
+        projector?.draw(angle, pitch, introProgress, now / 1000, signal(now), rows, burst, [hoverX, hoverY, hoverOn]);
         queue();
       } else if (Math.abs(target-angle)>.001 || Math.abs(pitch-targetPitch)>.001) queue();
     }
@@ -241,8 +273,7 @@ export default function Portrait() {
     function scroll() {
       const rect = hero.getBoundingClientRect();
       travel = bound(-rect.top / Math.max(1, rect.height - window.innerHeight),0,1);
-      burst = reduced.matches ? 0 : bound((travel - TURN) / (1 - TURN), 0, 1);
-      scrollAngle = reduced.matches ? LAST : bound(travel / TURN, 0, 1) * LAST;
+      burst = reduced.matches ? 0 : bound((travel - HOLD) / (1 - HOLD), 0, 1);
       // The surrounding type recedes as the figure goes, driven from the same value.
       (hero as HTMLElement).style.setProperty("--burst", burst.toFixed(3));
       queue();
@@ -272,6 +303,14 @@ export default function Portrait() {
       targetPitch = bound((origin.y-event.clientY)/150,-1,1);
       queue();
     }
+    function probe(event: PointerEvent) {
+      if (event.pointerType === "touch" && !origin) return;
+      const rect = layer!.getBoundingClientRect();
+      hoverX = (event.clientX - rect.left) / Math.max(1, rect.width);
+      hoverY = (event.clientY - rect.top) / Math.max(1, rect.height);
+      hoverTarget = hoverX >= 0 && hoverX <= 1 && hoverY >= 0 && hoverY <= 1 ? 1 : 0;
+    }
+    function away() { hoverTarget = 0; }
     function end() { origin = null; targetPitch = 0; queue(); }
     function key(event: KeyboardEvent) {
       let next = Math.round(scrollAngle+drag);
@@ -295,6 +334,8 @@ export default function Portrait() {
     layer.addEventListener("webglcontextlost",lost);
     reduced.addEventListener("change",mode);
     window.addEventListener("scroll",scroll,{passive:true});
+    window.addEventListener("pointermove",probe,{passive:true});
+    document.addEventListener("pointerleave",away);
     resize();
     if (projector) {
       void Promise.all(views.flatMap((view,index) => ["","-depth"].map(async (suffix,depth) => {
@@ -315,6 +356,7 @@ export default function Portrait() {
       stage.removeEventListener("lostpointercapture",end); stage.removeEventListener("keydown",key);
       layer.removeEventListener("webglcontextlost",lost);
       reduced.removeEventListener("change",mode); window.removeEventListener("scroll",scroll);
+      window.removeEventListener("pointermove",probe); document.removeEventListener("pointerleave",away);
     };
   },[]);
 

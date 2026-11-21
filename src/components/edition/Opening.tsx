@@ -1,5 +1,6 @@
 import Portrait from "./Portrait";
 import Masthead from "./Masthead";
+import NameBand from "./NameBand";
 import styles from "./Edition.module.css";
 
 export default function Opening() {
@@ -9,7 +10,7 @@ export default function Opening() {
         <Masthead />
         <div className={styles.theatre}>
           <div className={styles.field} aria-hidden="true" />
-          <h1 id="identity-name" className={styles.name}><span>Natan</span>{" "}<span>Oliveira</span></h1>
+          <h1 id="identity-name" className={styles.name}><span>Natan</span>{" "}<span>Oliveira</span><NameBand /></h1>
           <div className={styles.subject}><Portrait /></div>
           <span className={styles.caption}>Biometric portrait</span>
         </div>

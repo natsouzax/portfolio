@@ -14,9 +14,9 @@ import { useEffect, useRef } from "react";
  */
 // Binary weighted heavier, then maths and programming symbols.
 const GLYPHS = "0101010101010101" + "+-×÷=≠≈<>≤≥±∑∏∫√∞πλΔ∂∇" + "{}[]()<>/\|&!?;:*%#$@^~_" + "0123456789ABCDEFx";
-const CELL = 20;
-const RADIUS = 118;
-const MAX_DROPS = 70;
+const CELL = 15;
+const RADIUS = 62;
+const MAX_DROPS = 40;
 
 type Drop = { col: number; y: number; speed: number; life: number; tone: number };
 
@@ -67,7 +67,7 @@ export default function MatrixField() {
       chars = Array.from({ length: cols * rows }, pick);
       drops.length = 0;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.font = `500 ${CELL * 0.72}px ${family}, monospace`;
+      ctx.font = `500 ${CELL * 0.8}px ${family}, monospace`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
     }
@@ -83,7 +83,7 @@ export default function MatrixField() {
           const d = Math.sqrt(dx * dx + dy * dy) / radius;
           if (d >= 1) continue;
           // Dithered edge: the field breaks up toward the rim instead of fading smoothly.
-          const v = (1 - d) * (1 - d) * strength * (0.55 + Math.random() * 0.45);
+          const v = (1 - d) * (1 - d) * (1 - d) * strength * (0.55 + Math.random() * 0.45);
           const i = r * cols + c;
           if (v > energy[i]) { energy[i] = v; tone[i] = light; }
         }
@@ -93,10 +93,10 @@ export default function MatrixField() {
     function spawn(x: number, y: number, count: number) {
       for (let n = 0; n < count && drops.length < MAX_DROPS; n++) {
         drops.push({
-          col: Math.max(0, Math.min(cols - 1, Math.floor((x + (Math.random() - 0.5) * RADIUS * 1.4) / CELL))),
+          col: Math.max(0, Math.min(cols - 1, Math.floor((x + (Math.random() - 0.5) * RADIUS * 0.8) / CELL))),
           y: Math.floor((y + (Math.random() - 0.5) * RADIUS) / CELL),
           speed: 0.35 + Math.random() * 0.55,
-          life: 10 + Math.random() * 26,
+          life: 6 + Math.random() * 16,
           tone: light,
         });
       }
@@ -129,7 +129,7 @@ export default function MatrixField() {
         if (tone[i]) ctx.fillStyle = e > 1 ? `rgba(8,12,6,${Math.min(e, 1)})` : `rgba(38,74,6,${e * 0.85})`;
         else ctx.fillStyle = e > 1 ? `rgba(240,255,220,${Math.min(e, 1)})` : `rgba(200,255,112,${e * 0.9})`;
         ctx.fillText(chars[i], c * CELL + CELL / 2, r * CELL + CELL / 2);
-        energy[i] = e * 0.93;
+        energy[i] = e * 0.91;
       }
 
       if (alive) frame = requestAnimationFrame(draw);
@@ -152,7 +152,7 @@ export default function MatrixField() {
       // Fill in the path so a fast flick leaves a continuous wake.
       const steps = Math.max(1, Math.ceil(dist / (RADIUS * 0.4)));
       for (let s = 1; s <= steps; s++) {
-        excite(px + ((x - px) * s) / steps, py + ((y - py) * s) / steps, RADIUS, 0.9);
+        excite(px + ((x - px) * s) / steps, py + ((y - py) * s) / steps, RADIUS, 1.3);
       }
       if (dist > 14 && Math.random() < Math.min(0.85, dist / 70)) spawn(x, y, 1);
       px = x; py = y;
@@ -162,7 +162,7 @@ export default function MatrixField() {
       const x = event.clientX, y = event.clientY;
       lastProbe = 0;
       probe(x, y);
-      excite(x, y, RADIUS * 2, 1.05);
+      excite(x, y, RADIUS * 1.6, 1.4);
       spawn(x, y, event.pointerType === "touch" ? 10 : 16);
       wake();
     }

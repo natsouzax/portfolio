@@ -14,8 +14,25 @@
 /* The standing raster. A dark line and a faint bright one, so the texture
    reads on the black opening and on the cream work section alike. */
 .raster {
-  inset: 0;
-  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.09) 0 1px, transparent 1px 3px);
+  inset: -6px 0 0;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0 1px, transparent 1px 3px);
+  /* Like a tube: the lines crawl down the glass a pixel at a time and the
+     phosphor never quite holds a steady brightness. Two line periods per
+     cycle, so the loop is seamless; transform only, so it stays composited. */
+  animation: crawl 0.5s steps(6) infinite, phosphor 3.2s steps(16) infinite;
+  will-change: transform;
+}
+@keyframes crawl {
+  to { transform: translateY(6px); }
+}
+@keyframes phosphor {
+  0%, 100% { opacity: 1; }
+  12% { opacity: 0.82; }
+  19% { opacity: 1; }
+  44% { opacity: 0.9; }
+  50% { opacity: 1; }
+  71% { opacity: 0.76; }
+  75% { opacity: 0.96; }
 }
 .raster::after {
   content: "";
@@ -78,5 +95,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .roll { animation: none; opacity: 0.4; }
+  .raster { animation: none; }
   .snow, .tear { display: none; }
 }

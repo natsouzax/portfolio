@@ -15,7 +15,6 @@ const destination = "public/edition/closing";
 const CELL_W = 256;
 const CELL_H = 320;
 const COLS = 4;
-const ROWS = 2;
 const TAU = Math.PI * 2;
 
 const clamp = (n, min = 0, max = 1) => Math.min(max, Math.max(min, n));
@@ -126,14 +125,15 @@ function person(spec) {
 }
 
 const width = CELL_W * COLS;
-// Padded to a power of two so the browser can mipmap it; small figures would shimmer otherwise.
+// Two rows of cells, padded to a power of two so the browser can mipmap the
+// atlas; small figures would shimmer otherwise.
 const height = 1024;
 const pixels = Buffer.alloc(width * height * 4);
 const still = Buffer.alloc(width * height * 4);
 await mkdir(destination, { recursive: true });
 
 // Shade one point of a figure in the material channels: [structure, body, rim, coverage].
-function shade(field, x, y, seed) {
+function shade(field, x, y, seed, density = 1) {
   const here = field(x, y);
   const d = here.d;
   if (d > 2) return null;
@@ -150,8 +150,8 @@ function shade(field, x, y, seed) {
   const z = Math.sqrt(1 - (1 - inside) ** 2);
 
   // The same two sweeps the portrait is drawn with: rings, then ribs.
-  const rings = 0.5 + 0.5 * Math.cos((v * 46 - z * 6) * TAU);
-  const ribs = 0.5 + 0.5 * Math.cos((u * 30 + (z - 0.5) * 8) * TAU);
+  const rings = 0.5 + 0.5 * Math.cos((v * 46 * density - z * 6) * TAU);
+  const ribs = 0.5 + 0.5 * Math.cos((u * 30 * density + (z - 0.5) * 8) * TAU);
   const lattice = clamp(Math.max(rings ** 8, ribs ** 10) * 1.2);
   const stipple = noise(x * 0.5 + seed * 31, y * 0.5) > 0.38 ? 1 : 0.25;
 
@@ -204,38 +204,136 @@ if (process.env.CROWD_PREVIEW) {
 }
 console.log("baked crowd");
 
-// Natan, cut to the same bust as everyone else: the three-quarter portrait for
-// the head, standing on a crowd-style torso. Twice the crowd's resolution,
-// because this is the one figure people will look at closely.
-const HERO_W = CELL_W * 2;
-const HERO_H = CELL_H * 2;
-const headWidth = 290;
-const headHeight = Math.round(headWidth * 660 / 500);
-const headLeft = Math.round((HERO_W - headWidth) / 2) + 6;
-const headTop = 62;
-const head = await sharp("public/edition/portrait/turn.webp")
-  .resize(headWidth, headHeight)
-  .raw()
-  .toBuffer();
-const torso = person({ headless: true, head: [36, 46], turn: 0, neck: 40, shoulders: 102, slope: 2 });
+// Natan, facing the visitor, carved from a front photograph into the same
+// material as the crowd around him.
+// art/natan-front.jpg is a cropped, metadata-free copy of that photograph,
+// kept outside public/ so the source picture itself is never served.
+const FRONT = "art/natan-front.jpg";
+const crop = { left: 60, top: 0, width: 1080, height: 1160 };
+const HERO_W = 460;
+const HERO_H = Math.round((HERO_W * crop.height) / crop.width);
+
+// --- Cut the figure out of the room -----------------------------------------
+const { data: room, info: roomInfo } = await sharp(FRONT).extract(crop).raw().toBuffer({ resolveWithObject: true });
+const RW = roomInfo.width, RH = roomInfo.height;
+const key = Buffer.alloc(RW * RH);
+// Ears sit in shadow, so the skin test is relaxed in a box around each one.
+const ears = [[315, 385, 360, 520], [730, 795, 360, 520]];
+for (let y = 0; y < RH; y++) {
+  for (let x = 0; x < RW; x++) {
+    const i = (y * RW + x) * 3, r = room[i], g = room[i + 1], b = room[i + 2];
+    const luma = r * 0.3 + g * 0.59 + b * 0.11;
+    const ear = ears.some(([x0, x1, y0, y1]) => x >= x0 && x <= x1 && y >= y0 && y <= y1);
+    // The wall is a near-neutral cream; skin is warm, and keeps its blue where wood does not.
+    const skin = r - g > (ear ? 16 : 26) && b / (r + 1) > 0.42 && r > 70;
+    const hair = luma < 72 && Math.max(r, g, b) - Math.min(r, g, b) < 40;
+    const shirt = b > r + 14 && b > g;
+    // Above the shoulders nothing wider than the head belongs to him: the wall
+    // there carries an ornament and a wardrobe.
+    const beside = y < 640 && (x < 300 || x > (y > 505 ? 750 : 805));
+    key[y * RW + x] = !beside && (skin || hair || shirt) ? 255 : 0;
+  }
+}
+const cleaned = await sharp(key, { raw: { width: RW, height: RH, channels: 1 } }).median(7).extractChannel(0).raw().toBuffer();
+// Keep only the shape connected to the face, then fill each row between its
+// outermost solid runs: a head and shoulders are solid along every row.
+const figure = new Uint8Array(RW * RH);
+const stack = [520 * RW + 540];
+while (stack.length) {
+  const p = stack.pop();
+  if (figure[p] || cleaned[p] < 128) continue;
+  figure[p] = 1;
+  const x = p % RW, y = (p / RW) | 0;
+  if (x > 0) stack.push(p - 1);
+  if (x < RW - 1) stack.push(p + 1);
+  if (y > 0) stack.push(p - RW);
+  if (y < RH - 1) stack.push(p + RW);
+}
+const solid = Buffer.alloc(RW * RH);
+for (let y = 0; y < RH; y++) {
+  let first = -1, last = -1, run = 0;
+  for (let x = 0; x < RW; x++) {
+    run = figure[y * RW + x] ? run + 1 : 0;
+    if (run >= 12) { if (first < 0) first = x - 11; last = x; }
+  }
+  if (first >= 0) solid.fill(255, y * RW + first, y * RW + last + 1);
+}
+
+// --- Work at the size the browser will sample ------------------------------
+const shrink = (input, channels, sigma = 0) => {
+  let pipeline = sharp(input, { raw: { width: RW, height: RH, channels } }).resize(HERO_W, HERO_H);
+  if (sigma) pipeline = pipeline.blur(sigma);
+  if (channels === 1) pipeline = pipeline.extractChannel(0);
+  return pipeline.raw().toBuffer();
+};
+const picture = await shrink(room, 3);
+const outline = await shrink(solid, 1, 0.8);
+const volume = await shrink(solid, 1, 26);
+const pick = (buffer, channels, x, y, c = 0) =>
+  buffer[(Math.floor(clamp(y, 0, HERO_H - 1)) * HERO_W + Math.floor(clamp(x, 0, HERO_W - 1))) * channels + c] / 255;
+const mask = (x, y) => pick(outline, 1, x, y);
+const tone = (x, y) => pick(picture, 3, x, y, 0) * 0.3 + pick(picture, 3, x, y, 1) * 0.59 + pick(picture, 3, x, y, 2) * 0.11;
+
+// Light is measured against the figure itself, so a dim room still gives a full range.
+let low = 1, high = 0;
+for (let y = 0; y < HERO_H; y++) for (let x = 0; x < HERO_W; x++) {
+  if (mask(x, y) < 0.9) continue;
+  const t = tone(x, y);
+  low = Math.min(low, t); high = Math.max(high, t);
+}
+
+// Shaped the way the crowd is shaped (see shade above): coarse rings and ribs
+// over an implied volume, light from the upper left, a rim on the silhouette
+// and grain in the hair. The photograph only lends the silhouette and a faint
+// trace of the features, so he reads as one of them, just recognisably him.
+const band = await shrink(solid, 1, 3);
+const slope = await shrink(solid, 1, 9);
+const toneSoft = await shrink(room, 3, 2.5);
+const soft = (x, y) => {
+  const t = pick(toneSoft, 3, x, y, 0) * 0.3 + pick(toneSoft, 3, x, y, 1) * 0.59 + pick(toneSoft, 3, x, y, 2) * 0.11;
+  return clamp((t - low) / Math.max(0.05, high - low));
+};
 const hero = Buffer.alloc(HERO_W * HERO_H * 4);
 const heroStill = Buffer.alloc(HERO_W * HERO_H * 4);
 
 for (let y = 0; y < HERO_H; y++) {
   for (let x = 0; x < HERO_W; x++) {
-    const hx = x - headLeft, hy = y - headTop;
-    // The portrait is cut at the collar; its own cropped shoulders would never
-    // match the crowd's, so the baked torso carries them instead.
-    const collar = clamp((headTop + headHeight * 0.7 - y) / 34 + (noise(x, y) - 0.5) * 0.5);
-    const portrait = hx >= 0 && hy >= 0 && hx < headWidth && hy < headHeight
-      ? [0, 1, 2, 3].map(c => head[(hy * headWidth + hx) * 4 + c] / 255 * collar)
-      : [0, 0, 0, 0];
-    const takeover = clamp((y - 270) / 50);
-    const body = takeover > 0 ? shade(torso, (x + 0.5) / 2, (y + 0.5) / 2, 9) : null;
-    if (!body && portrait[3] < 0.004) continue;
-    const share = body ? takeover * (1 - portrait[3] * 0.55) : 0;
-    const material = portrait.map((value, c) => clamp(value + (body ? body[c] * share : 0)));
-    write(hero, heroStill, (y * HERO_W + x) * 4, material);
+    const m = mask(x, y);
+    if (m < 0.01) continue;
+    const u = x / HERO_W, v = y / HERO_H;
+
+    const gx = pick(slope, 1, x + 2, y) - pick(slope, 1, x - 2, y);
+    const gy = pick(slope, 1, x, y + 2) - pick(slope, 1, x, y - 2);
+    const g = Math.hypot(gx, gy);
+    const light = g < 0.01 ? 0.62 : clamp(0.4 + 0.6 * ((gx / g) * 0.55 + (gy / g) * 0.83));
+    const inside = clamp((pick(volume, 1, x, y) - 0.5) * 2);
+    const z = Math.sqrt(1 - (1 - inside) ** 2);
+
+    const rings = 0.5 + 0.5 * Math.cos((v * 33 - z * 6) * TAU);
+    const ribs = 0.5 + 0.5 * Math.cos((u * 25 + (z - 0.5) * 8) * TAU);
+    const lattice = clamp(Math.max(rings ** 8, ribs ** 10) * 1.2);
+    const stipple = noise(x * 0.5, y * 0.5) > 0.38 ? 1 : 0.25;
+    const rim = clamp((1 - Math.abs(pick(band, 1, x, y) - 0.5) * 2.2) ** 2 * (0.45 + 0.75 * light));
+
+    const shade = soft(x, y);
+    const isHair = v < 0.45 && shade < 0.25;
+    const hairGrain = isHair ? (noise(Math.floor(x / 2), Math.floor(y / 2)) > 0.6 ? 0.55 : 0.1) : 0;
+    // Just enough of the face to know whose it is: brows, eyes, the mouth, the beard line.
+    const wideSoft = (soft(x - 4, y) + soft(x + 4, y) + soft(x, y - 4) + soft(x, y + 4)) / 4;
+    const trace = isHair ? 0 : clamp(Math.abs(shade - wideSoft) * 4.2 - 0.06) * 0.85;
+
+    const body = clamp((0.16 + 0.42 * z) * (0.55 + 0.45 * light) * (isHair ? 0.7 : 1) * (v < 0.62 ? 0.5 + 0.8 * shade : 1));
+    // The grid dims where the face is in shadow, so eyes, brows and beard read as
+    // darker hollows in the same lattice everyone else is made of.
+    const isFace = !isHair && v < 0.62;
+    const structure = clamp(lattice * stipple * (0.25 + 0.6 * z) * (isFace ? 0.2 + 1.1 * shade ** 1.3 : 1) + rim * 0.55 + hairGrain + trace);
+
+    // The chest dissolves into the floor and the shoulders into the air.
+    const floor = clamp((0.97 - v) * 7 + noise(x * 1.7, y * 1.3) * 0.9 - 0.2);
+    const side = clamp(Math.min(x, HERO_W - 1 - x) / 34 + noise(x * 2.1, y) * 0.6 - 0.2);
+    const coverage = m * clamp(Math.max(body * 3, structure * 1.5, rim)) * floor * side;
+    if (coverage < 0.004) continue;
+    write(hero, heroStill, (y * HERO_W + x) * 4, [structure, body, rim, coverage]);
   }
 }
 
@@ -251,4 +349,4 @@ if (process.env.CROWD_PREVIEW) {
     .png()
     .toFile(process.env.CROWD_PREVIEW.replace(/\.png$/, "-hero.png"));
 }
-console.log("baked hero");
+console.log(`baked hero ${HERO_W}x${HERO_H}`);

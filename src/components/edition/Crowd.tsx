@@ -5,15 +5,17 @@ import { useEffect, useRef } from "react";
 import styles from "./Closing.module.css";
 
 // The closing projection: Natan standing in a crowd of anonymous holograms,
-// edge to edge across the footer. Every figure is stored in the portrait's
-// channel layout (R lattice, G body, B rim, A coverage), so the whole crowd is
+// edge to edge across the footer. He stands among them at their scale, facing
+// the visitor, carved from a real photograph rather than drawn, and the one
+// figure the lamp is aimed at. Every figure is stored
+// in the portrait's channel layout (R lattice, G body, B rim, A coverage), so the whole crowd is
 // first gathered into one buffer and then painted in a single pass, with the
 // same raster, chroma split and tearing as the opening.
 
-const HERO = "/edition/portrait/turn.webp";
-const HERO_STILL = "/edition/portrait/turn-still.webp";
+const HERO = "/edition/closing/hero.webp";
+const HERO_STILL = "/edition/closing/hero-still.webp";
 const ATLAS = "/edition/closing/crowd.webp";
-const HERO_ASPECT = 500 / 660;
+const HERO_ASPECT = 460 / 494;
 const CELL_ASPECT = 256 / 320;
 const ATLAS_COLS = 4;
 const ATLAS_ROWS = 2;
@@ -48,9 +50,13 @@ function arrange(width: number, height: number): Figure[] {
   const random = seeded(7);
   const narrow = width < 760;
   // On a phone the stage is taller than it is wide; size people by the width instead.
-  const unit = narrow ? Math.min(height, width * 1.05) : height;
-  const heroHeight = unit * (narrow ? .86 : .94);
-  const heroClear = heroHeight * HERO_ASPECT * .5;
+  const unit = narrow ? Math.min(height, width * 1.15) : height;
+  const floor = height - unit;
+  // Natan stands between the third row and the front one, sized for that
+  // depth: the front row passes in front of his chest and shoulders, and only
+  // his face is kept clear.
+  const heroHeight = unit * (narrow ? .5 : .46);
+  const faceClear = heroHeight * HERO_ASPECT * .24;
   const figures: Figure[] = [];
 
   ROWS.forEach(row => {
@@ -58,10 +64,14 @@ function arrange(width: number, height: number): Figure[] {
     const wide = tall * CELL_ASPECT;
     let x = -wide * (.2 + random() * .3);
     while (x < width + wide * .5) {
-      const near = Math.abs(x - width / 2) < heroClear;
-      if (!(row.clear && near)) {
+      const offset = Math.abs(x - width / 2);
+      // Someone in the front row right before him stands lower, so their head
+      // reaches his chest and his face stays in view.
+      const below = row.clear && offset < faceClear + wide * .26;
+      const blocks = row.depth === .75 && offset < faceClear * 1.6;
+      if (!blocks) {
         figures.push({
-          x, bottom: height - unit + unit * row.bottom + (random() - .5) * unit * .03,
+          x, bottom: floor + unit * (row.bottom + (below ? .3 : 0)) + (random() - .5) * unit * .03,
           height: tall * (.92 + random() * .16),
           person: Math.floor(random() * PEOPLE), flip: random() > .5,
           dim: row.dim * (.82 + random() * .3), solid: row.solid,
@@ -73,11 +83,11 @@ function arrange(width: number, height: number): Figure[] {
   });
 
   figures.push({
-    x: width / 2, bottom: height + heroHeight * .05, height: heroHeight,
-    person: 0, flip: false, dim: 1, solid: 1, depth: .9, phase: 0, hero: true,
+    x: width / 2, bottom: floor + unit * .86, height: heroHeight,
+    person: 0, flip: false, dim: .74, solid: 1, depth: .85, phase: 0, hero: true,
   });
-  // Paint back to front; the hero sits between the third row and the sparse front row.
-  return figures.sort((a, b) => (a.hero ? .9 : a.depth) - (b.hero ? .9 : b.depth));
+  // Paint back to front, so the rows in front of him cover him the way they cover each other.
+  return figures.sort((a, b) => a.depth - b.depth);
 }
 
 const gatherVertex = `
@@ -397,7 +407,7 @@ export default function Crowd() {
 
     function sway(time: number) {
       return (figure: Figure): [number, number, number] => {
-        if (figure.hero) return [lean * 10, Math.sin(time * .7) * height * .006, 1];
+        if (figure.hero) return [lean * 26 * figure.depth, Math.sin(time * .9) * figure.height * .006, 1];
         const drift = Math.sin(time * .35 + figure.phase) * figure.height * .012 + lean * 26 * figure.depth;
         const breathe = Math.sin(time * .9 + figure.phase * 1.7) * figure.height * .004;
         // Now and then a figure loses its lock and drops out for a beat.
@@ -428,6 +438,11 @@ export default function Crowd() {
       layer!.height = Math.max(1, Math.round(height * scale));
       rows = Math.max(32, Math.round(height / 3.2));
       figures = arrange(width, height);
+      // The marker and the light column follow wherever the layout put him.
+      const hero = figures.find(figure => figure.hero)!;
+      holder!.style.setProperty("--hero-x", `${hero.x}px`);
+      holder!.style.setProperty("--hero-top", `${hero.bottom - hero.height}px`);
+      holder!.style.setProperty("--hero-h", `${hero.height}px`);
       queue();
     }
     function mode() {
@@ -487,11 +502,13 @@ export default function Crowd() {
   return (
     <div ref={stage} className={styles.stage}>
       <p className={styles.farewell}>
-        <span className={styles.see} data-text="See you">See you</span>{" "}
-        <span className={styles.soon} data-text="soon.">soon.</span>
+        <span className={styles.see}>See you</span>{" "}
+        <span className={styles.soon}>soon.</span>
       </p>
-      <Image ref={poster} src={HERO_STILL} alt="" width={500} height={660} unoptimized draggable={false} className={styles.poster} />
+      <span className={styles.beam} aria-hidden="true" />
+      <Image ref={poster} src={HERO_STILL} alt="" width={460} height={494} unoptimized draggable={false} className={styles.poster} />
       <canvas ref={canvas} aria-hidden="true" className={styles.canvas} />
+      <span className={styles.lock} aria-hidden="true"><i /><b>Natan</b><small>that&apos;s me</small></span>
       <span className={styles.emitter} aria-hidden="true" />
     </div>
   );
