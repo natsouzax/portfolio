@@ -1,0 +1,78 @@
+.cue {
+  position: fixed;
+  z-index: 96;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  padding: 0.42rem 0.7rem;
+  border: 1px solid rgba(200, 255, 112, 0.42);
+  border-radius: 0.45rem;
+  /*
+    Fundo opaco: antes era translúcido e, como o badge cruza a coluna de texto
+    em toda largura abaixo de ~1600px, o texto da página aparecia misturado ao
+    do badge. Opaco, ele apenas ocupa uma área pequena por 680ms sem embaralhar
+    a leitura.
+  */
+  background: var(--ink);
+  box-shadow:
+    0 0 1.4rem rgba(200, 255, 112, 0.12),
+    inset 0 0 0.9rem rgba(200, 255, 112, 0.05);
+  color: var(--signal);
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(0.72rem, 1.2vw, 0.9rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  pointer-events: none;
+  text-transform: uppercase;
+  animation: sound-cue 680ms var(--ease-out) both;
+}
+
+.cue::before {
+  margin-right: 0.4rem;
+  color: var(--text-faint);
+  content: "sfx /";
+  font-size: 0.56em;
+  letter-spacing: 0.08em;
+  vertical-align: 0.12em;
+}
+
+/*
+  Abaixo de ~1600px a coluna de leitura chega perto da borda e não sobra faixa
+  lateral para o badge. Reduzir a pegada é o que dá para fazer sem mexer na
+  identidade dele: sem o prefixo "sfx /", ele encolhe de ~172px para ~95px.
+*/
+@media (max-width: 1600px) {
+  .cue {
+    padding: 0.34rem 0.55rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.09em;
+  }
+
+  .cue::before {
+    content: none;
+  }
+}
+
+@keyframes sound-cue {
+  0% {
+    opacity: 0;
+    transform: translate3d(0.8rem, 0.4rem, 0) scale(0.82) skewX(-8deg);
+  }
+
+  18%,
+  72% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1) skewX(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-0.2rem, -0.3rem, 0) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cue {
+    display: none;
+  }
+}

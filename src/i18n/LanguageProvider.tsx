@@ -18,19 +18,10 @@ type LanguageContextValue = {
 
 const STORAGE_KEY = "natan-portfolio-locale";
 const localeListeners = new Set<() => void>();
-let fallbackLocale: Locale = "pt";
+let fallbackLocale: Locale = "en";
 
 function getStoredLocale(): Locale {
-  if (typeof window === "undefined") return "pt";
-
-  try {
-    const storedLocale = window.localStorage.getItem(STORAGE_KEY);
-    return storedLocale === "en" || storedLocale === "pt"
-      ? storedLocale
-      : fallbackLocale;
-  } catch {
-    return fallbackLocale;
-  }
+  return fallbackLocale;
 }
 
 function subscribeToLocale(onStoreChange: () => void) {
@@ -54,7 +45,7 @@ function storeLocale(locale: Locale) {
 }
 
 function getServerLocale(): Locale {
-  return "pt";
+  return "en";
 }
 
 const documentCopy: Record<
@@ -90,13 +81,13 @@ const documentCopy: Record<
   en: {
     lang: "en-GB",
     openGraphLocale: "en_GB",
-    title: "Natan Oliveira — Full Stack Developer",
+    title: "odevntzn — Natan Oliveira | Full Stack Developer",
     description:
       "Portfolio of Natan de Souza Oliveira, a product-minded full stack developer. Digital experiences from planning to deployment.",
-    applicationName: "Natan Oliveira's Workspace",
+    applicationName: "odevntzn — Natan Oliveira",
     keywords:
       "Natan Oliveira, full stack developer, product development, Next.js, TypeScript, React",
-    openGraphTitle: "Natan Oliveira — Digital products, thought through end to end",
+    openGraphTitle: "odevntzn — Digital products, made real",
     openGraphDescription:
       "Step into the workspace of a full stack developer who connects product, experience, and engineering.",
     twitterDescription: "Digital products from the first diagram to deployment.",

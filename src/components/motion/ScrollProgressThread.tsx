@@ -17,7 +17,7 @@ export default function ScrollProgressThread() {
       }
     : {
         label: "Story progress",
-        chapters: ["Entrance", "Method", "Lexuri", "Projects", "Contact"],
+        chapters: ["Entrance", "Lexuri", "Projects", "Method", "Contact"],
         summary: "The page has five chapters",
       };
   const { scrollYProgress } = useScroll();

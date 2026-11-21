@@ -329,9 +329,9 @@ export const portfolioContent = {
       },
     ],
     navigation: [
-      { href: "#sobre", label: "Method", chapter: "02" },
-      { href: "#lexuri", label: "Lexuri", chapter: "03" },
-      { href: "#projetos", label: "Work", chapter: "04" },
+      { href: "#lexuri", label: "Lexuri", chapter: "02" },
+      { href: "#projetos", label: "Work", chapter: "03" },
+      { href: "#sobre", label: "Method", chapter: "04" },
       { href: "#contato", label: "Contact", chapter: "05" },
     ],
   },

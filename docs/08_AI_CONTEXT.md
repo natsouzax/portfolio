@@ -1,4 +1,4 @@
-# Portfolio Website
+﻿# Portfolio Website
 # Product Requirements Document (PRD)
 
 Version: 1.0
@@ -7,7 +7,11 @@ Version: 1.0
 
 # Read First
 
-This document is the single source of truth for this project.
+## Current Direction Update (2026-11-20)
+
+Before implementation, read [`09_CURRENT_EXPERIENCE_BRIEF.md`](09_CURRENT_EXPERIENCE_BRIEF.md). It contains the latest approved user decisions for the brand, home intro, language, scroll/drag behavior, page flow, and footer. It supersedes conflicting earlier details in this PRD for those topics; non-conflicting quality and engineering requirements remain active.
+
+This document remains the source of truth for product requirements not superseded by the current direction brief. For brand, home intro, language, interaction, page flow, and footer, follow `09_CURRENT_EXPERIENCE_BRIEF.md`.
 
 Do not treat this document as a prompt.
 
@@ -599,3 +603,5 @@ And the final result reflects one simple idea:
 **This is not a portfolio.**
 
 **This is the digital workspace of a product engineer who loves building exceptional experiences.**
+
+\n

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fira_Code, Open_Sans, Unbounded } from "next/font/google";
+import { SoundProvider } from "@/audio/SoundProvider";
 import { LanguageProvider } from "@/i18n/LanguageProvider";
 
 import "./globals.css";
@@ -30,34 +31,34 @@ const deploymentUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(deploymentUrl),
   title: {
-    default: "Natan Oliveira — Desenvolvedor Full Stack",
-    template: "%s — Natan Oliveira",
+    default: "odevntzn — Natan Oliveira | Full Stack Developer",
+    template: "%s — odevntzn",
   },
   description:
-    "Portfólio de Natan de Souza Oliveira, desenvolvedor full stack orientado a produto. Experiências digitais do planejamento ao deploy.",
-  applicationName: "Workspace de Natan Oliveira",
+    "Portfolio of Natan de Souza Oliveira, a product-minded full stack developer building digital experiences from idea to launch.",
+  applicationName: "odevntzn — Natan Oliveira",
   authors: [{ name: "Natan de Souza Oliveira" }],
   creator: "Natan de Souza Oliveira",
   keywords: [
+    "odevntzn",
     "Natan Oliveira",
-    "desenvolvedor full stack",
-    "desenvolvimento de produto",
+    "full stack developer",
+    "product development",
     "Next.js",
     "TypeScript",
     "React",
   ],
   openGraph: {
     type: "website",
-    locale: "pt_BR",
-    title: "Natan Oliveira — Produtos digitais, pensados por inteiro",
-    description:
-      "Entre no workspace de um desenvolvedor full stack que conecta produto, experiência e engenharia.",
-    siteName: "Natan Oliveira",
+    locale: "en_GB",
+    title: "odevntzn — Digital products, made real",
+    description: "Explore the work and practice of Natan Oliveira, a product-minded full stack developer.",
+    siteName: "odevntzn",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Natan Oliveira — Desenvolvedor Full Stack",
-    description: "Produtos digitais do primeiro diagrama ao deploy.",
+    title: "odevntzn — Natan Oliveira | Full Stack Developer",
+    description: "Digital products from first idea to deployment.",
   },
   icons: {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
@@ -79,11 +80,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="pt-BR"
+      lang="en-GB"
       className={`${firaCode.variable} ${openSans.variable} ${unbounded.variable}`}
     >
       <body>
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <SoundProvider>{children}</SoundProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

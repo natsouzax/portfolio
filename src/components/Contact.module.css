@@ -134,6 +134,49 @@
   transform: translateZ(3rem);
 }
 
+.guideEnd > figure img {
+  filter: grayscale(1) sepia(1) saturate(3.2) hue-rotate(38deg) brightness(1.22) drop-shadow(0 0 1.2rem rgba(200, 255, 112, 0.58));
+}
+
+.binaryRain {
+  position: absolute;
+  inset: 14% auto auto 4%;
+  color: rgba(200, 255, 112, 0.22);
+  font: 0.58rem/2.2 var(--font-mono), monospace;
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 1rem rgba(200, 255, 112, 0.26);
+  transform: rotate(-12deg) translateZ(1rem);
+}
+
+.drones { position: absolute; inset: 0; pointer-events: none; }
+.drones i {
+  position: absolute; top: 26%; left: 8%; width: 2.8rem; height: 1.7rem;
+  border: 1px solid #859a74; border-radius: 60% 60% 38% 38%;
+  background: linear-gradient(#45553b, #11160e 42%, #080c06 70%, #344329);
+  box-shadow: -.9rem .15rem 0 -.45rem #627459, .9rem .15rem 0 -.45rem #627459;
+  animation: droneHover 4s ease-in-out infinite alternate;
+}
+.drones i::before { position: absolute; content: ""; inset: 45% 22% 39%; background: var(--signal); box-shadow: 0 0 .55rem var(--signal); }
+.drones i::after { position: absolute; content: ""; inset: 103% 32% -40%; background: linear-gradient(#b5ef7177, transparent); clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%); }
+.drones i + i { top: 50%; left: auto; right: 6%; scale: .68; animation-delay: -2s; }
+@keyframes droneHover { from { transform: translateY(-.35rem) rotate(-6deg); } to { transform: translateY(.35rem) rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) { .drones i { animation: none; } }
+
+.waiting {
+  display: grid;
+  gap: 0.45rem;
+  text-align: right;
+}
+
+.waiting strong {
+  color: var(--signal);
+  font: 700 clamp(1.05rem, 2vw, 1.6rem)/1 var(--font-brand), sans-serif;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 1.2rem rgba(200, 255, 112, 0.32);
+}
+
+.waiting span { color: var(--text-soft); font-size: 0.58rem; }
+
 .guideEnd::before {
   width: 21rem;
   height: 21rem;

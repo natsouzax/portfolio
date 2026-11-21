@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Natan Oliveira — Produtos digitais, pensados por inteiro";
+export const alt = "odevntzn — Natan Oliveira, full stack developer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -67,7 +67,7 @@ export default function OpenGraphImage() {
               NO
             </div>
             <div style={{ display: "flex", fontSize: "20px", fontWeight: 700 }}>
-              Natan Oliveira
+              odevntzn
             </div>
             <div
               style={{
@@ -94,9 +94,9 @@ export default function OpenGraphImage() {
                 lineHeight: 0.98,
               }}
             >
-              Produtos digitais,
+              Natan Oliveira
               <br />
-              pensados por inteiro.
+              Full stack developer
             </div>
             <div
               style={{
@@ -106,7 +106,7 @@ export default function OpenGraphImage() {
                 fontSize: "21px",
               }}
             >
-              Produto · Experiência · Engenharia
+              Product · Experience · Engineering
             </div>
           </div>
         </div>

@@ -45,6 +45,7 @@ export default function StepCycle({
                 key={step.id}
                 type="button"
                 className={styles.node}
+                data-sound="binary"
                 data-active={isActive || undefined}
                 aria-pressed={isActive}
                 onClick={() => onSelect(index)}

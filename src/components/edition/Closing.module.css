@@ -1,0 +1,81 @@
+.closing {
+  --volt: #c8ff70;
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  color: #f7f8f0;
+  background-color: #080a07;
+  background-image: radial-gradient(ellipse at 75% 53%, #1e2b1570, transparent 43%);
+  padding-inline: clamp(1.15rem, 5.2vw, 6rem);
+}
+
+.invitation {
+  position: relative;
+  display: grid;
+  grid-template-columns: .96fr 1.04fr;
+  align-items: center;
+  width: min(100%, 100rem);
+  min-height: clamp(34rem, 85svh, 72rem);
+  margin-inline: auto;
+}
+
+.copy { z-index: 1; padding-block: 5rem; }
+.status {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  color: #c1c8b6;
+  margin: 0 0 clamp(1.5rem, 3vw, 3rem);
+  font: 500 .72rem/1.45 var(--font-mono), monospace;
+}
+.status i { width: .4rem; height: .4rem; border-radius: 50%; background: var(--volt); }
+.copy h2 {
+  margin: 0;
+  font: 500 clamp(4.9rem, 9.4vw, 10rem)/.86 var(--font-brand), sans-serif;
+  letter-spacing: -.082em;
+}
+.copy h2 em { color: var(--volt); font-style: normal; }
+.email {
+  display: inline-flex;
+  align-items: center;
+  gap: 2rem;
+  min-height: 3.6rem;
+  margin-top: clamp(1.8rem, 3vw, 3rem);
+  border-bottom: 1px solid #c8ff7080;
+  font-weight: 600;
+}
+.email svg { width: 1.2rem; transition: transform .25s ease; }
+.email:hover { color: var(--volt); }
+.email:hover svg { transform: translate(2px, -2px); }
+
+.theatre { position: relative; display: grid; align-items: center; isolation: isolate; }
+.theatre::before {
+  content: ""; position: absolute; inset: 60% -40% -4% -35%; z-index: -1;
+  background-image: linear-gradient(#8cb66728 1px, transparent 1px), linear-gradient(90deg, #8cb66728 1px, transparent 1px);
+  background-size: 2.8rem 2.8rem;
+  transform: perspective(15rem) rotateX(63deg);
+  mask-image: radial-gradient(ellipse at center, black, transparent 68%);
+}
+.sculpture { width: 100%; height: auto; display: block; }
+.bottom {
+  position: relative; display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; border-top: 1px solid #ffffff30; padding-block: 1.15rem;
+  width: min(100%, 100rem); margin-inline: auto; color: #bcc2b3;
+  font: 500 .75rem/1.5 var(--font-mono), monospace;
+}
+.bottom nav { display: flex; gap: clamp(1rem, 3.4vw, 4rem); }
+.bottom a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+.bottom a:hover { color: var(--volt); }
+.slash { color: #657156; padding-inline: .25rem; }
+.back { gap: .8rem; }
+
+@media (max-width: 760px) {
+  .invitation { grid-template-columns: 1fr; padding-top: 4rem; min-height: auto; }
+  .copy { padding-block: 0; }
+  .copy h2 { font-size: clamp(4.1rem, 13vw, 6.5rem); }
+  .status { margin-bottom: 1.5rem; }
+  .email { margin-top: 1.25rem; }
+  .theatre { width: min(100%, 32rem); justify-self: center; }
+  .bottom { flex-wrap: wrap; gap: .15rem 1.5rem; }
+  .bottom nav { width: 100%; order: 2; }
+}

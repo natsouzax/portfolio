@@ -68,7 +68,7 @@ export default function WorkspaceGuide({
         >
           {mode === "observing" || mode === "waving" ? (
             <Image
-              src={mode === "waving" ? "/characters/natan-waving-v2.png" : "/characters/natan-observing.png"}
+              src={mode === "waving" ? "/characters/identity-sprites-v1/fullbody-wave.webp" : "/characters/natan-observing.png"}
               alt={locale === "pt" ? `Natan Oliveira em pixel art, ${label}` : `Pixel art of Natan Oliveira, ${label}`}
               fill
               priority={priority}

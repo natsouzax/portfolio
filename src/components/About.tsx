@@ -91,7 +91,7 @@ export default function About() {
         <header className={styles.header} data-reveal>
           <div>
             <p className="chapter-kicker">
-              <span className="chapter-number">02</span>
+              <span className="chapter-number">04</span>
               {copy.kicker}
             </p>
             <h2 id="about-title" className="section-title">

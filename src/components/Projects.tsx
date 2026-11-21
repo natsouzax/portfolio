@@ -43,7 +43,7 @@ function ProjectCard({
         </ul>
         <div className={styles.projectLinks}>
           {project.links.map((link) => (
-            <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+            <a key={link.href} href={link.href} target="_blank" rel="noreferrer" data-sound="whoosh">
               {link.label}
               <Icon name="arrowUpRight" />
             </a>
@@ -102,7 +102,7 @@ export default function Projects() {
           <header className={styles.header} data-reveal>
             <div>
               <p className="chapter-kicker">
-                <span className="chapter-number">04</span>
+                <span className="chapter-number">03</span>
                 {copy.kicker}
               </p>
               <h2
@@ -118,7 +118,7 @@ export default function Projects() {
 
           <section className={styles.workGroup} aria-labelledby="projects-group-title">
             <header className={styles.groupHeader} data-reveal>
-              <span>04.A</span>
+              <span>03.A</span>
               <div>
                 <h3 id="projects-group-title">{copy.projectsTitle}</h3>
                 <p>{copy.projectsLede}</p>
@@ -138,7 +138,7 @@ export default function Projects() {
 
           <section className={styles.workGroup} aria-labelledby="delivered-group-title">
             <header className={styles.groupHeader} data-reveal>
-              <span>04.B</span>
+              <span>03.B</span>
               <div>
                 <h3 id="delivered-group-title">{copy.deliveredTitle}</h3>
                 <p>{copy.deliveredLede}</p>

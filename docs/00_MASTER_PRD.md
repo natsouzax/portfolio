@@ -6,6 +6,10 @@ Version: 1.0
 Project: Personal Portfolio
 Status: Living Document
 
+## Current Direction Update (2026-11-20)
+
+Read [`09_CURRENT_EXPERIENCE_BRIEF.md`](09_CURRENT_EXPERIENCE_BRIEF.md) before using this PRD for implementation. That brief records the latest approved decisions for the brand, English-first site, home intro, scroll/drag interaction, page flow, and footer, and supersedes conflicting older details in those areas. The broader product, accessibility, performance, and quality principles in this PRD still apply.
+
 ---
 
 # Executive Summary

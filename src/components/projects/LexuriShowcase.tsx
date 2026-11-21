@@ -304,7 +304,7 @@ function ProductIntroduction() {
   return (
     <div className={styles.productIntro}>
       <p className="chapter-kicker">
-        <span className="chapter-number">03</span>
+        <span className="chapter-number">02</span>
         {copy.kicker}
       </p>
       <h2 id="lexuri-title">{copy.title}</h2>
