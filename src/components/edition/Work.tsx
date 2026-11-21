@@ -1,46 +1,8 @@
 import { Icon } from "@/components/ui/Icon";
 import { portfolioContent } from "@/data/portfolio";
+import LexuriPlayer from "./LexuriPlayer";
+import FluxoPhone from "./FluxoPhone";
 import styles from "./Work.module.css";
-
-// Editorial artwork for the listening and review loop in Lexuri.
-function Tape() {
-  return (
-    <div className={styles.tapeScene} aria-hidden="true">
-      <div className={styles.tape}>
-        <i className={styles.screws} />
-        <div className={styles.tapeLabel}>
-          <span>LEXURI AUDIO LIBRARY</span>
-          <strong>Lexuri.</strong>
-          <small>ENGLISH IN CONTEXT</small>
-        </div>
-        <div className={styles.tapeWindow}>
-          <i /><b /><i />
-        </div>
-        <div className={styles.tapeBase}><i /><i /></div>
-      </div>
-    </div>
-  );
-}
-
-function Ledger() {
-  return (
-    <div className={styles.ledgerScene} aria-hidden="true">
-      <div className={styles.paper}>
-        <b>Fluxo</b><small>MONTHLY OVERVIEW</small>
-        <div className={styles.rule} />
-        <span>Budget summary</span>
-        <div className={styles.bars}>
-          {[38, 56, 43, 70, 59, 92, 80].map((height, i) => (
-            <i key={i} style={{ height: height + "%" }} />
-          ))}
-        </div>
-        <div className={styles.rule} />
-        <small>ACCOUNTS · GOALS · NOTES</small>
-        <div className={styles.barcode} />
-      </div>
-    </div>
-  );
-}
 
 const { portfolioProjects, deliveredWork } = portfolioContent.en;
 const archive = [portfolioProjects[1], ...deliveredWork];
@@ -56,14 +18,15 @@ export default function Work() {
           </header>
           <div className={styles.features}>
             <article id="lexuri" className={styles.lead} data-assemble="">
-              <a className={styles.artLink} href="https://lexuri.app" aria-label="Visit Lexuri">
-                <Tape /><span className={styles.open}><Icon name="arrowUpRight" /></span>
-              </a>
+              <div className={styles.artFrame}>
+                <LexuriPlayer />
+                <a className={styles.open} href="https://lexuri.app" aria-label="Visit Lexuri"><Icon name="arrowUpRight" /></a>
+              </div>
               <div className={styles.projectTitle}><h3><a href="https://lexuri.app" data-marker="">Lexuri</a></h3><small>Language learning</small></div>
               <p>Pause on a phrase, hear how it sounds, then come back to it. I designed and built a way to study English through the videos you already watch.</p>
             </article>
             <article className={styles.second} data-assemble="">
-              <Ledger />
+              <div className={styles.artFrame}><FluxoPhone /></div>
               <div className={styles.projectTitle}><h3>Fluxo</h3><small>Mobile product</small></div>
               <p>A personal finance app that brings accounts, goals and notes together. I shaped the product and built its mobile experience in React Native.</p>
               <a className={styles.authorLink} data-marker="" href={portfolioProjects[0].links[0].href}>My GitHub profile <Icon name="arrowUpRight" /></a>

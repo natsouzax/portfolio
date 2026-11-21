@@ -50,53 +50,15 @@
 .features { display: grid; grid-template-columns: 1.42fr 1fr; gap: clamp(1.5rem, 3vw, 3.5rem); align-items: start; }
 .features article { min-width: 0; }
 .second { margin-top: clamp(3rem, 10vw, 11rem); }
-.artLink { display: block; position: relative; }
 .open {
   position: absolute; top: 1rem; right: 1rem; width: 2.7rem; aspect-ratio: 1; display: grid;
   place-items: center; background: var(--volt); color: #070806; border-radius: 50%;
   transition: transform .3s;
 }
-.artLink:hover .open { transform: translate(2px,-2px); }
 .projectTitle { display: flex; align-items: baseline; justify-content: space-between; gap: .65rem; margin-top: 1.25rem; padding-top: .65rem; border-top: 1px solid var(--edgeStrong); }
 .projectTitle h3 { font-size: clamp(1.85rem, 3.3vw, 3.9rem); font-weight: 600; letter-spacing: -.065em; line-height: 1; margin: 0; }
 .projectTitle small, .row summary small { color: var(--mute); font: .68rem/1.4 var(--font-mono), monospace; }
 .features article > p { max-width: 39rem; margin: .9rem 0 0; color: var(--mute); font-size: clamp(.95rem, 1.2vw, 1.13rem); line-height: 1.6; }
-.tapeScene, .ledgerScene {
-  position: relative; isolation: isolate; overflow: hidden; display: grid; place-items: center; container-type: inline-size;
-}
-.tapeScene { aspect-ratio: 1.52; perspective: 70rem; background: radial-gradient(ellipse at 34% 8%,#f2ffc6,transparent 56%),linear-gradient(145deg,#c8ff70,#a9e158 68%,#5f8a31); }
-.tapeScene::before {
-  content: ""; position: absolute; width: 63%; height: 17%; left: 18%; bottom: 12%; transform: rotate(-9deg);
-  background: #344321; opacity: .45; filter: blur(2.2cqw); border-radius: 50%;
-}
-.tape {
-  position: relative; width: 70%; aspect-ratio: 1.57; border-radius: 2.3cqw;
-  background: repeating-linear-gradient(0deg, #1c211e 0 .1cqw,#282e29 .14cqw .36cqw);
-  transform: rotateZ(-11deg) rotateX(16deg) rotateY(-8deg); transition: transform .65s cubic-bezier(.2,.7,.2,1);
-  box-shadow: inset .15cqw .2cqw .3cqw #7a8277,inset -.25cqw -.25cqw .25cqw #080c09, .2cqw .5cqw #343b33,.3cqw .92cqw #20251f,.45cqw 1.28cqw #161b16,1.2cqw 2.3cqw 2.4cqw #24321c66;
-}
-.artLink:is(:focus-visible,:hover) .tape { transform: rotateZ(-7deg) rotateX(11deg) rotateY(-4deg) translateY(-1%); }
-.screws { position: absolute; inset: 5% 4% auto; height: 90%; background: radial-gradient(circle at 1% 2%,#434b42 0 .36cqw,#969c89 .4cqw .6cqw,transparent .7cqw),radial-gradient(circle at 99% 2%,#434b42 0 .36cqw,#969c89 .4cqw .6cqw,transparent .7cqw),radial-gradient(circle at 1% 98%,#434b42 0 .36cqw,#969c89 .4cqw .6cqw,transparent .7cqw),radial-gradient(circle at 99% 98%,#434b42 0 .36cqw,#969c89 .4cqw .6cqw,transparent .7cqw); }
-.tapeLabel { position: absolute; inset: 9% 7% 26%; padding: 1.5cqw 2.1cqw; border-radius: .8cqw; color: #11160e; background: linear-gradient(100deg,#efefdf,#d4d5bf); overflow:hidden; }
-.tapeLabel span, .tapeLabel small { display: block; font: 600 .95cqw/1.1 var(--font-mono),monospace; letter-spacing: .11em; }
-.tapeLabel strong { display:block; font: italic 9cqw/.95 Georgia,serif; letter-spacing:-.09em; }
-.tapeLabel small { position:absolute; top:1.5cqw; right:2cqw; }
-.tapeWindow { position:absolute; inset:42% 15% auto; height:24%; display:flex; align-items:center; justify-content:space-between; padding-inline:1cqw; border:.45cqw solid #151913; border-radius:4cqw; background:linear-gradient(5deg,#333a31,#11150f); box-shadow:0 .22cqw .08cqw #e6e9d9; }
-.tapeWindow i { width:6.5cqw; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,#22291e 28%,transparent 30%),repeating-conic-gradient(#c1c7b9 0 11deg,#464d41 12deg 30deg); box-shadow:0 0 0 .7cqw #060805; }
-.tapeWindow b { width:45%; height:52%; border:.3cqw solid #151a13; background: radial-gradient(circle at -25% 50%,#3a2119 55%,transparent 57%),linear-gradient(12deg,#5b6555,#969e91); }
-.tapeBase { position:absolute; inset:auto 18% 0; height:21%; clip-path:polygon(8% 0,92% 0,100% 100%,0 100%); background:linear-gradient(#545c50,#262d26 10%,#252a24); display:flex; align-items:end; justify-content:space-between; padding:0 17% 1cqw; }
-.tapeBase i { width:2.1cqw; aspect-ratio:1; border-radius:50%; background:#080a07; box-shadow:inset 0 .25cqw .2cqw #000,0 .15cqw #60665a; }
-.ledgerScene { aspect-ratio:1.1; background: radial-gradient(ellipse at 30% 20%,#18220f,#0c120a 58%,#070906); }
-.paper { width:48%; padding:4cqw 3cqw 5cqw; color:#1c2619; background:linear-gradient(103deg,#c6cabc,#fbfbed 32%,#e2e6d8 82%,#c7c9bc); transform: rotate(8deg) skewY(-3deg); box-shadow:2.4cqw 3cqw 3.5cqw #111911aa; font-family:var(--font-mono),monospace; }
-.paper::after { content:""; position:absolute; left:0; right:0; bottom:-.85cqw; height:1cqw; background:linear-gradient(135deg,#e3e7d9 25%,transparent 25%) -1cqw 0/2cqw 2cqw,linear-gradient(225deg,#e3e7d9 25%,transparent 25%) -1cqw 0/2cqw 2cqw; }
-.paper b,.paper small,.paper span { display:block; }
-.paper b { font:600 8cqw/1 var(--font-sans),sans-serif; letter-spacing:-.09em; }
-.paper small { margin-top:1.8cqw; font-size:1.25cqw; letter-spacing:.08em; }
-.paper span { font-size:2.2cqw; }
-.rule { border-top:1px dashed #69715f; margin-block:2.7cqw; }
-.bars { display:flex; height:12cqw; align-items:end; gap:.8cqw; margin-top:2.8cqw; }
-.bars i { flex:1; background:#4a7a22; }
-.barcode { height:4cqw; width:67%; margin:3cqw auto 0; background:repeating-linear-gradient(90deg,#293024 0 .42cqw,transparent .42cqw .75cqw,#293024 .75cqw 1cqw,transparent 1cqw 1.75cqw,#293024 1.75cqw 2.5cqw,transparent 2.5cqw 3cqw); }
 .archive { margin-top:clamp(4rem,8vw,9rem); display:grid; grid-template-columns:minmax(9rem,.55fr) 2fr; gap:3vw; }
 .archive h3 { font-size:clamp(1.2rem,2vw,2rem); letter-spacing:-.055em; margin:.75rem 0 0; }
 .rows { border-bottom:1px solid var(--edge); }
@@ -127,29 +89,15 @@
   .heading h2 { font-size:clamp(3.3rem,10.6vw,5.8rem); }
   .features { gap:2.8rem; }
   .second { margin:0; }
-  .ledgerScene { aspect-ratio:1.45; }
-  .paper { width:42%; padding:2.8cqw; }
   .archive { gap:1.25rem; }
   .row summary { gap:.6rem; }
   .row summary small { display:none; }
   .row summary { grid-template-columns:1.9rem 1fr 1.5rem; }
 }
 @media(prefers-reduced-motion:reduce) {
-  .artLink:is(:hover,:focus-visible) .tape { transform:rotateZ(-11deg) rotateX(16deg) rotateY(-8deg); }
 }
 
 /* Each piece sits in its own pool of light, which lifts when you reach for it. */
-.artLink::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 1px var(--edge);
-  transition: box-shadow 320ms var(--ease-out);
-}
-.artLink:is(:hover, :focus-visible)::after {
-  box-shadow: inset 0 0 0 1px rgba(200, 255, 112, 0.55), 0 0 2.5rem rgba(200, 255, 112, 0.16);
-}
 /* Index marks, set in the same mono as the telemetry in the opening. The
    number is its own grid cell: `strong` already spends its ::before on the
    hover marker. */
@@ -164,7 +112,6 @@
 }
 .row[open] summary::before { color: var(--type); }
 @media (prefers-reduced-motion: reduce) {
-  .artLink::after { transition: none; }
 }
 
 /*
@@ -186,4 +133,24 @@
 .archive[data-assemble] { --at: .72; }
 @media (prefers-reduced-motion: reduce) {
   .work [data-assemble] { --shown: 1; transform: none; }
+}
+
+/* The project artwork is a working demo now, so the frame is a plain box and
+   the link to the live product sits in its corner. */
+.artFrame { position: relative; display: block; }
+.artFrame::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--edge);
+  transition: box-shadow 320ms var(--ease-out);
+}
+.artFrame:is(:hover, :focus-within)::after {
+  box-shadow: inset 0 0 0 1px rgba(200, 255, 112, 0.55), 0 0 2.5rem rgba(200, 255, 112, 0.16);
+}
+.artFrame .open { transition: transform .3s; }
+.artFrame:is(:hover, :focus-within) .open { transform: translate(2px, -2px); }
+@media (prefers-reduced-motion: reduce) {
+  .artFrame::after, .artFrame .open { transition: none; }
 }

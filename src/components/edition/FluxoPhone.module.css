@@ -1,0 +1,124 @@
+.scene {
+  --volt: #c8ff70;
+  --paper: #eef3e6;
+  --mute: #8d9a84;
+  --a: #c8ff70;
+  --b: #76d8ff;
+  --c: #ffcf6e;
+  --d: #b9a7ff;
+  container-type: inline-size;
+  /* A portrait frame: a 0.482 handset cannot be read inside a landscape box.
+     This also sets the tall card against the wide Lexuri one beside it. */
+  aspect-ratio: 0.82;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 55% at 76% 8%, rgba(200, 255, 112, 0.14), transparent 62%),
+    linear-gradient(200deg, #121a0e, #070906 64%);
+}
+
+/* The handset. Sized from the container so it holds at any column width. */
+.phone {
+  /* Sized so the whole handset fits the frame: at 0.482 the height is just
+     over twice the width, and the frame is 1.1 wide to 1 tall. */
+  width: 55cqw;
+  aspect-ratio: 0.482;
+  padding: 1.1cqw;
+  border-radius: 7cqw;
+  background: linear-gradient(150deg, #39412f, #0d1109 38%, #272e20);
+  box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, 0.6), inset 0 0 0 0.3cqw rgba(238, 243, 230, 0.12);
+  transform: rotate(-4deg);
+}
+.screen {
+  display: grid;
+  grid-template-rows: auto auto auto auto 1fr;
+  gap: 2.4cqw;
+  height: 100%;
+  padding: 2.4cqw 3cqw 3cqw;
+  border-radius: 6cqw;
+  background: #080b07;
+  overflow: hidden;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--mute);
+  font: 2.3cqw var(--font-mono), monospace;
+}
+.notch { width: 11cqw; height: 1.5cqw; border-radius: 999px; background: #000; }
+
+.account { display: grid; gap: 0.6cqw; }
+.label { color: var(--mute); font: 2.3cqw var(--font-mono), monospace; letter-spacing: 0.14em; text-transform: uppercase; }
+.total {
+  color: var(--paper);
+  font: 600 8.4cqw/1 var(--font-sans), sans-serif;
+  letter-spacing: -0.05em;
+  animation: settle 420ms var(--ease-out);
+}
+@keyframes settle {
+  from { opacity: 0; transform: translateY(0.3em); }
+}
+
+.split { display: flex; gap: 0.7cqw; height: 2.2cqw; }
+.split i {
+  border-radius: 999px;
+  background: var(--a);
+  transition: flex-grow 420ms var(--ease-out), opacity 300ms var(--ease-out);
+}
+.split i[data-tone="b"] { background: var(--b); }
+.split i[data-tone="c"] { background: var(--c); }
+.split i[data-tone="d"] { background: var(--d); }
+.split i[data-dim] { opacity: 0.22; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 1cqw; }
+.chips button {
+  padding: 0.5em 0.9em;
+  border: 1px solid rgba(238, 243, 230, 0.2);
+  border-radius: 999px;
+  background: none;
+  color: var(--mute);
+  font: 600 2.4cqw var(--font-mono), monospace;
+  cursor: pointer;
+  transition: color 200ms var(--ease-out), border-color 200ms var(--ease-out), background-color 200ms var(--ease-out);
+}
+.chips button:is(:hover, :focus-visible) { color: var(--paper); border-color: rgba(238, 243, 230, 0.5); }
+.chips button[data-on] { background: var(--paper); border-color: var(--paper); color: #080b07; }
+.chips button[data-on][data-tone="a"] { background: var(--a); border-color: var(--a); }
+.chips button[data-on][data-tone="b"] { background: var(--b); border-color: var(--b); }
+.chips button[data-on][data-tone="c"] { background: var(--c); border-color: var(--c); }
+.chips button[data-on][data-tone="d"] { background: var(--d); border-color: var(--d); }
+
+/* The month runs past the bottom of the screen, as it would on a phone,
+   so it fades out rather than being sliced through a row. */
+.statement { display: grid; align-content: start; gap: 0.4cqw; margin: 0; padding: 0; list-style: none; min-height: 0;
+  overflow: hidden; mask-image: linear-gradient(#000 72%, transparent); }
+.statement li {
+  display: grid;
+  grid-template-columns: 1.6cqw 1fr auto;
+  align-items: center;
+  gap: 2cqw;
+  padding: 1.5cqw 0;
+  border-top: 1px solid rgba(238, 243, 230, 0.1);
+  animation: deal 360ms var(--ease-out) backwards;
+  animation-delay: calc(var(--i) * 45ms);
+}
+@keyframes deal {
+  from { opacity: 0; transform: translateY(0.6cqw); }
+}
+.statement i { width: 1.6cqw; height: 1.6cqw; border-radius: 50%; background: var(--a); }
+.statement i[data-tone="b"] { background: var(--b); }
+.statement i[data-tone="c"] { background: var(--c); }
+.statement i[data-tone="d"] { background: var(--d); }
+.statement span { display: grid; min-width: 0; }
+.statement strong { color: var(--paper); font: 500 2.9cqw/1.3 var(--font-sans), sans-serif; letter-spacing: -0.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.statement small { color: var(--mute); font: 2.2cqw var(--font-mono), monospace; }
+.statement b { color: var(--paper); font: 500 2.8cqw var(--font-mono), monospace; }
+.statement b[data-in] { color: var(--volt); }
+
+@media (prefers-reduced-motion: reduce) {
+  .total, .statement li { animation: none; }
+  .split i, .chips button { transition: none; }
+}

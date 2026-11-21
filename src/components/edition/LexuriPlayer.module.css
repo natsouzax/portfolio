@@ -1,0 +1,145 @@
+.player {
+  --ink: #070906;
+  --glass: #0d110b;
+  --volt: #c8ff70;
+  --paper: #eef3e6;
+  --mute: #93a088;
+  container-type: inline-size;
+  aspect-ratio: 1.52;
+  display: grid;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 0%, rgba(200, 255, 112, 0.16), transparent 62%),
+    linear-gradient(160deg, #11170d, #070906 62%);
+}
+
+.bezel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 3cqw;
+  padding: 4.5cqw 5cqw;
+  min-height: 0;
+}
+
+/* The corner link to the live product sits over this row, so leave it room. */
+.head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-right: 8cqw; }
+.badge {
+  padding: 0.35em 0.75em;
+  border: 1px solid rgba(200, 255, 112, 0.42);
+  border-radius: 999px;
+  color: var(--volt);
+  font: 600 2.1cqw/1 var(--font-mono), monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.meta { color: var(--mute); font: 2.1cqw var(--font-mono), monospace; letter-spacing: 0.1em; }
+
+.stage { display: grid; align-content: center; gap: 3.4cqw; min-height: 0; }
+
+/* The line itself. Words are controls, so they have to look like language
+   first and targets second. */
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 1.6cqw;
+  margin: 0;
+}
+.word {
+  position: relative;
+  padding: 0.1em 0.06em;
+  border: 0;
+  background: none;
+  color: var(--paper);
+  font: 500 6.4cqw/1.28 var(--font-sans), sans-serif;
+  letter-spacing: -0.03em;
+  cursor: pointer;
+  transition: color 240ms var(--ease-out), opacity 240ms var(--ease-out);
+}
+.word[data-state="ahead"] { opacity: 0.38; }
+.word[data-state="past"] { opacity: 0.62; }
+.word[data-state="active"] { color: var(--ink); opacity: 1; }
+/* The sweep that lands under the current word. */
+.word::before {
+  content: "";
+  position: absolute;
+  inset: 0.14em -0.18em 0.12em;
+  z-index: -1;
+  background: var(--volt);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 260ms var(--ease-out);
+}
+.word { isolation: isolate; }
+.word[data-state="active"]::before { transform: scaleX(1); }
+/* Anything with a meaning behind it is marked, the way the product marks
+   what it can teach you. */
+.word[data-known]::after {
+  content: "";
+  position: absolute;
+  left: 0.06em;
+  right: 0.06em;
+  bottom: 0.08em;
+  border-bottom: 2px dotted rgba(200, 255, 112, 0.5);
+}
+.word[data-state="active"][data-known]::after { border-bottom-color: rgba(7, 9, 6, 0.45); }
+.word:focus-visible { outline: 2px solid var(--volt); outline-offset: 2px; }
+
+/* The meaning that opens under the word you stop on. */
+.card {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 2cqw;
+  min-height: 7.5cqw;
+  padding: 2.2cqw 2.6cqw;
+  border-left: 2px solid var(--volt);
+  background: rgba(238, 243, 230, 0.05);
+}
+.card strong { color: var(--paper); font-size: 3.4cqw; letter-spacing: -0.02em; }
+.gloss { color: var(--volt); font: italic 3.4cqw Georgia, serif; }
+.card small { flex: 1 1 100%; color: var(--mute); font: 2.2cqw/1.5 var(--font-mono), monospace; }
+.hint { flex: 1 1 100%; }
+
+.transport { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 3cqw; }
+.play {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  min-height: 44px;
+  padding: 0 1.1em;
+  border: 1px solid rgba(200, 255, 112, 0.45);
+  border-radius: 999px;
+  background: none;
+  color: var(--volt);
+  font: 600 2.3cqw var(--font-mono), monospace;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out);
+}
+.play:is(:hover, :focus-visible) { background: var(--volt); color: var(--ink); }
+
+.wave { display: flex; align-items: center; gap: 0.6cqw; height: 7cqw; }
+.wave i {
+  flex: 1;
+  height: 16%;
+  background: rgba(200, 255, 112, 0.3);
+  transform-origin: center;
+}
+/* Only the playing state moves; paused leaves a readable still waveform. */
+.wave[data-running] i {
+  height: var(--h);
+  animation: pulse 1.05s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -90ms);
+  background: var(--volt);
+}
+@keyframes pulse {
+  from { transform: scaleY(0.3); opacity: 0.55; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+.counter { color: var(--mute); font: 2.2cqw var(--font-mono), monospace; }
+
+@media (prefers-reduced-motion: reduce) {
+  .word, .word::before, .play { transition: none; }
+  .wave[data-running] i { animation: none; }
+}
