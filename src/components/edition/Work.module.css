@@ -1,9 +1,34 @@
+/*
+  The work and the profile are read on the same transmission as the opening:
+  black ground, bone-white type, one neon green. The objects on the page --
+  the cassette, the printed statement -- stay physical and pale, so the panels
+  read as black and white with the green doing the signalling.
+*/
 .work, .about {
-  --paper: #eeefe7;
-  --type: #171a15;
-  background: var(--paper);
+  --type: #eef3e6;
+  --mute: #99a391;
+  --edge: rgba(238, 243, 230, 0.14);
+  --edgeStrong: rgba(238, 243, 230, 0.3);
+  --volt: #c8ff70;
+  position: relative;
+  isolation: isolate;
+  background: #070806;
   color: var(--type);
 }
+/* Survey grid and a pool of signal behind the headline. */
+.work::before, .about::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 45% at 16% 0%, rgba(200, 255, 112, 0.1), transparent 68%),
+    linear-gradient(rgba(238, 243, 230, 0.04) 1px, transparent 1px) 0 0 / 100% 4.75rem,
+    linear-gradient(90deg, rgba(238, 243, 230, 0.04) 1px, transparent 1px) 0 0 / 4.75rem 100%;
+  mask-image: linear-gradient(#000, #000 72%, transparent);
+}
+.about::before { background: radial-gradient(ellipse 80% 50% at 82% 100%, rgba(200, 255, 112, 0.09), transparent 66%); }
 .spread { width: min(100%, 108rem); margin-inline: auto; padding-inline: clamp(1.25rem, 5.5vw, 7rem); }
 .work { padding-block: clamp(5rem, 9vw, 10rem) clamp(4rem, 8vw, 8rem); }
 .heading, .aboutGrid { display: grid; grid-template-columns: 1.42fr 1fr; gap: clamp(2rem, 7vw, 8rem); }
@@ -28,18 +53,18 @@
 .artLink { display: block; position: relative; }
 .open {
   position: absolute; top: 1rem; right: 1rem; width: 2.7rem; aspect-ratio: 1; display: grid;
-  place-items: center; background: #11170f; color: #fff; border-radius: 50%;
+  place-items: center; background: var(--volt); color: #070806; border-radius: 50%;
   transition: transform .3s;
 }
 .artLink:hover .open { transform: translate(2px,-2px); }
-.projectTitle { display: flex; align-items: baseline; justify-content: space-between; gap: .65rem; margin-top: 1.25rem; padding-top: .65rem; border-top: 1px solid #b5b9ac; }
+.projectTitle { display: flex; align-items: baseline; justify-content: space-between; gap: .65rem; margin-top: 1.25rem; padding-top: .65rem; border-top: 1px solid var(--edgeStrong); }
 .projectTitle h3 { font-size: clamp(1.85rem, 3.3vw, 3.9rem); font-weight: 600; letter-spacing: -.065em; line-height: 1; margin: 0; }
-.projectTitle small, .row summary small { color: #4d5347; font: .68rem/1.4 var(--font-mono), monospace; }
-.features article > p { max-width: 39rem; margin: .9rem 0 0; color: #454b40; font-size: clamp(.95rem, 1.2vw, 1.13rem); line-height: 1.6; }
+.projectTitle small, .row summary small { color: var(--mute); font: .68rem/1.4 var(--font-mono), monospace; }
+.features article > p { max-width: 39rem; margin: .9rem 0 0; color: var(--mute); font-size: clamp(.95rem, 1.2vw, 1.13rem); line-height: 1.6; }
 .tapeScene, .ledgerScene {
   position: relative; isolation: isolate; overflow: hidden; display: grid; place-items: center; container-type: inline-size;
 }
-.tapeScene { aspect-ratio: 1.52; perspective: 70rem; background: radial-gradient(ellipse at 34% 8%,#efffba,transparent 56%),linear-gradient(145deg,#c6ee89,#b5d377 70%,#819b5c); }
+.tapeScene { aspect-ratio: 1.52; perspective: 70rem; background: radial-gradient(ellipse at 34% 8%,#f2ffc6,transparent 56%),linear-gradient(145deg,#c8ff70,#a9e158 68%,#5f8a31); }
 .tapeScene::before {
   content: ""; position: absolute; width: 63%; height: 17%; left: 18%; bottom: 12%; transform: rotate(-9deg);
   background: #344321; opacity: .45; filter: blur(2.2cqw); border-radius: 50%;
@@ -61,7 +86,7 @@
 .tapeWindow b { width:45%; height:52%; border:.3cqw solid #151a13; background: radial-gradient(circle at -25% 50%,#3a2119 55%,transparent 57%),linear-gradient(12deg,#5b6555,#969e91); }
 .tapeBase { position:absolute; inset:auto 18% 0; height:21%; clip-path:polygon(8% 0,92% 0,100% 100%,0 100%); background:linear-gradient(#545c50,#262d26 10%,#252a24); display:flex; align-items:end; justify-content:space-between; padding:0 17% 1cqw; }
 .tapeBase i { width:2.1cqw; aspect-ratio:1; border-radius:50%; background:#080a07; box-shadow:inset 0 .25cqw .2cqw #000,0 .15cqw #60665a; }
-.ledgerScene { aspect-ratio:1.1; background: radial-gradient(ellipse at 30% 20%,#4e574d,#303a33 58%,#202923); }
+.ledgerScene { aspect-ratio:1.1; background: radial-gradient(ellipse at 30% 20%,#18220f,#0c120a 58%,#070906); }
 .paper { width:48%; padding:4cqw 3cqw 5cqw; color:#1c2619; background:linear-gradient(103deg,#c6cabc,#fbfbed 32%,#e2e6d8 82%,#c7c9bc); transform: rotate(8deg) skewY(-3deg); box-shadow:2.4cqw 3cqw 3.5cqw #111911aa; font-family:var(--font-mono),monospace; }
 .paper::after { content:""; position:absolute; left:0; right:0; bottom:-.85cqw; height:1cqw; background:linear-gradient(135deg,#e3e7d9 25%,transparent 25%) -1cqw 0/2cqw 2cqw,linear-gradient(225deg,#e3e7d9 25%,transparent 25%) -1cqw 0/2cqw 2cqw; }
 .paper b,.paper small,.paper span { display:block; }
@@ -70,13 +95,13 @@
 .paper span { font-size:2.2cqw; }
 .rule { border-top:1px dashed #69715f; margin-block:2.7cqw; }
 .bars { display:flex; height:12cqw; align-items:end; gap:.8cqw; margin-top:2.8cqw; }
-.bars i { flex:1; background:#2a3a27; }
+.bars i { flex:1; background:#4a7a22; }
 .barcode { height:4cqw; width:67%; margin:3cqw auto 0; background:repeating-linear-gradient(90deg,#293024 0 .42cqw,transparent .42cqw .75cqw,#293024 .75cqw 1cqw,transparent 1cqw 1.75cqw,#293024 1.75cqw 2.5cqw,transparent 2.5cqw 3cqw); }
 .archive { margin-top:clamp(4rem,8vw,9rem); display:grid; grid-template-columns:minmax(9rem,.55fr) 2fr; gap:3vw; }
 .archive h3 { font-size:clamp(1.2rem,2vw,2rem); letter-spacing:-.055em; margin:.75rem 0 0; }
-.rows { border-bottom:1px solid #afb6a8; }
-.row { border-top:1px solid #afb6a8; }
-.row summary { display:grid; grid-template-columns:1fr auto 1.5rem; align-items:center; column-gap:1.4rem; padding:1.3rem 0; cursor:pointer; list-style:none; }
+.rows { border-bottom:1px solid var(--edge); }
+.row { border-top:1px solid var(--edge); }
+.row summary { display:grid; grid-template-columns:2.4rem 1fr auto 1.5rem; align-items:center; column-gap:1.4rem; padding:1.3rem 0; list-style:none; }
 .row summary::-webkit-details-marker { display:none; }
 .row summary strong { font-size:clamp(1.1rem,2.25vw,2.5rem); line-height:1.1; font-weight:500; letter-spacing:-.045em; }
 .toggle { width:1.1rem; height:1.1rem; justify-self:end; position:relative; }
@@ -84,16 +109,16 @@
 .toggle::after { transform:rotate(90deg); transition:transform .25s; }
 .row[open] .toggle::after { transform:rotate(0); }
 .details { max-width:46rem; padding-bottom:1.5rem; }
-.details p { margin:0 0 1rem; color:#40473a; }
+.details p { margin:0 0 1rem; color:var(--mute); }
 .details > div { display:flex; flex-wrap:wrap; column-gap:1.5rem; }
 .details a,.about a { display:inline-flex; align-items:center; gap:.65rem; min-height:2.75rem; font-weight:600; text-decoration:underline; text-underline-offset:.32em; }
 .details a svg,.about a svg { width:1rem; }
 .authorLink { display:inline-flex; align-items:center; gap:.4rem; min-height:2.75rem; margin-top:.25rem; font-size:.8rem; font-weight:600; text-decoration:underline; text-underline-offset:.25em; }
 .authorLink svg { width:.85rem; }
-.about { background:#d7ddcb; padding-block:clamp(4.5rem,9vw,10rem); }
+.about { background:#0a0c08; padding-block:clamp(4.5rem,9vw,10rem); }
 .about h2 { font-size:clamp(4.4rem,8vw,9.25rem); }
 .aboutGrid > div > p:first-child { margin:0; font-size:clamp(1.5rem,2.6vw,3rem); letter-spacing:-.055em; line-height:1.16; }
-.aboutGrid > div > p + p { max-width:34rem; margin-block:1.5rem; color:#444c3e; line-height:1.6; }
+.aboutGrid > div > p + p { max-width:34rem; margin-block:1.5rem; color:var(--mute); line-height:1.6; }
 @media(max-width:700px) {
   .heading,.features,.aboutGrid,.archive { grid-template-columns:1fr; }
   .heading,.aboutGrid { gap:1.75rem; }
@@ -107,8 +132,37 @@
   .archive { gap:1.25rem; }
   .row summary { gap:.6rem; }
   .row summary small { display:none; }
-  .row summary { grid-template-columns:1fr 1.5rem; }
+  .row summary { grid-template-columns:1.9rem 1fr 1.5rem; }
 }
 @media(prefers-reduced-motion:reduce) {
   .artLink:is(:hover,:focus-visible) .tape { transform:rotateZ(-11deg) rotateX(16deg) rotateY(-8deg); }
+}
+
+/* Each piece sits in its own pool of light, which lifts when you reach for it. */
+.artLink::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--edge);
+  transition: box-shadow 320ms var(--ease-out);
+}
+.artLink:is(:hover, :focus-visible)::after {
+  box-shadow: inset 0 0 0 1px rgba(200, 255, 112, 0.55), 0 0 2.5rem rgba(200, 255, 112, 0.16);
+}
+/* Index marks, set in the same mono as the telemetry in the opening. The
+   number is its own grid cell: `strong` already spends its ::before on the
+   hover marker. */
+.rows { counter-reset: archive; }
+.row { counter-increment: archive; }
+.row summary::before {
+  content: counter(archive, decimal-leading-zero);
+  align-self: start;
+  padding-top: .35em;
+  color: var(--volt);
+  font: .62rem var(--font-mono), monospace;
+}
+.row[open] summary::before { color: var(--type); }
+@media (prefers-reduced-motion: reduce) {
+  .artLink::after { transition: none; }
 }
