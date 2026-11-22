@@ -123,7 +123,7 @@ const lexuriCopy = {
 
 function AppChrome({ children }: { children: React.ReactNode }) {
   const { locale } = useLanguage();
-  const copy = lexuriCopy[locale];
+  const copy = lexuriCopy[locale === "fr" ? "en" : locale];
 
   return (
     <div className={styles.appChrome}>
@@ -145,7 +145,7 @@ function AppChrome({ children }: { children: React.ReactNode }) {
 
 function ImmersionScreen() {
   const { locale } = useLanguage();
-  const copy = lexuriCopy[locale].immersion;
+  const copy = lexuriCopy[locale === "fr" ? "en" : locale].immersion;
 
   return (
     <AppChrome>
@@ -183,7 +183,7 @@ function ImmersionScreen() {
 
 function UnderstandingScreen() {
   const { locale } = useLanguage();
-  const copy = lexuriCopy[locale].understanding;
+  const copy = lexuriCopy[locale === "fr" ? "en" : locale].understanding;
 
   return (
     <AppChrome>
@@ -208,7 +208,7 @@ function UnderstandingScreen() {
 
 function RetentionScreen() {
   const { locale } = useLanguage();
-  const copy = lexuriCopy[locale].retention;
+  const copy = lexuriCopy[locale === "fr" ? "en" : locale].retention;
 
   return (
     <AppChrome>
@@ -238,7 +238,7 @@ function RetentionScreen() {
 
 function ContinuityScreen() {
   const { locale } = useLanguage();
-  const copy = lexuriCopy[locale].continuity;
+  const copy = lexuriCopy[locale === "fr" ? "en" : locale].continuity;
 
   return (
     <AppChrome>
@@ -277,7 +277,7 @@ const screens: Record<LexuriStepId, () => React.JSX.Element> = {
 
 function ProductScreen({ activeStep }: { activeStep: number }) {
   const { locale } = useLanguage();
-  const lexuriSteps = lexuriStepsByLocale[locale];
+  const lexuriSteps = lexuriStepsByLocale[locale === "fr" ? "en" : locale];
   const active = lexuriSteps[activeStep] ?? lexuriSteps[0];
   const Screen = screens[active.id];
 
@@ -299,7 +299,7 @@ function ProductScreen({ activeStep }: { activeStep: number }) {
 
 function ProductIntroduction() {
   const { locale } = useLanguage();
-  const copy = lexuriCopy[locale].introduction;
+  const copy = lexuriCopy[locale === "fr" ? "en" : locale].introduction;
 
   return (
     <div className={styles.productIntro}>
@@ -351,8 +351,8 @@ function NotebookStage({
   glow?: number | MotionValue<number>;
 }) {
   const { locale } = useLanguage();
-  const lexuriSteps = lexuriStepsByLocale[locale];
-  const copy = lexuriCopy[locale];
+  const lexuriSteps = lexuriStepsByLocale[locale === "fr" ? "en" : locale];
+  const copy = lexuriCopy[locale === "fr" ? "en" : locale];
   const active = lexuriSteps[activeStep] ?? lexuriSteps[0];
 
   return (

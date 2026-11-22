@@ -1,0 +1,75 @@
+/* Sits under the mark on the black curtain, arriving once the mark has landed. */
+.gate {
+  display: grid;
+  justify-items: center;
+  gap: 1.15rem;
+  width: min(92vw, 34rem);
+  margin-top: clamp(1.75rem, 5vh, 3.5rem);
+  text-align: center;
+  animation: raise 520ms var(--ease-out) both;
+}
+@keyframes raise {
+  from { opacity: 0; transform: translateY(0.9rem); }
+}
+
+.heading {
+  margin: 0;
+  color: #cfd6c6;
+  font: 0.78rem/1.5 var(--font-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.row { display: grid; justify-items: center; gap: 0.5rem; width: 100%; }
+.legend {
+  color: #7f8a76;
+  font: 0.62rem var(--font-mono), monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.choices button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 44px;
+  padding: 0 1em;
+  border: 1px solid rgba(238, 243, 230, 0.22);
+  border-radius: 999px;
+  background: none;
+  color: #cfd6c6;
+  font: 0.8rem var(--font-mono), monospace;
+  cursor: pointer;
+  transition: color 200ms var(--ease-out), border-color 200ms var(--ease-out), background-color 200ms var(--ease-out);
+}
+.choices button b { color: #8d9a84; font-weight: 600; transition: color 200ms var(--ease-out); }
+.choices button:is(:hover, :focus-visible) { color: #fff; border-color: rgba(238, 243, 230, 0.6); }
+/* The selected choice takes the signal colour, like everything else that is on. */
+.choices button[aria-pressed="true"] {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: #070906;
+}
+.choices button[aria-pressed="true"] b { color: #070906; }
+
+.enter {
+  min-height: 48px;
+  margin-top: 0.4rem;
+  padding: 0 2.2em;
+  border: 1px solid var(--signal);
+  border-radius: 999px;
+  background: none;
+  color: var(--signal);
+  font: 600 0.84rem var(--font-mono), monospace;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+.enter:is(:hover, :focus-visible) { background: var(--signal); color: #070906; }
+
+.note { color: #6d7866; font: 0.64rem/1.5 var(--font-mono), monospace; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gate { animation: none; }
+  .choices button, .enter { transition: none; }
+}

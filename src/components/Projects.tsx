@@ -43,7 +43,7 @@ function ProjectCard({
         </ul>
         <div className={styles.projectLinks}>
           {project.links.map((link) => (
-            <a key={link.href} href={link.href} target="_blank" rel="noreferrer" data-sound="whoosh">
+            <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
               {link.label}
               <Icon name="arrowUpRight" />
             </a>
@@ -59,7 +59,7 @@ function ProjectCard({
 
 export default function Projects() {
   const { locale } = useLanguage();
-  const { deliveredWork, portfolioProjects } = portfolioContent[locale];
+  const { deliveredWork, portfolioProjects } = portfolioContent[locale === "fr" ? "en" : locale];
   const copy = locale === "pt"
     ? {
         technologies: "Tecnologias usadas em",

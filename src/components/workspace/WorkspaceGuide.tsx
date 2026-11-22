@@ -46,7 +46,7 @@ export default function WorkspaceGuide({
   const { locale } = useLanguage();
   const shouldReduceMotion = useIsReducedMotion();
   const float = floatingMotion[mode];
-  const label = labels[locale][mode];
+  const label = labels[locale === "fr" ? "en" : locale][mode];
 
   return (
     <motion.figure

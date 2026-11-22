@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import { editionCopy, type EditionLocale } from "@/i18n/edition";
 import styles from "./FluxoPhone.module.css";
 
 /**
@@ -31,6 +33,12 @@ const money = (value: number) =>
 
 export default function FluxoPhone() {
   const [filter, setFilter] = useState<string | null>(null);
+  const { locale } = useLanguage();
+  const copy = (editionCopy[locale as EditionLocale] ?? editionCopy.en).fluxo;
+  // The statement is the same month in any language; only its words change.
+  const label = (id: string) => copy.categories[id as keyof typeof copy.categories] ?? id;
+  const named = (id: number, fallback: string) =>
+    ({ 2: copy.entries.rent, 3: copy.entries.metro, 4: copy.entries.invoice, 6: copy.entries.power } as Record<number, string>)[id] ?? fallback;
   const shown = filter ? ENTRIES.filter(entry => entry.category === filter) : ENTRIES;
   const total = shown.reduce((sum, entry) => sum + entry.amount, 0);
 
@@ -45,7 +53,7 @@ export default function FluxoPhone() {
           </header>
 
           <div className={styles.account}>
-            <span className={styles.label}>{filter ? CATEGORIES.find(c => c.id === filter)?.label : "November"}</span>
+            <span className={styles.label}>{filter ? label(filter) : copy.month}</span>
             <strong className={styles.total} key={total}>{money(total)}</strong>
           </div>
 
@@ -62,7 +70,7 @@ export default function FluxoPhone() {
           </div>
 
           <div className={styles.chips}>
-            <button type="button" data-on={filter === null ? "" : undefined} onClick={() => setFilter(null)}>All</button>
+            <button type="button" data-on={filter === null ? "" : undefined} onClick={() => setFilter(null)}>{copy.all}</button>
             {CATEGORIES.map(category => (
               <button
                 key={category.id}
@@ -71,7 +79,7 @@ export default function FluxoPhone() {
                 data-on={filter === category.id ? "" : undefined}
                 onClick={() => setFilter(filter === category.id ? null : category.id)}
               >
-                {category.label}
+                {label(category.id)}
               </button>
             ))}
           </div>
@@ -81,7 +89,7 @@ export default function FluxoPhone() {
               <li key={entry.id} style={{ "--i": i } as React.CSSProperties}>
                 <i data-tone={CATEGORIES.find(c => c.id === entry.category)?.tone} aria-hidden="true" />
                 <span>
-                  <strong>{entry.name}</strong>
+                  <strong>{named(entry.id, entry.name)}</strong>
                   <small>{entry.when}</small>
                 </span>
                 <b data-in={entry.amount > 0 ? "" : undefined}>{money(entry.amount)}</b>

@@ -1,9 +1,15 @@
+"use client";
+
 import Portrait from "./Portrait";
 import Masthead from "./Masthead";
 import NameBand from "./NameBand";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import { editionCopy, type EditionLocale } from "@/i18n/edition";
 import styles from "./Edition.module.css";
 
 export default function Opening() {
+  const { locale } = useLanguage();
+  const copy = (editionCopy[locale as EditionLocale] ?? editionCopy.en).opening;
   return (
     <section id="top" className={styles.opening} aria-labelledby="identity-name">
       <div className={styles.viewport}>
@@ -12,11 +18,11 @@ export default function Opening() {
           <div className={styles.field} aria-hidden="true" />
           <h1 id="identity-name" className={styles.name}><span>Natan</span>{" "}<span>Oliveira</span><NameBand /></h1>
           <div className={styles.subject}><Portrait /></div>
-          <span className={styles.caption}>Biometric portrait</span>
+          <span className={styles.caption}>{copy.caption}</span>
         </div>
         <div className={styles.lower}>
-          <p>Full stack developer<br/><span>based in Portugal.</span></p>
-          <a href="#projetos" data-marker="" data-sound="whoosh">Selected work <span aria-hidden="true">↓</span></a>
+          <p>{copy.role}<br/><span>{copy.place}</span></p>
+          <a href="#trabalhos-selecionados" data-marker="">{copy.selected} <span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </section>

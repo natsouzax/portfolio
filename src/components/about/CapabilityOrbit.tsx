@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 
 import { useIsReducedMotion } from "@/components/motion/useIsReducedMotion";
-import { useSoundEffects } from "@/audio/SoundProvider";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { portfolioContent, type Capability } from "@/data/portfolio";
 import { useLanguage } from "@/i18n/LanguageProvider";
@@ -60,9 +59,8 @@ function CapabilityList({
 }
 
 export default function CapabilityOrbit() {
-  const { playSound } = useSoundEffects();
   const { locale } = useLanguage();
-  const { capabilities } = portfolioContent[locale];
+  const { capabilities } = portfolioContent[locale === "fr" ? "en" : locale];
   const copy = locale === "pt"
     ? {
         competencies: "Competências em",
@@ -127,12 +125,6 @@ export default function CapabilityOrbit() {
     // Encaixa no card mais próximo do que foi arrastado.
     const stepDelta = Math.round(dragDeg / STEP);
     setActive((current) => wrap(current - stepDelta));
-    if (gesture.current.moved && stepDelta !== 0) {
-      playSound("softWhoosh", {
-        direction: stepDelta > 0 ? 1 : -1,
-        intensity: 0.66,
-      });
-    }
     setDragDeg(0);
     setDragging(false);
   }
@@ -140,7 +132,6 @@ export default function CapabilityOrbit() {
   /** Clique num card só conta se não houve arrasto — evita seleção acidental. */
   function handleCardClick(index: number) {
     if (gesture.current.moved) return;
-    playSound("calculations", { intensity: 0.46, step: index });
     select(index);
   }
 
@@ -237,7 +228,6 @@ export default function CapabilityOrbit() {
           type="button"
           className={`${styles.arrow} ${styles.arrowPrev}`}
           onClick={() => select(active - 1)}
-          data-sound="calculations"
           aria-label={copy.previous}
         >
           ‹
@@ -246,7 +236,6 @@ export default function CapabilityOrbit() {
           type="button"
           className={`${styles.arrow} ${styles.arrowNext}`}
           onClick={() => select(active + 1)}
-          data-sound="calculations"
           aria-label={copy.next}
         >
           ›
@@ -269,7 +258,6 @@ export default function CapabilityOrbit() {
             key={capability.number}
             type="button"
             onClick={() => select(index)}
-            data-sound="calculations"
             aria-pressed={index === active}
             className={index === active ? styles.activeControl : undefined}
           >

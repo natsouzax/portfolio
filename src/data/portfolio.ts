@@ -1,4 +1,4 @@
-import type { Locale } from "@/i18n/LanguageProvider";
+import type { LegacyLocale } from "@/i18n/LanguageProvider";
 
 export type LinkItem = {
   label: string;
@@ -335,4 +335,4 @@ export const portfolioContent = {
       { href: "#contato", label: "Contact", chapter: "05" },
     ],
   },
-} as const satisfies Record<Locale, PortfolioContent>;
+} as const satisfies Record<LegacyLocale, PortfolioContent>;

@@ -148,7 +148,7 @@ const previewCopy = {
 
 function FluxoPreview() {
   const { locale } = useLanguage();
-  const copy = previewCopy[locale].fluxo;
+  const copy = previewCopy[locale === "fr" ? "en" : locale].fluxo;
 
   return (
     <div className={styles.fluxoPreview} aria-hidden="true">
@@ -185,7 +185,7 @@ const storeViewIds: StoreView[] = ["visao", "catalogo", "inteligencia"];
 
 function StoreViewContent({ view }: { view: StoreView }) {
   const { locale } = useLanguage();
-  const copy = previewCopy[locale].store;
+  const copy = previewCopy[locale === "fr" ? "en" : locale].store;
 
   if (view === "catalogo") {
     return (
@@ -269,7 +269,7 @@ function StoreViewContent({ view }: { view: StoreView }) {
 
 function StorePreview() {
   const { locale } = useLanguage();
-  const copy = previewCopy[locale].store;
+  const copy = previewCopy[locale === "fr" ? "en" : locale].store;
   const [view, setView] = useState<StoreView>("visao");
 
   return (
@@ -310,7 +310,7 @@ function StorePreview() {
 
 function LegalEcosystemPreview() {
   const { locale } = useLanguage();
-  const copy = previewCopy[locale].legal;
+  const copy = previewCopy[locale === "fr" ? "en" : locale].legal;
 
   return (
     <div className={styles.servicesPreview} aria-label={copy.preview}>
@@ -368,7 +368,7 @@ function LegalEcosystemPreview() {
 
 function TotalSuplementsPreview() {
   const { locale } = useLanguage();
-  const copy = previewCopy[locale].total;
+  const copy = previewCopy[locale === "fr" ? "en" : locale].total;
 
   return (
     <div className={styles.totalPreview} aria-label={copy.preview}>
@@ -409,7 +409,7 @@ function TotalSuplementsPreview() {
 
 function AutomationBotPreview() {
   const { locale } = useLanguage();
-  const copy = previewCopy[locale].bot;
+  const copy = previewCopy[locale === "fr" ? "en" : locale].bot;
 
   return (
     <div className={styles.botPreview} aria-hidden="true">

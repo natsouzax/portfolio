@@ -20,7 +20,7 @@ export default function StepCycle({
   onSelect: (index: number) => void;
 }) {
   const { locale } = useLanguage();
-  const lexuriSteps = lexuriStepsByLocale[locale];
+  const lexuriSteps = lexuriStepsByLocale[locale === "fr" ? "en" : locale];
   const loopNote = locale === "pt"
     ? "ciclo contínuo — a continuidade devolve a pessoa à imersão"
     : "continuous cycle — continuity brings each person back to immersion";
@@ -45,7 +45,6 @@ export default function StepCycle({
                 key={step.id}
                 type="button"
                 className={styles.node}
-                data-sound="binary"
                 data-active={isActive || undefined}
                 aria-pressed={isActive}
                 onClick={() => onSelect(index)}

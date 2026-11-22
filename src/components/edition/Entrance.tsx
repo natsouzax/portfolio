@@ -6,10 +6,12 @@ import Interference from "./Interference";
 import Pointer from "./Pointer";
 import MatrixField from "./MatrixField";
 import Decode from "./Decode";
+import Gate from "./Gate";
+import SectionReveal from "./SectionReveal";
 import styles from "./Edition.module.css";
 
 export default function Entrance({ children }: { children: React.ReactNode }) {
-  const [phase, setPhase] = useState<"loading" | "lifting" | "open">("loading");
+  const [phase, setPhase] = useState<"loading" | "choosing" | "lifting" | "open">("loading");
   const logo = useRef<HTMLImageElement>(null);
   const site = useRef<HTMLDivElement>(null);
   const skipped = useRef(false);
@@ -39,7 +41,7 @@ export default function Entrance({ children }: { children: React.ReactNode }) {
     );
     const ready = Promise.allSettled([brand, document.fonts.ready, poster?.decode()]);
     void Promise.race([ready, wait(4200)]).then(() => {
-      if (active) setPhase("lifting");
+      if (active) setPhase("choosing");
     });
     return () => { active = false; timers.forEach(clearTimeout); };
   }, [phase]);
@@ -61,11 +63,14 @@ export default function Entrance({ children }: { children: React.ReactNode }) {
       {phase !== "open" && (
         <div className={styles.curtain} data-curtain="" data-phase={phase} aria-label="Portfolio introduction">
           <Image ref={logo} src="/brand/odevntzn-nucleo-animado.svg" alt="odevntzn" width={690} height={188} preload />
-          <button type="button" onClick={() => { skipped.current = true; setPhase("open"); }}>Skip intro ↗</button>
+          {phase === "choosing"
+            ? <Gate onEnter={() => setPhase("lifting")} />
+            : <button type="button" onClick={() => { skipped.current = true; setPhase("lifting"); }}>Skip intro ↗</button>}
         </div>
       )}
       <noscript><style>{`[data-curtain]{display:none!important}[data-scene]{opacity:1!important;transform:none!important}`}</style></noscript>
       <div ref={site} data-scene="" data-phase={phase} className={styles.site}>{children}</div>
+      {phase === "open" && <SectionReveal scene={site} />}
       {phase === "open" && <><MatrixField /><Interference /><Pointer /><Decode /></>}
     </>
   );

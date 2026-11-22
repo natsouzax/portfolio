@@ -83,7 +83,7 @@ const aboutCopy = {
 
 export default function About() {
   const { locale } = useLanguage();
-  const copy = aboutCopy[locale];
+  const copy = aboutCopy[locale === "fr" ? "en" : locale];
 
   return (
     <section id="sobre" className={styles.about} aria-labelledby="about-title">

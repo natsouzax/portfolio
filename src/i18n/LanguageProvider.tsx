@@ -8,7 +8,9 @@ import {
   useSyncExternalStore,
 } from "react";
 
-export type Locale = "pt" | "en";
+export type Locale = "pt" | "en" | "fr";
+/** The locales the pre-edition content sets cover. French falls back to English there. */
+export type LegacyLocale = "pt" | "en";
 
 type LanguageContextValue = {
   locale: Locale;
@@ -20,7 +22,18 @@ const STORAGE_KEY = "natan-portfolio-locale";
 const localeListeners = new Set<() => void>();
 let fallbackLocale: Locale = "en";
 
+let restored = false;
+
 function getStoredLocale(): Locale {
+  if (!restored) {
+    restored = true;
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      if (saved === "pt" || saved === "en" || saved === "fr") fallbackLocale = saved;
+    } catch {
+      // A blocked store just means the choice lasts for this session only.
+    }
+  }
   return fallbackLocale;
 }
 
@@ -63,6 +76,21 @@ const documentCopy: Record<
     imageAlt: string;
   }
 > = {
+  fr: {
+    lang: "fr-FR",
+    openGraphLocale: "fr_FR",
+    title: "odevntzn — Natan Oliveira | Développeur Full Stack",
+    description:
+      "Portfolio de Natan de Souza Oliveira, développeur full stack orienté produit. Des expériences numériques de la conception au déploiement.",
+    applicationName: "odevntzn — Natan Oliveira",
+    keywords:
+      "Natan Oliveira, développeur full stack, développement produit, Next.js, TypeScript, React",
+    openGraphTitle: "odevntzn — Des produits numériques, pour de vrai",
+    openGraphDescription:
+      "Découvrez le travail d'un développeur full stack qui relie produit, expérience et ingénierie.",
+    twitterDescription: "Des produits numériques, du premier schéma au déploiement.",
+    imageAlt: "Natan Oliveira — Des produits numériques, pensés de bout en bout",
+  },
   pt: {
     lang: "pt-BR",
     openGraphLocale: "pt_BR",
@@ -131,7 +159,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     () => ({
       locale,
       setLocale: storeLocale,
-      toggleLocale: () => storeLocale(locale === "pt" ? "en" : "pt"),
+      toggleLocale: () => storeLocale(locale === "en" ? "pt" : locale === "pt" ? "fr" : "en"),
     }),
     [locale],
   );

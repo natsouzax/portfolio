@@ -1,4 +1,4 @@
-import type { Locale } from "@/i18n/LanguageProvider";
+import type { LegacyLocale } from "@/i18n/LanguageProvider";
 
 export type LexuriStepId = "immerse" | "understand" | "retain" | "continue";
 
@@ -79,4 +79,4 @@ export const lexuriStepsByLocale = {
         "The same experience architecture keeps context, progress, and review consistent across the web hub, Android, and Windows.",
     },
   ],
-} as const satisfies Record<Locale, readonly LexuriStep[]>;
+} as const satisfies Record<LegacyLocale, readonly LexuriStep[]>;
