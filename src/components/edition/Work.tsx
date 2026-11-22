@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui/Icon";
 import { profile } from "@/data/portfolio";
 import LexuriPlayer from "./LexuriPlayer";
 import FluxoPhone from "./FluxoPhone";
+import BodyFragments from "./BodyFragments";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { editionCopy, type EditionLocale } from "@/i18n/edition";
 import styles from "./Work.module.css";
@@ -35,14 +36,14 @@ export default function Work() {
     <>
       <section id="trabalhos-selecionados" className={styles.work} aria-labelledby="work-title">
         <div className={styles.spread}>
-          <header className={styles.heading} data-assemble="">
-            <h2 id="work-title" data-section-reveal="heading"><span>{copy.title}</span><br />{" "}<em>{copy.titleEm}</em></h2>
+          <header className={styles.heading}>
+            <h2 id="work-title"><span>{copy.title}</span><br />{" "}<em>{copy.titleEm}</em></h2>
             <p data-section-reveal="copy">{copy.intro}</p>
           </header>
           <div className={styles.features}>
             <article id="lexuri">
               <div className={styles.projectTitle} data-section-reveal="copy"><h3><a href="https://lexuri.app" data-marker="">Lexuri</a></h3><small>{copy.lexuriKind}</small></div>
-              <div className={styles.lexuriFrame} data-assemble="">
+              <div className={styles.lexuriFrame}>
                 <LexuriPlayer />
               </div>
               <p className={styles.lexuriCopy} data-section-reveal="copy">{copy.lexuriText}</p>
@@ -97,14 +98,14 @@ export function WorkAbout() {
   return (
     <section id="sobre" className={styles.about} aria-labelledby="about-title">
       <div className={styles.spread}>
-        <div className={styles.aboutGrid}>
-          <h2 id="about-title" data-section-reveal="heading"><span>{copy.title}</span> <em>{copy.titleEm}</em></h2>
+        <header className={styles.heading}>
+          <h2 id="about-title"><span>{copy.title}</span><br />{" "}<em>{copy.titleEm}</em></h2>
           <div>
-            <p data-section-reveal="copy">{copy.lead}</p>
-            <p data-section-reveal="copy">{copy.body}</p>
+            <p><span data-assembly-copy>{copy.lead}</span></p>
             <a href="#contato" data-marker="">{copy.cta} <Icon name="arrowDown" /></a>
           </div>
-        </div>
+        </header>
+        <BodyFragments left={copy.left} right={copy.right} portrait={copy.portrait} />
       </div>
     </section>
   );

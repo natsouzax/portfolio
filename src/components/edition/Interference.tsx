@@ -28,7 +28,7 @@ export default function Interference() {
       delete root.dataset.signal;
     }
     function fire() {
-      if (reduced.matches || document.hidden) { schedule(4000); return; }
+      if (reduced.matches || document.hidden || root.hasAttribute("data-lexuri")) { schedule(4000); return; }
       // Most breaks are a flicker. Now and then the picture really loses tracking.
       const severity = Math.random() < 0.26 ? "hard" : "soft";
       node!.dataset.break = severity;

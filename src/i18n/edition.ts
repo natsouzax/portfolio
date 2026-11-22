@@ -24,7 +24,7 @@ type Copy = {
     skip: string;
   };
   nav: { work: string; projects: string; about: string; contact: string; home: string };
-  opening: { caption: string; role: string; place: string; selected: string; portrait: string };
+  opening: { caption: string; role: string; place: string; about: string; portrait: string };
   work: {
     title: string; titleEm: string; intro: string;
     lexuriKind: string; lexuriText: string; lexuriVisit: string;
@@ -33,7 +33,7 @@ type Copy = {
     clientTitle: string; clientTitleEm: string; visit: string;
     clients: { name: string; category: string; description: string }[];
   };
-  about: { title: string; titleEm: string; lead: string; body: string; cta: string };
+  about: { title: string; titleEm: string; lead: string; cta: string; left: string; right: string; portrait: string };
   closing: { status: string; title: string; titleEm: string; email: string; back: string };
   lexuri: { badge: string; meta: string; hint: string; play: string; pause: string; line: Gloss[] };
   fluxo: {
@@ -60,7 +60,7 @@ export const editionCopy: Record<EditionLocale, Copy> = {
       skip: "Skip intro",
     },
     nav: { work: "Work", projects: "Projects", about: "About", contact: "Contact ↗", home: "odevntzn home" },
-    opening: { caption: "Biometric portrait", role: "Full stack developer", place: "based in Portugal.", selected: "Selected work", portrait: "Holographic portrait of Natan. Drag or use the arrow keys to turn." },
+    opening: { caption: "Biometric portrait", role: "Full stack developer", place: "based in Portugal.", about: "About me", portrait: "Holographic portrait of Natan. Drag or use the arrow keys to turn." },
     work: {
       title: "Selected", titleEm: "work.",
       intro: "Two products I designed and built, one for learning languages and one for managing money.",
@@ -79,9 +79,11 @@ export const editionCopy: Record<EditionLocale, Copy> = {
     },
     about: {
       title: "About", titleEm: "me.",
-      lead: "I’m Natan Oliveira. I design and build digital products in Portugal while studying Computer Engineering.",
-      body: "On Lexuri, that means asking what happens when a learner pauses a video for one unfamiliar expression. The answer shapes the interface, the data I save and what comes back in their next review.",
+      lead: "I’m Natan Oliveira. I moved from Brazil to Portugal to study Computer Engineering at the University of Beira Interior. I work as a full-stack developer and enjoy taking an idea all the way to a working product, from the interface to the backend.",
       cta: "Get in touch",
+      left: "I like getting a rough idea into someone’s hands early. Watching them use it tells me what to build next.",
+      right: "I work across design and code so the choices I make on screen and behind it serve the same purpose.",
+      portrait: "A full-body hologram of Natan Oliveira waving.",
     },
     closing: { status: "Open for collaborations", title: "Waiting", titleEm: "for you.", email: "Send me an email", back: "Back to top" },
     lexuri: {
@@ -122,7 +124,7 @@ export const editionCopy: Record<EditionLocale, Copy> = {
       skip: "Saltar introdução",
     },
     nav: { work: "Projetos", projects: "Produtos", about: "Sobre", contact: "Contacto ↗", home: "início odevntzn" },
-    opening: { caption: "Retrato biométrico", role: "Desenvolvedor full stack", place: "baseado em Portugal.", selected: "Ver projetos", portrait: "Retrato holográfico do Natan. Arraste ou use as setas para girar." },
+    opening: { caption: "Retrato biométrico", role: "Desenvolvedor full stack", place: "baseado em Portugal.", about: "Sobre mim", portrait: "Retrato holográfico do Natan. Arraste ou use as setas para girar." },
     work: {
       title: "Projetos", titleEm: "escolhidos.",
       intro: "Dois produtos que desenhei e construí: um para aprender línguas, outro para gerir dinheiro.",
@@ -141,9 +143,11 @@ export const editionCopy: Record<EditionLocale, Copy> = {
     },
     about: {
       title: "Sobre", titleEm: "mim.",
-      lead: "Sou o Natan Oliveira. Desenho e construo produtos digitais em Portugal enquanto estudo Engenharia Informática.",
-      body: "No Lexuri, isso significa perguntar o que acontece quando alguém pausa um vídeo por causa de uma expressão que não conhece. A resposta molda a interface, os dados que guardo e o que volta na revisão seguinte.",
+      lead: "Sou o Natan Oliveira. Vim do Brasil para estudar Engenharia Informática na Universidade da Beira Interior, em Portugal. Trabalho como desenvolvedor full stack e gosto de pegar uma ideia e construir o produto inteiro, da interface ao backend.",
       cta: "Falar comigo",
+      left: "Gosto de colocar uma ideia nas mãos de alguém logo no início. Ver como a pessoa usa já me dá pistas do que construir a seguir.",
+      right: "Trabalho entre o design e o código. Assim consigo tomar decisões que fazem sentido tanto na tela quanto por trás dela.",
+      portrait: "Holograma de corpo inteiro de Natan Oliveira acenando.",
     },
     closing: { status: "Disponível para colaborações", title: "À espera", titleEm: "de si.", email: "Enviar-me um email", back: "Voltar ao topo" },
     lexuri: {
@@ -184,7 +188,7 @@ export const editionCopy: Record<EditionLocale, Copy> = {
       skip: "Passer l’intro",
     },
     nav: { work: "Projets", projects: "Produits", about: "À propos", contact: "Contact ↗", home: "accueil odevntzn" },
-    opening: { caption: "Portrait biométrique", role: "Développeur full stack", place: "établi au Portugal.", selected: "Voir les projets", portrait: "Portrait holographique de Natan. Faites glisser ou utilisez les flèches pour le tourner." },
+    opening: { caption: "Portrait biométrique", role: "Développeur full stack", place: "établi au Portugal.", about: "À propos de moi", portrait: "Portrait holographique de Natan. Faites glisser ou utilisez les flèches pour le tourner." },
     work: {
       title: "Projets", titleEm: "choisis.",
       intro: "Deux produits que j’ai conçus et développés : un pour apprendre les langues, l’autre pour gérer son argent.",
@@ -203,9 +207,11 @@ export const editionCopy: Record<EditionLocale, Copy> = {
     },
     about: {
       title: "À propos", titleEm: "de moi.",
-      lead: "Je suis Natan Oliveira. Je conçois et développe des produits numériques au Portugal, tout en étudiant le génie informatique.",
-      body: "Sur Lexuri, cela revient à se demander ce qui se passe quand quelqu’un met une vidéo en pause pour une seule expression inconnue. La réponse façonne l’interface, les données que j’enregistre et ce qui revient à la révision suivante.",
+      lead: "Je suis Natan Oliveira. J’ai quitté le Brésil pour étudier le génie informatique à l’Université de Beira Interior, au Portugal. Je travaille comme développeur full stack et j’aime partir d’une idée pour créer un produit complet, de l’interface au backend.",
       cta: "Me contacter",
+      left: "J’aime mettre une idée entre les mains de quelqu’un dès le début. Voir comment cette personne l’utilise m’aide à savoir quoi construire ensuite.",
+      right: "Je travaille entre le design et le code. Les décisions que je prends à l’écran et en coulisses peuvent ainsi servir le même objectif.",
+      portrait: "Hologramme en pied de Natan Oliveira qui salue de la main.",
     },
     closing: { status: "Ouvert aux collaborations", title: "En vous", titleEm: "attendant.", email: "M’envoyer un email", back: "Haut de page" },
     lexuri: {

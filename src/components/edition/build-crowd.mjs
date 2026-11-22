@@ -173,6 +173,7 @@ function write(target, preview, i, [structure, body, rim, coverage]) {
   target[i + 1] = Math.round(255 * clamp(body));
   target[i + 2] = Math.round(255 * clamp(rim));
   target[i + 3] = Math.round(255 * clamp(coverage));
+  if (!preview) return;
   const hot = structure ** 3;
   preview[i] = Math.round(255 * clamp(0.08 * body + 0.78 * structure + 0.92 * hot + 0.42 * rim));
   preview[i + 1] = Math.round(255 * clamp(0.23 * body + 1.0 * structure + 1.0 * hot + 0.74 * rim));
@@ -295,6 +296,7 @@ const soft = (x, y) => {
 };
 const hero = Buffer.alloc(HERO_W * HERO_H * 4);
 const heroStill = Buffer.alloc(HERO_W * HERO_H * 4);
+const heroDetail = Buffer.alloc(HERO_W * HERO_H * 4);
 
 for (let y = 0; y < HERO_H; y++) {
   for (let x = 0; x < HERO_W; x++) {
@@ -333,7 +335,31 @@ for (let y = 0; y < HERO_H; y++) {
     const side = clamp(Math.min(x, HERO_W - 1 - x) / 34 + noise(x * 2.1, y) * 0.6 - 0.2);
     const coverage = m * clamp(Math.max(body * 3, structure * 1.5, rim)) * floor * side;
     if (coverage < 0.004) continue;
-    write(hero, heroStill, (y * HERO_W + x) * 4, [structure, body, rim, coverage]);
+    const offset = (y * HERO_W + x) * 4;
+    write(hero, heroStill, offset, [structure, body, rim, coverage]);
+
+    // Project the detail as wires over the entire bust. The photo bends and
+    // lights those wires, and its edges trace the brows, mouth, hair and shirt.
+    const head = 1 - clamp((v - 0.58) / 0.16);
+    const relief = z + clamp((shade - wideSoft) * 4, -0.45, 0.45) * mix(0.17, 0.34, head);
+    const across = u - 0.5;
+    const ringsAt = v * 72 - relief * 7 - across ** 2 * 7;
+    const ribsAt = across * mix(48, 66, head) / (1 + relief * 0.28) + relief * across * 5;
+    const scanRing = (0.5 + 0.5 * Math.cos(ringsAt * TAU)) ** 7;
+    const scanRib = (0.5 + 0.5 * Math.cos(ribsAt * TAU)) ** 8;
+    const grid = Math.max(scanRing, scanRib * 0.85) * (0.42 + 0.58 * stipple);
+    const joints = scanRing * scanRib;
+    const edgeX = soft(x + 2, y) - soft(x - 2, y);
+    const edgeY = soft(x, y + 2) - soft(x, y - 2);
+    const fineX = tone(x + 1, y) - tone(x - 1, y);
+    const fineY = tone(x, y + 1) - tone(x, y - 1);
+    const contours = clamp((Math.hypot(edgeX, edgeY) - 0.028) * 4.1);
+    const fineDetail = clamp((Math.hypot(fineX, fineY) - 0.014) * 5.8);
+    const meshLight = mix(0.69 + 0.18 * shade, 0.49 + 0.55 * shade, head);
+    const wires = clamp(grid * meshLight + joints * 0.19 + contours * 0.47 + fineDetail * 0.43 + rim * 0.35);
+    const volumeFill = 0.08 + 0.22 * z;
+    const opacity = m * (0.52 + 0.48 * Math.max(wires, rim)) * side * floor;
+    write(heroDetail, null, offset, [wires, volumeFill, rim * 0.64 + fineDetail * 0.18, opacity]);
   }
 }
 
@@ -343,6 +369,9 @@ await sharp(hero, { raw: { width: HERO_W, height: HERO_H, channels: 4 } })
 await sharp(heroStill, { raw: { width: HERO_W, height: HERO_H, channels: 4 } })
   .webp({ quality: 88, alphaQuality: 92 })
   .toFile(`${destination}/hero-still.webp`);
+await sharp(heroDetail, { raw: { width: HERO_W, height: HERO_H, channels: 4 } })
+  .webp({ quality: 94, alphaQuality: 94 })
+  .toFile(`${destination}/hero-detail.webp`);
 if (process.env.CROWD_PREVIEW) {
   await sharp(heroStill, { raw: { width: HERO_W, height: HERO_H, channels: 4 } })
     .flatten({ background: "#000" })

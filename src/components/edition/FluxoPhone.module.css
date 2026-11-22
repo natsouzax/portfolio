@@ -29,7 +29,15 @@
   background: linear-gradient(150deg, #39412f, #0d1109 38%, #272e20);
   box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, 0.6), inset 0 0 0 0.3cqw rgba(238, 243, 230, 0.12);
   transform: rotate(-4deg);
+  transition: transform 880ms var(--ease-out);
 }
+
+@media (hover: hover) {
+  .scene:hover .phone { transform: rotate(0deg); }
+}
+
+.scene:has(:focus-visible) .phone { transform: rotate(0deg); }
+
 .screen {
   display: grid;
   grid-template-rows: auto auto auto auto 1fr;
@@ -120,5 +128,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .total, .statement li { animation: none; }
-  .split i, .chips button { transition: none; }
+  .phone, .split i, .chips button { transition: none; }
 }

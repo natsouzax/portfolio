@@ -1,7 +1,8 @@
 import Entrance from "@/components/edition/Entrance";
 import Opening from "@/components/edition/Opening";
 import Fragments from "@/components/edition/Fragments";
-import Work from "@/components/edition/Work";
+import Work, { WorkAbout } from "@/components/edition/Work";
+import PersonalProjects from "@/components/edition/PersonalProjects";
 import Closing from "@/components/edition/Closing";
 import { profile } from "@/data/portfolio";
 
@@ -19,11 +20,12 @@ export default function Home() {
 
   return (
     <Entrance>
-      <a className="skip-link" href="#conteudo">Skip to content</a>
       <main id="conteudo">
         <Opening />
         <Fragments />
+        <WorkAbout />
         <Work />
+        <PersonalProjects githubUrl={profile.githubUrl} />
       </main>
       <Closing />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />

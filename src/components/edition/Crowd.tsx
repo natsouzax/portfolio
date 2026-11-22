@@ -3,18 +3,21 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import styles from "./Closing.module.css";
+import { projectionLight } from "./projection-light";
 
 // The closing projection: Natan standing in a crowd of anonymous holograms,
 // edge to edge across the footer. He stands among them at their scale, facing
-// the visitor, carved from a real photograph rather than drawn, and the one
-// figure the lamp is aimed at. Every figure is stored
+// the visitor, carved from a real photograph. Every figure is stored
 // in the portrait's channel layout (R lattice, G body, B rim, A coverage), so the whole crowd is
 // first gathered into one buffer and then painted in a single pass, with the
 // same raster, chroma split and tearing as the opening.
 
 const HERO = "/edition/closing/hero.webp";
 const HERO_STILL = "/edition/closing/hero-still.webp";
+const HERO_DETAIL = "/edition/closing/hero-detail.webp";
 const ATLAS = "/edition/closing/crowd.webp";
+const DETAIL_TEAR_MS = 420;
+const DETAIL_DURATION_MS = 2800;
 const HERO_ASPECT = 460 / 494;
 const CELL_ASPECT = 256 / 320;
 const ATLAS_COLS = 4;
@@ -107,11 +110,25 @@ const gatherVertex = `
 // material channels. Distance is expressed as coverage, not as colour.
 const gatherFragment = `
   precision mediump float;
-  uniform sampler2D atlas, hero;
+  uniform sampler2D atlas, hero, detail;
+  uniform float detailMix;
   varying vec2 uv;
   varying vec4 tint; // dim, kind, solid, unused
   void main() {
-    vec4 t = tint.y > .5 ? texture2D(hero, uv) : texture2D(atlas, uv);
+    vec4 t;
+    if (tint.y > .5) {
+      // The replacement signal arrives in torn horizontal bands.
+      float block = floor(uv.y * 11.);
+      float band = floor(uv.y * 31.);
+      float threshold = fract((band + 1.) * .6180339 + block * .17);
+      float tear = 4. * detailMix * (1. - detailMix);
+      float jump = (fract((block + 1.) * .7548777) - .5) * .21;
+      float jitter = (threshold - .5) * .09;
+      vec2 locked = uv + vec2(jump + jitter, (step(.7, threshold) - .3) * .018) * tear;
+      t = detailMix > threshold ? texture2D(detail, locked) : texture2D(hero, locked);
+    } else {
+      t = texture2D(atlas, uv);
+    }
     float a = t.a * tint.x;
     vec3 material = vec3(t.r * (tint.y > .5 ? 1. : .7), t.g * tint.z, t.b);
     gl_FragColor = vec4(material * a, a);
@@ -133,7 +150,9 @@ const paintFragment = `
   varying vec2 uv;
   uniform sampler2D scene;
   uniform vec2 texel, cell;
-  uniform float time, glitch, rows, reveal;
+  uniform float time, glitch, detailMix, rows, reveal;
+
+  ${projectionLight}
 
   float hash(float n) { return fract(sin(n * 91.3458) * 47453.5453); }
   float hash2(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
@@ -147,19 +166,17 @@ const paintFragment = `
     float band = floor(p.y * 23. + hash(beat) * 6.);
     float slip = hash(band * 3.17 + beat * 7.3) - .5;
     float torn = step(.64, hash(band * 1.61 + beat * 2.9));
-    p.x += slip * torn * glitch * .05;
+    float switching = 4. * detailMix * (1. - detailMix);
+    float tracking = exp(-abs(p.y - (.15 + .72 * detailMix)) * 42.);
+    p.x += slip * (torn * (glitch * .05 + switching * .08) + tracking * switching * .09);
 
     // The three colour guns never land on quite the same spot.
-    vec2 ch = vec2(texel.x * (1.8 + glitch * 16.), 0.);
+    vec2 ch = vec2(texel.x * (1.8 + glitch * 16. + switching * (9. + tracking * 18.)), 0.);
     vec4 r = take(p + ch), m = take(p), b = take(p - ch);
     float cover = max(max(r.a, b.a), m.a);
 
     vec3 wire = vec3(r.r, m.r, b.r);
-    vec3 color =
-        vec3(.07, .21, .09) * m.g
-      + wire * vec3(.76, 1., .42)
-      + wire * wire * wire * vec3(.9, 1., .78)
-      + m.b * vec3(.4, .72, .25);
+    vec3 color = phosphor(wire, m.g, m.b);
 
     // A soft halo, so the figures light the air around them.
     float halo = 0.;
@@ -193,13 +210,13 @@ const paintFragment = `
     alpha = max(alpha, rain * .8);
 
     // Raster lines locked to the screen, creeping upward.
-    color *= .86 + .14 * cos((uv.y * rows - time * .4) * 6.2831853);
+    color *= raster(uv.y, rows, time, .14);
     // A soft interference bar rolling down the frame.
     float bar = fract(uv.y * .62 - time * .055);
     color *= 1. + .13 * smoothstep(0., .07, bar) * smoothstep(.2, .09, bar);
     // Mains hum, plus the dimming of a torn frame.
     color *= .965 + .035 * hash(floor(time * 11.));
-    color *= 1. - .34 * glitch * torn;
+    color *= (1. - .34 * glitch * torn) * (1. - switching * max(.44 * torn, .7 * tracking));
     color += vec3(.10, .16, .06) * glitch * torn * cover;
 
     // The crowd is printed from the floor up the first time it is seen.
@@ -245,7 +262,7 @@ function createProjector(canvas: HTMLCanvasElement) {
   gl.bindBuffer(gl.ARRAY_BUFFER, screen);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
 
-  const textures: Record<"atlas" | "hero" | "scene", WebGLTexture | null> = { atlas: null, hero: null, scene: null };
+  const textures: Record<"atlas" | "hero" | "detail" | "scene", WebGLTexture | null> = { atlas: null, hero: null, detail: null, scene: null };
   const framebuffer = gl.createFramebuffer();
   let data = new Float32Array(0);
   let sceneSize = [0, 0];
@@ -260,7 +277,7 @@ function createProjector(canvas: HTMLCanvasElement) {
     return handle;
   }
 
-  function upload(name: "atlas" | "hero", image: HTMLImageElement) {
+  function upload(name: "atlas" | "hero" | "detail", image: HTMLImageElement) {
     textures[name] = texture(image);
     if (name === "atlas") {
       gl!.generateMipmap(gl!.TEXTURE_2D);
@@ -288,11 +305,13 @@ function createProjector(canvas: HTMLCanvasElement) {
   gl.useProgram(gather);
   gl.uniform1i(uniform(gather, "atlas"), 0);
   gl.uniform1i(uniform(gather, "hero"), 1);
+  gl.uniform1i(uniform(gather, "detail"), 2);
+  const detailMixAt = uniform(gather, "detailMix");
   gl.useProgram(paint);
   gl.uniform1i(uniform(paint, "scene"), 0);
-  const paintUniforms = Object.fromEntries(["texel", "cell", "time", "glitch", "rows", "reveal"].map(name => [name, uniform(paint, name)]));
+  const paintUniforms = Object.fromEntries(["texel", "cell", "time", "glitch", "detailMix", "rows", "reveal"].map(name => [name, uniform(paint, name)]));
 
-  function draw(figures: Figure[], width: number, height: number, scale: number, time: number, glitch: number, rows: number, reveal: number, sway: (figure: Figure) => [number, number, number]) {
+  function draw(figures: Figure[], width: number, height: number, scale: number, time: number, glitch: number, detailMix: number, rows: number, reveal: number, sway: (figure: Figure) => [number, number, number]) {
     const pw = canvas.width, ph = canvas.height;
     sizeScene(pw, ph);
     if (data.length < figures.length * 6 * FLOATS) data = new Float32Array(figures.length * 6 * FLOATS);
@@ -329,6 +348,8 @@ function createProjector(canvas: HTMLCanvasElement) {
     gl!.useProgram(gather);
     gl!.activeTexture(gl!.TEXTURE0); gl!.bindTexture(gl!.TEXTURE_2D, textures.atlas);
     gl!.activeTexture(gl!.TEXTURE1); gl!.bindTexture(gl!.TEXTURE_2D, textures.hero);
+    gl!.activeTexture(gl!.TEXTURE2); gl!.bindTexture(gl!.TEXTURE_2D, textures.detail ?? textures.hero);
+    gl!.uniform1f(detailMixAt, detailMix);
     gl!.bindBuffer(gl!.ARRAY_BUFFER, quads);
     gl!.bufferData(gl!.ARRAY_BUFFER, data.subarray(0, n), gl!.DYNAMIC_DRAW);
     const stride = FLOATS * 4;
@@ -352,6 +373,7 @@ function createProjector(canvas: HTMLCanvasElement) {
     gl!.uniform2f(paintUniforms.cell, Math.round(9 * scale), Math.round(13 * scale));
     gl!.uniform1f(paintUniforms.time, time);
     gl!.uniform1f(paintUniforms.glitch, glitch);
+    gl!.uniform1f(paintUniforms.detailMix, detailMix);
     gl!.uniform1f(paintUniforms.rows, rows);
     gl!.uniform1f(paintUniforms.reveal, reveal);
     gl!.bindBuffer(gl!.ARRAY_BUFFER, screen);
@@ -380,26 +402,34 @@ export default function Crowd() {
     if (!holder || !layer || !still) return;
     const root = document.documentElement;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const projector = createProjector(layer);
+    let projector: ReturnType<typeof createProjector> = null;
     let ready = false, disposed = false, visible = false, frame = 0;
     let figures: Figure[] = [];
     let width = 1, height = 1, scale = 1, rows = 120;
     let revealStart = 0;
     let lean = 0, leanTarget = 0;
     let glitch = 0, burstUntil = 0, burstPeak = 0, nextBurst = 0;
+    let detailReady = false, detailSince = -Infinity, wasHard = false;
 
     // Mostly a steady picture, with the occasional hard break-up, and always
     // breaking up together with the page-wide interference.
-    function signal(now: number) {
+    function signal(now: number, revealed: boolean) {
+      let burstStarted = false;
       if (now > burstUntil) {
-        if (!nextBurst) nextBurst = now + 1200 + Math.random() * 2600;
+        if (!nextBurst) nextBurst = now + 2800 + Math.random() * 900;
         if (now >= nextBurst) {
+          burstStarted = true;
           burstUntil = now + 70 + Math.random() * 200;
           burstPeak = .3 + Math.random() * .6;
           nextBurst = burstUntil + 1800 + Math.random() * 5200;
         }
       }
-      const page = root.dataset.signal === "hard" ? .9 : root.dataset.signal ? .45 : 0;
+      const hard = root.dataset.signal === "hard";
+      const page = hard ? .9 : root.dataset.signal ? .45 : 0;
+      if (detailReady && revealed && (burstStarted || (hard && !wasHard)) && now - detailSince >= DETAIL_DURATION_MS + 900) {
+        detailSince = now;
+      }
+      wasHard = hard;
       const target = Math.max(page, now < burstUntil ? burstPeak * (.45 + .55 * Math.random()) : 0);
       glitch += (target - glitch) * (target > glitch ? .8 : .22);
       return glitch;
@@ -425,7 +455,10 @@ export default function Crowd() {
       const time = still ? 12 : now / 1000;
       const reveal = still ? 1 : revealStart ? bound((now - revealStart) / 2600, 0, 1) : 0;
       lean += (leanTarget - lean) * .05;
-      projector!.draw(figures, width, height, scale, time, still ? 0 : signal(now), rows, reveal, sway(time));
+      const interference = still || !visible ? 0 : signal(now, reveal >= .9);
+      const age = now - detailSince;
+      const detailMix = still ? 0 : bound(Math.min(age, DETAIL_DURATION_MS - age) / DETAIL_TEAR_MS, 0, 1);
+      projector!.draw(figures, width, height, scale, time, interference, detailMix, rows, reveal, sway(time));
       if (!still && visible) frame = requestAnimationFrame(render);
     }
     function queue() { if (!frame && !disposed && ready) frame = requestAnimationFrame(render); }
@@ -438,7 +471,7 @@ export default function Crowd() {
       layer!.height = Math.max(1, Math.round(height * scale));
       rows = Math.max(32, Math.round(height / 3.2));
       figures = arrange(width, height);
-      // The marker and the light column follow wherever the layout put him.
+      // Align the marker and the fallback portrait with the central figure.
       const hero = figures.find(figure => figure.hero)!;
       holder!.style.setProperty("--hero-x", `${hero.x}px`);
       holder!.style.setProperty("--hero-top", `${hero.bottom - hero.height}px`);
@@ -464,9 +497,31 @@ export default function Crowd() {
         queue();
       }
     }, { threshold: .18 });
+    const preload = new IntersectionObserver(([entry]) => {
+      if (disposed || !entry.isIntersecting) return;
+      preload.disconnect();
+      const activeProjector = createProjector(layer);
+      if (!activeProjector) return;
+      projector = activeProjector;
+
+      const load = (name: "atlas" | "hero" | "detail", src: string) => {
+        const image = new window.Image();
+        image.src = src;
+        return image.decode().then(() => { if (!disposed) activeProjector.upload(name, image); });
+      };
+      void Promise.all([load("atlas", ATLAS), load("hero", HERO)]).then(() => {
+        if (disposed) return;
+        ready = true;
+        mode();
+      }).catch(() => { /* The still portrait stays in place when a texture is unavailable. */ });
+      void load("detail", HERO_DETAIL).then(() => {
+        if (!disposed) detailReady = true;
+      }).catch(() => { /* The original texture stays active. */ });
+    }, { rootMargin: "300px" });
     const dimensions = new ResizeObserver(resize);
     const lost = (event: Event) => { event.preventDefault(); ready = false; mode(); };
     intersection.observe(holder);
+    preload.observe(holder);
     dimensions.observe(holder);
     holder.addEventListener("pointermove", point);
     holder.addEventListener("pointerleave", leave);
@@ -474,23 +529,10 @@ export default function Crowd() {
     reduced.addEventListener("change", queue);
     resize();
 
-    if (projector) {
-      const load = (name: "atlas" | "hero", src: string) => {
-        const image = new window.Image();
-        image.src = src;
-        return image.decode().then(() => { if (!disposed) projector.upload(name, image); });
-      };
-      void Promise.all([load("atlas", ATLAS), load("hero", HERO)]).then(() => {
-        if (disposed) return;
-        ready = true;
-        mode();
-      }).catch(() => { /* The still portrait stays in place when a texture is unavailable. */ });
-    }
-
     return () => {
       disposed = true;
       cancelAnimationFrame(frame);
-      intersection.disconnect(); dimensions.disconnect();
+      intersection.disconnect(); preload.disconnect(); dimensions.disconnect();
       holder.removeEventListener("pointermove", point);
       holder.removeEventListener("pointerleave", leave);
       layer.removeEventListener("webglcontextlost", lost);
@@ -505,7 +547,6 @@ export default function Crowd() {
         <span className={styles.see}>See you</span>{" "}
         <span className={styles.soon}>soon.</span>
       </p>
-      <span className={styles.beam} aria-hidden="true" />
       <Image ref={poster} src={HERO_STILL} alt="" width={460} height={494} unoptimized draggable={false} className={styles.poster} />
       <canvas ref={canvas} aria-hidden="true" className={styles.canvas} />
       <span className={styles.lock} aria-hidden="true"><i /><b>Natan</b><small>that&apos;s me</small></span>

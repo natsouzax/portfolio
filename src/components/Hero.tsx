@@ -109,7 +109,7 @@ export default function Hero() {
               I’m Natan — a product-minded full stack developer connecting thoughtful design with dependable engineering.
             </p>
             <div className={styles.ctas}>
-              <a className={styles.primary} href="#lexuri" data-sound="whoosh">Explore selected work <Icon name="arrowDown" /></a>
+              <a className={styles.primary} href="#lexuri">Explore selected work <Icon name="arrowDown" /></a>
               <a className={styles.secondary} href="#contato">Start a conversation <Icon name="arrowUpRight" /></a>
             </div>
             <div className={styles.coordinates}>

@@ -5,7 +5,6 @@
   isolation: isolate;
   overflow: clip;
   color: #f7f8f0;
-  background-color: #080a07;
   background-image: radial-gradient(ellipse at 50% 78%, #1e2b1570, transparent 52%);
   padding-inline: var(--gutter);
 }
@@ -47,7 +46,6 @@
   font-weight: 600;
 }
 .email svg { width: 1.2rem; transition: transform .25s ease; }
-.email:hover { color: var(--volt); }
 .email:hover svg { transform: translate(2px, -2px); }
 
 /* ---------- The crowd ---------------------------------------------------- */
@@ -81,23 +79,6 @@
   height: var(--hero-h, 66%);
   transform: translateX(-50%);
   transition: opacity .6s ease;
-}
-
-/* A column of projector light behind Natan: the one figure the lamp is aimed at. */
-.beam {
-  position: absolute;
-  z-index: 0;
-  left: var(--hero-x, 50%);
-  top: calc(var(--hero-top, 30%) - 8%);
-  bottom: 0;
-  width: calc(var(--hero-h, 66%) * .62);
-  transform: translateX(-50%);
-  background:
-    radial-gradient(ellipse 50% 30% at 50% 100%, #c8ff7033, transparent),
-    linear-gradient(to top, #c8ff7024, #c8ff700d 60%, transparent);
-  clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
-  filter: blur(6px);
-  pointer-events: none;
 }
 
 /* The lock-on: corner brackets around his head and a tag, like a scanner
@@ -233,7 +214,6 @@
 }
 .bottom nav { display: flex; gap: clamp(1rem, 3.4vw, 4rem); }
 .bottom a { display: inline-flex; align-items: center; min-height: 2.75rem; }
-.bottom a:hover { color: var(--volt); }
 .slash { color: #657156; padding-inline: .25rem; }
 .back { gap: .8rem; }
 

@@ -1,0 +1,75 @@
+.logo {
+  width: clamp(12rem, 34vw, 30rem);
+  height: auto;
+  fill: #fff;
+  color: #fff;
+}
+
+.position { animation: settle 1.7s cubic-bezier(.65, 0, .2, 1) both; }
+.symbol { fill: currentColor; animation: pulse 1.7s ease both; }
+.facet { transform-origin: 48px 52px; }
+.logo .facet {
+  animation: assemble 1.7s cubic-bezier(.45, .05, .22, 1) both;
+}
+.left { --dx: -28px; --dy: -13px; }
+.right { --dx: 28px; --dy: -14px; }
+.base { --dx: 0px; --dy: 29px; }
+.window { animation: reveal 1.7s cubic-bezier(.2, .65, .2, 1) both; }
+.letters { animation: showLetters 1.7s ease-out both; }
+
+.logo[data-wait-for-scroll]:not([data-logo-playing] *) :is(.position, .symbol, .facet, .window, .letters) {
+  animation: none;
+}
+
+@keyframes assemble {
+  0%, 7% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(-19deg); }
+  18% { opacity: 1; transform: translate(var(--dx), var(--dy)) rotate(-19deg); }
+  45% { opacity: 1; transform: translate(calc(var(--dx) * -.07), calc(var(--dy) * -.07)) rotate(1deg); }
+  51%, 100% { opacity: 1; transform: translate(0, 0) rotate(0); }
+}
+@keyframes pulse {
+  0%, 42%, 60%, 100% { color: #fff; }
+  48% { color: #c8ff70; }
+}
+@keyframes settle {
+  0%, 53% { transform: translateX(244px); }
+  82%, 100% { transform: translateX(0); }
+}
+@keyframes reveal {
+  0%, 65% { transform: scaleX(0); }
+  92%, 100% { transform: scaleX(1); }
+}
+@keyframes showLetters {
+  0%, 65% { opacity: 0; transform: translateX(-9px); }
+  89%, 100% { opacity: 1; transform: translateX(0); }
+}
+
+.logo[data-exiting] .position { animation: recenter var(--logo-exit-duration) cubic-bezier(.65, 0, .2, 1) both; }
+.logo[data-exiting] .symbol { animation: none; }
+.logo[data-exiting] .facet { animation: closeAndOpen var(--logo-exit-duration) cubic-bezier(.45, .05, .22, 1) both; }
+.logo[data-exiting] .window { animation: conceal var(--logo-exit-duration) cubic-bezier(.55, 0, .3, 1) both; }
+.logo[data-exiting] .letters { animation: hideLetters var(--logo-exit-duration) ease-in both; }
+
+@keyframes recenter {
+  0%, 10% { transform: translateX(0); }
+  54%, 100% { transform: translateX(244px); }
+}
+@keyframes closeAndOpen {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0); }
+  48%, 54% { opacity: 1; transform: translate(calc(var(--dx) * -.22), calc(var(--dy) * -.22)); }
+  82% { opacity: .7; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(-19deg); }
+}
+@keyframes conceal {
+  0% { transform: scaleX(1); }
+  54%, 100% { transform: scaleX(0); }
+}
+@keyframes hideLetters {
+  0% { opacity: 1; transform: translateX(0); }
+  54%, 100% { opacity: 0; transform: translateX(-9px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .position, .symbol, .logo .facet, .window, .letters,
+  .logo[data-exiting] :is(.position, .facet, .window, .letters) { animation: none; }
+}

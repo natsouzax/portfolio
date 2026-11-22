@@ -98,3 +98,5 @@
   .raster { animation: none; }
   .snow, .tear { display: none; }
 }
+/* Let the product's own colours and controls come through during the lesson. */
+:global(html[data-lexuri]) .veil { opacity: .12; }

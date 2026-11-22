@@ -1,7 +1,6 @@
 "use client";
 
 import Portrait from "./Portrait";
-import Masthead from "./Masthead";
 import NameBand from "./NameBand";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { editionCopy, type EditionLocale } from "@/i18n/edition";
@@ -13,7 +12,6 @@ export default function Opening() {
   return (
     <section id="top" className={styles.opening} aria-labelledby="identity-name">
       <div className={styles.viewport}>
-        <Masthead />
         <div className={styles.theatre}>
           <div className={styles.field} aria-hidden="true" />
           <h1 id="identity-name" className={styles.name}><span>Natan</span>{" "}<span>Oliveira</span><NameBand /></h1>
@@ -22,7 +20,7 @@ export default function Opening() {
         </div>
         <div className={styles.lower}>
           <p>{copy.role}<br/><span>{copy.place}</span></p>
-          <a href="#trabalhos-selecionados" data-marker="">{copy.selected} <span aria-hidden="true">↓</span></a>
+          <a href="#sobre" data-marker="">{copy.about} <span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </section>

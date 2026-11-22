@@ -19,12 +19,12 @@ export default function Contact() {
             <p>I’m open to opportunities and conversations about digital products, full stack development, and experiences that deserve extra care.</p>
 
             <div className={styles.primaryContacts}>
-              <a href={`mailto:${profile.professionalEmail}`} data-sound="check">
+              <a href={`mailto:${profile.professionalEmail}`}>
                 <span className={styles.contactIcon}><Icon name="mail" /></span>
                 <span><small>PROFESSIONAL EMAIL</small><strong>{profile.professionalEmail}</strong></span>
                 <Icon name="arrowUpRight" />
               </a>
-              <a href={profile.whatsappUrl} target="_blank" rel="noreferrer" data-sound="check">
+              <a href={profile.whatsappUrl} target="_blank" rel="noreferrer">
                 <span className={styles.contactIcon}><Icon name="whatsapp" /></span>
                 <span><small>WHATSAPP</small><strong>{profile.phoneDisplay}</strong></span>
                 <Icon name="arrowUpRight" />
