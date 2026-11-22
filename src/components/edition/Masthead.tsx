@@ -7,9 +7,9 @@ import EntranceLogo from "./EntranceLogo";
 import styles from "./Edition.module.css";
 
 const COMPACT_SCROLL_DISTANCE = 180;
-const LOGO_SCROLL_START = 8;
+const FULL_TRANSITION_MS = 750;
 
-export default function Masthead() {
+export default function Masthead({ phase }: { phase: "loading" | "choosing" | "exiting" | "lifting" | "open" }) {
   const header = useRef<HTMLElement>(null);
   const { locale, setLocale } = useLanguage();
   const copy = editionCopy[locale as EditionLocale] ?? editionCopy.en;
@@ -19,31 +19,47 @@ export default function Masthead() {
     if (!masthead) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const readScrollProgress = () => Math.max(0, Math.min(window.scrollY / COMPACT_SCROLL_DISTANCE, 1));
+    let progress = readScrollProgress();
     let frame = 0;
-    let previousProgress = -1;
+    let lastFrameTime = 0;
 
-    const syncSize = () => {
+    const paintSize = () => {
+      const eased = reducedMotion.matches ? Number(progress >= 0.5) : progress ** 2 * (3 - 2 * progress);
+      masthead.style.setProperty("--mast-progress", String(eased));
+      masthead.style.setProperty("--mast-return-progress", String(1 - eased));
+    };
+
+    const animateSize = (now: number) => {
       frame = 0;
-      const scrollY = window.scrollY;
-      if (scrollY >= LOGO_SCROLL_START) masthead.toggleAttribute("data-logo-playing", true);
-      else if (scrollY <= 1) masthead.removeAttribute("data-logo-playing");
+      const target = readScrollProgress();
+      const distance = target - progress;
+      // Switch timelines only where their visual states match.
+      if (!reducedMotion.matches && progress === 1 && distance < 0) {
+        masthead.setAttribute("data-opening", "");
+      }
+      const maxStep = Math.max(0, now - lastFrameTime) / FULL_TRANSITION_MS;
+      lastFrameTime = now;
 
-      const scrollProgress = Math.max(0, Math.min(scrollY / COMPACT_SCROLL_DISTANCE, 1));
-      // Smoothstep slows the resize near both endpoints.
-      const progress = reducedMotion.matches
-        ? Number(scrollProgress >= 0.5)
-        : scrollProgress ** 2 * (3 - 2 * scrollProgress);
+      progress = reducedMotion.matches || Math.abs(distance) <= maxStep
+        ? target
+        : progress + Math.sign(distance) * maxStep;
 
-      if (progress === previousProgress) return;
-      previousProgress = progress;
-      masthead.style.setProperty("--mast-progress", String(progress));
+      if (reducedMotion.matches || progress === 0 || progress === 1) {
+        masthead.removeAttribute("data-opening");
+      }
+
+      paintSize();
+      if (progress !== target) frame = window.requestAnimationFrame(animateSize);
     };
 
     const scheduleSize = () => {
-      if (!frame) frame = window.requestAnimationFrame(syncSize);
+      if (frame) return;
+      lastFrameTime = performance.now();
+      frame = window.requestAnimationFrame(animateSize);
     };
 
-    syncSize();
+    paintSize();
     window.addEventListener("scroll", scheduleSize, { passive: true });
     reducedMotion.addEventListener("change", scheduleSize);
 
@@ -57,7 +73,9 @@ export default function Masthead() {
   return (
     <header ref={header} className={styles.mast}>
       <a href="#top" data-signature="" className={styles.signature} aria-label={copy.nav.home}>
-        <EntranceLogo waitForScroll />
+        {(phase === "lifting" || phase === "open") && (
+          <EntranceLogo followScroll />
+        )}
       </a>
       <nav aria-label={copy.nav.home}>
         <a href="#trabalhos" data-marker="">{copy.nav.work}</a>

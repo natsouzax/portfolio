@@ -92,7 +92,7 @@ export default function Entrance({ children }: { children: React.ReactNode }) {
       <noscript><style>{`[data-curtain]{display:none!important}[data-scene]{opacity:1!important;transform:none!important}[data-site-navigation]{visibility:visible!important}`}</style></noscript>
       <div ref={navigation} data-site-navigation="" data-phase={phase} className={styles.navigation}>
         <a className="skip-link" href="#conteudo">Skip to content</a>
-        <Masthead />
+        <Masthead phase={phase} />
       </div>
       <div ref={site} data-scene="" data-phase={phase} className={styles.site}>{children}</div>
       {phase === "open" && <SectionReveal scene={site} />}

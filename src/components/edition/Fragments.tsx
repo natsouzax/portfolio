@@ -2,18 +2,29 @@
 
 import { useEffect, useRef } from "react";
 import styles from "./Fragments.module.css";
+import { mountBodyFragments } from "./BodyFragments";
 import { drawShard, makeCopyShards, makeTitleShards, type Shard } from "./fragment-art";
 
 const FORWARD_DURATION = 1550;
 const RETURN_DURATION = 1100;
+const BODY_FORWARD_DURATION = 2600;
+const BODY_RETURN_DURATION = 1850;
 const bound = (progress: number) => Math.min(1, Math.max(0, progress));
 const smooth = (progress: number) => progress * progress * (3 - 2 * progress);
-type Destination = 0 | 1;
+type Destination = 0 | 1 | 2;
 
 export default function Fragments() {
   const canvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // A full page load should begin at the opening, rather than restoring an
+    // old scroll position that can leave the scroll-driven scene mid-transition.
+    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+    if (window.location.hash !== "#top") {
+      window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search + "#top");
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
     const layer = canvas.current;
     const context = layer?.getContext("2d", { alpha: true });
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -26,6 +37,8 @@ export default function Fragments() {
 
     const sample = document.createElement("canvas");
     const lead = about.querySelector<HTMLElement>("[data-assembly-copy]");
+    const bodyStage = about.querySelector<HTMLElement>("[data-body-stage]");
+    const body = bodyStage && mountBodyFragments(bodyStage, title, lead);
     const targets = Array.from(title.querySelectorAll<HTMLElement>(":scope > span, :scope > em"));
     if (lead) targets.push(lead);
     const lines = targets.map(node => ({ node, shards: [] as Shard[], revealed: -1 }));
@@ -34,17 +47,22 @@ export default function Fragments() {
     let needsSampling = true;
     let painted = false;
     let progress = 0;
+    let destination: Destination = 0;
     let transition: {
       startedAt: number;
       duration: number;
       from: number;
       to: Destination;
+      segment: 0 | 1;
       fromY: number;
       toY: number;
     } | null = null;
     let touch: { x: number; y: number; captured: boolean } | null = null;
-    let previousY = window.scrollY;
+    let previousY = 0;
     let followingAnchor = false;
+    let previousWheelAt = 0;
+    let previousWheelDirection = 0;
+    let finishedDirection = 0;
 
     function queue() {
       if (!frame && transition) frame = requestAnimationFrame(paint);
@@ -78,8 +96,13 @@ export default function Fragments() {
       painted = false;
     }
 
-    function position(destination: Destination) {
+    function position(destination: Destination): number {
       if (destination === 0) return Math.max(0, opening!.getBoundingClientRect().top + window.scrollY);
+      if (destination === 2 && bodyStage) {
+        const stage = bodyStage.getBoundingClientRect();
+        const inset = Math.max(68, (window.innerHeight - stage.height) / 2);
+        return Math.max(position(1), stage.top + window.scrollY - inset);
+      }
       const heading = title!.getBoundingClientRect();
       const inset = Math.max(0, Math.min(window.innerHeight * .14, (window.innerHeight - heading.height) / 2));
       return Math.max(0, heading.top + window.scrollY - inset);
@@ -90,13 +113,15 @@ export default function Fragments() {
       opening!.style.setProperty("--burst", burst.toFixed(3));
     }
 
-    function settle(destination: Destination, pulse = false) {
+    function settle(next: Destination, pulse = false) {
       cancelAnimationFrame(frame);
       frame = 0;
       transition = null;
-      progress = destination;
+      progress = destination = next;
       setBurst();
       clear();
+      if (reduced.matches) body?.showAll();
+      else body?.render(next === 2 ? 1 : 0);
       if (pulse) title!.setAttribute("data-assembly-pulse", "");
       else title!.removeAttribute("data-assembly-pulse");
     }
@@ -104,37 +129,63 @@ export default function Fragments() {
     function play(to: Destination) {
       if (transition?.to === to) return;
       const wasPlaying = transition !== null;
+      const segment = transition?.segment ?? (Math.min(progress, to) >= 1 ? 1 : 0);
+      const forward = to > progress;
+      const duration = segment
+        ? (forward ? BODY_FORWARD_DURATION : BODY_RETURN_DURATION)
+        : (forward ? FORWARD_DURATION : RETURN_DURATION);
       title!.removeAttribute("data-assembly-pulse");
       transition = {
         startedAt: performance.now(),
-        duration: Math.max(180, (to ? FORWARD_DURATION : RETURN_DURATION) * Math.abs(to - progress)),
-        from: progress, to, fromY: window.scrollY, toY: position(to),
+        duration: Math.max(180, duration * Math.abs(to - progress)),
+        from: progress, to, segment, fromY: window.scrollY, toY: position(to),
       };
       if (wasPlaying) queue();
       else resize();
     }
 
-    function trigger(to: Destination) {
+    function trigger(direction: 1 | -1) {
       if (reduced.matches || document.querySelector("[data-curtain]")) return false;
       if (transition) {
-        play(to);
+        play((transition.segment + (direction > 0 ? 1 : 0)) as Destination);
         return true;
       }
       const y = window.scrollY;
       const fromOpening = y - position(0);
-      if (fromOpening <= 2 && progress === 1) settle(0);
-      if (progress === to) return false;
-      const nearOpening = fromOpening < window.innerHeight * .8;
-      const nearAbout = y - position(1) < window.innerHeight * .12;
-      if (to ? !nearOpening : !nearAbout) return false;
-      play(to);
-      return true;
+      const height = window.innerHeight;
+      if (fromOpening <= 2 && destination !== 0) settle(0);
+      if (destination === 0 && direction > 0 && fromOpening < height * .8) {
+        play(1);
+        return true;
+      }
+      if (destination === 1 && direction < 0 && y <= position(1) + height * .12) {
+        play(0);
+        return true;
+      }
+      if (body?.isReady() && y <= position(2) + height * .15 && y >= position(1) - height * .15) {
+        if (destination === 1 && direction > 0) {
+          play(2);
+          return true;
+        }
+        if (destination === 2 && direction < 0) {
+          play(1);
+          return true;
+        }
+      }
+      return false;
     }
 
     function wheel(event: WheelEvent) {
       if (event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
       followingAnchor = false;
-      if (event.cancelable && trigger(event.deltaY > 0 ? 1 : 0)) event.preventDefault();
+      const direction = event.deltaY > 0 ? 1 : -1;
+      const now = performance.now();
+      const trailing = !transition && destination === 1 && direction === finishedDirection &&
+        direction === previousWheelDirection && now - previousWheelAt < 140;
+      previousWheelAt = now;
+      previousWheelDirection = direction;
+      if (event.cancelable && (trailing || trigger(direction))) event.preventDefault();
+      if (!trailing && !transition) finishedDirection = 0;
     }
 
     function touchStart(event: TouchEvent) {
@@ -148,7 +199,8 @@ export default function Fragments() {
       if (reduced.matches || !touch || !point || event.touches.length !== 1 || !event.cancelable) return;
       const dy = touch.y - point.clientY;
       if (Math.abs(dy) >= 6 && Math.abs(dy) > Math.abs(touch.x - point.clientX)) {
-        touch.captured = trigger(dy > 0 ? 1 : 0) || touch.captured;
+        // A swipe that started a leg can reverse it, then releases on the next swipe.
+        if (transition || !touch.captured) touch.captured = trigger(dy > 0 ? 1 : -1) || touch.captured;
         if (touch.captured) {
           touch.x = point.clientX;
           touch.y = point.clientY;
@@ -164,14 +216,14 @@ export default function Fragments() {
       const up = event.key === "ArrowUp" || event.key === "PageUp" || (event.key === " " && event.shiftKey);
       if (!down && !up) return;
       followingAnchor = false;
-      if (trigger(down ? 1 : 0)) event.preventDefault();
+      if (trigger(down ? 1 : -1)) event.preventDefault();
     }
 
     function anchorClick(event: MouseEvent) {
       const link = (event.target as Element | null)?.closest<HTMLAnchorElement>("a[href^='#']");
       if (!link?.hash || event.defaultPrevented) return;
       followingAnchor = true;
-      if (transition) settle(progress < .5 ? 0 : 1);
+      if (transition) settle(Math.round(progress) as Destination);
     }
 
     function anchorSettled() {
@@ -188,14 +240,17 @@ export default function Fragments() {
       // the transition sees them. Long jumps still land normally.
       if (!followingAnchor && Math.abs(delta) <= window.innerHeight * .75) {
         if (delta > 1 && trigger(1)) return;
-        if (delta < -1 && trigger(0)) return;
+        if (delta < -1 && trigger(-1)) return;
       }
-      if (progress === 0 && aboutTop <= 4) settle(1);
-      else if (progress === 1 && aboutTop >= window.innerHeight) settle(0);
+      if (body && y >= position(2) && destination !== 2) settle(2);
+      else if (aboutTop >= window.innerHeight && destination !== 0) settle(0);
+      else if (y + window.innerHeight * .14 < position(2) && destination === 2) settle(1);
+      else if (aboutTop <= 4 && destination === 0) settle(1);
     }
 
     function motionChanged() {
       if (reduced.matches) settle(0);
+      else syncNativeScroll();
     }
 
     function endPulse(event: AnimationEvent) {
@@ -205,13 +260,21 @@ export default function Fragments() {
     function paint(now: number) {
       frame = 0;
       if (!transition) return;
-      const { startedAt, duration, from, to, fromY, toY } = transition;
+      const { startedAt, duration, from, to, segment, fromY, toY } = transition;
       const elapsed = bound((now - startedAt) / duration);
       progress = from + (to - from) * elapsed;
-      window.scrollTo({ top: fromY + (toY - fromY) * smooth(elapsed), behavior: "instant" });
+      const travel = segment && to === 2 ? bound(elapsed / .72) : elapsed;
+      const y = fromY + (toY - fromY) * smooth(travel);
+      if (Math.abs(window.scrollY - y) > .5) window.scrollTo({ top: y, behavior: "instant" });
       setBurst();
       if (elapsed === 1) {
-        settle(to, to === 1 && painted);
+        finishedDirection = Math.sign(to - from);
+        settle(to, segment === 0 && to === 1 && painted);
+        return;
+      }
+      if (segment === 1) {
+        body?.render(progress - 1);
+        queue();
         return;
       }
 
@@ -275,6 +338,9 @@ export default function Fragments() {
     const copy = new MutationObserver(invalidate);
     copy.observe(title, { childList: true, characterData: true, subtree: true });
     if (lead) copy.observe(lead, { childList: true, characterData: true, subtree: true });
+    if (!reduced.matches) {
+      settle(0);
+    }
     window.addEventListener("wheel", wheel, { passive: false });
     window.addEventListener("touchstart", touchStart, { passive: true });
     window.addEventListener("touchmove", touchMove, { passive: false });
@@ -292,6 +358,7 @@ export default function Fragments() {
       layout.disconnect();
       copy.disconnect();
       clear();
+      body?.dispose();
       opening.style.removeProperty("--burst");
       title.removeEventListener("animationend", endPulse);
       title.removeEventListener("animationcancel", endPulse);

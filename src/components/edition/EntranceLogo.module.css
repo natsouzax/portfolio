@@ -3,22 +3,61 @@
   height: auto;
   fill: #fff;
   color: #fff;
+  --logo-entrance-duration: 1.7s;
 }
 
-.position { animation: settle 1.7s cubic-bezier(.65, 0, .2, 1) both; }
-.symbol { fill: currentColor; animation: pulse 1.7s ease both; }
+.position { animation: settle var(--logo-entrance-duration) cubic-bezier(.65, 0, .2, 1) both; }
+.symbol { fill: currentColor; animation: pulse var(--logo-entrance-duration) ease both; }
 .facet { transform-origin: 48px 52px; }
 .logo .facet {
-  animation: assemble 1.7s cubic-bezier(.45, .05, .22, 1) both;
+  animation: assemble var(--logo-entrance-duration) cubic-bezier(.450, .05, .22, 1) both;
 }
 .left { --dx: -28px; --dy: -13px; }
 .right { --dx: 28px; --dy: -14px; }
 .base { --dx: 0px; --dy: 29px; }
-.window { animation: reveal 1.7s cubic-bezier(.2, .65, .2, 1) both; }
-.letters { animation: showLetters 1.7s ease-out both; }
+.window { animation: reveal var(--logo-entrance-duration) cubic-bezier(.2, .65, .2, 1) both; }
+.letters { animation: showLetters var(--logo-entrance-duration) ease-out both; }
 
-.logo[data-wait-for-scroll]:not([data-logo-playing] *) :is(.position, .symbol, .facet, .window, .letters) {
-  animation: none;
+.logo[data-scroll-logo] {
+  --header-progress: var(--mast-progress, 0);
+  /* At either end the symbol is assembled. It separates while the header is in motion. */
+  --facet-spread: clamp(0, min((1 - var(--header-progress)) * 5, (var(--header-progress) - .42) * 2.9), 1);
+}
+
+.logo[data-scroll-logo] :is(.position, .symbol, .facet, .window, .letters) {
+  animation-play-state: paused;
+}
+
+.logo[data-scroll-logo] .facet {
+  animation-delay: calc(var(--logo-entrance-duration) * (.3 * var(--facet-spread) - .5));
+}
+
+.logo[data-scroll-logo] .symbol {
+  animation-delay: calc(var(--logo-entrance-duration) * (.42 * var(--facet-spread) - .60));
+}
+
+.logo[data-scroll-logo] :is(.position, .window, .letters) {
+  animation-delay: calc(
+    var(--logo-entrance-duration) *
+    (.39 * var(--header-progress) - .92)
+  );
+}
+
+/* Return only. Spread the assembled favicon, then replay the intro from 18%. */
+:global(header[data-opening]) .logo[data-scroll-logo] {
+  --return-progress: var(--mast-return-progress, 0);
+  --return-spread-end: .22;
+  --return-spread: clamp(0, calc(var(--return-progress) / var(--return-spread-end)), 1);
+  --return-intro: clamp(0, calc((var(--return-progress) - var(--return-spread-end)) / (1 - var(--return-spread-end))), 1);
+  --return-intro-time: calc(.18 + .82 * var(--return-intro));
+}
+
+:global(header[data-opening]) .logo[data-scroll-logo] .facet {
+  animation-delay: calc(var(--logo-entrance-duration) * (-.50 + .32 * var(--return-spread) - .82 * var(--return-intro)));
+}
+
+:global(header[data-opening]) .logo[data-scroll-logo] :is(.symbol, .position, .window, .letters) {
+  animation-delay: calc(var(--logo-entrance-duration) * -1 * var(--return-intro-time));
 }
 
 @keyframes assemble {
@@ -70,6 +109,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .position, .symbol, .logo .facet, .window, .letters,
+  .logo:not([data-scroll-logo]) :is(.position, .symbol, .facet, .window, .letters),
   .logo[data-exiting] :is(.position, .facet, .window, .letters) { animation: none; }
 }

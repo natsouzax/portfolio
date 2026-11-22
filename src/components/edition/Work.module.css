@@ -99,7 +99,7 @@
 }
 
 .heading p { --section-copy-delay: 140ms; max-width: 26rem; margin: 0 0 .25rem; font-size: clamp(1.05rem, 1.7vw, 1.8rem); letter-spacing: -.034em; line-height: 1.35; }
-.about [data-assembly-copy] { display: block; }
+.about [data-assembly-copy] { display: block; clip-path: var(--body-title-clip, none); }
 .features { display: grid; gap: clamp(3rem, 8vw, 8rem); }
 .features article { min-width: 0; }
 .lexuriFrame { margin-top: 1rem; }

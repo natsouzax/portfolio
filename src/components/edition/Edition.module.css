@@ -54,6 +54,7 @@
 }
 .signature svg {
   width: calc(var(--logo-expanded) * (1 - var(--mast-progress)) + var(--logo-compact) * var(--mast-progress));
+  height: auto;
 }
 .mast nav { display:flex; gap:clamp(.8rem,2.2vw,2rem); font-size:.85rem; }
 .mast nav a { display:inline-flex; align-items:center; min-height:44px; font-weight:700; }
